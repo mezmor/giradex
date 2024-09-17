@@ -22,63 +22,63 @@ body {
     }
 
     /* rename moveset column */
-    #pokemongo-table thead tr > *:nth-child(1) {
+    #pokedex-move-table thead tr > *:nth-child(1) {
         font-size: 0;
     }
-    #pokemongo-table thead tr > *:nth-child(1):before {
+    #pokedex-move-table thead tr > *:nth-child(1):before {
         content: "Moveset";
         font-size: 18px;
         display: inline-block;
         padding: 0.25em 0;
     }
 
-    #pokemongo-table thead tr > *:nth-child(2), #pokemongo-table thead tr > *:nth-child(2n+3) {
+    #pokedex-move-table thead tr > *:nth-child(2), #pokedex-move-table thead tr > *:nth-child(2n+3) {
         display: none;
     }
 
-    #pokemongo-table, #pokemongo-table > * {
+    #pokedex-move-table, #pokedex-move-table > * {
         display: block;
     }
-    #pokemongo-table tbody tr {
+    #pokedex-move-table tbody tr {
         display: grid;
         grid-auto-flow: column;
         grid-template-columns: 2fr repeat(3, 1fr);
         grid-template-rows: repeat(2, auto);
     }
 
-    #pokemongo-table tbody td {
+    #pokedex-move-table tbody td {
         width: 100% !important;
         text-align: center;
     }
 
-    #pokemongo-table tbody td:nth-child(2n+4) {
+    #pokedex-move-table tbody td:nth-child(2n+4) {
         font-size: 0.8em;
         font-weight: bold;
         color: var(--col-shadow);
     }
 
-    #pokemongo-table tbody td:nth-child(2n+4)::before {
+    #pokedex-move-table tbody td:nth-child(2n+4)::before {
         content: "(";
     }
-    #pokemongo-table tbody td:nth-child(2n+4)::after {
+    #pokedex-move-table tbody td:nth-child(2n+4)::after {
         content: ")";
     }
 
-    #pokemongo-table thead tr {
+    #pokedex-move-table thead tr {
         display: grid;
         grid-auto-flow: column;
         grid-template-columns: 2fr repeat(3, 1fr);
         grid-template-rows: auto;
     }
-    #pokemongo-table thead th {
+    #pokedex-move-table thead th {
         width: 100% !important;
     }
 
-    #pokemongo-add-fast, #pokemongo-add-charged {
+    #pokedex-add-fast, #pokedex-add-charged {
         display: none;
     }
 
-    #pokemongo-add-any {
+    #pokedex-add-any {
         display: inline-block;
         position: static;
         margin-left: 5px;
@@ -182,8 +182,8 @@ body {
 }
 
 @media screen and (max-width:600px) { 
-    #strongest-table, #strongest-links, #page-nav, #pokemongo, 
-    #pokemongo-table thead tr > *:nth-child(1):after {
+    #strongest-table, #strongest-links, #page-nav, #pokedex, 
+    #pokedex-move-table thead tr > *:nth-child(1):after {
         font-size: 14px;
     }
 

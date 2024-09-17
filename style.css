@@ -463,7 +463,7 @@ span.poke-form-name, .poke-number {
     scroll-margin: 0;
 }
 
-#pokemongo { display: none; }
+#pokedex-moves { display: none; }
 
 #not-released { display: none; }
 
@@ -692,24 +692,24 @@ span.poke-form-name, .poke-number {
     background-color: var(--col-so-off);
 }
 
-#pokemongo-table {
+#pokedex-move-table {
     width: 100%;
     /*table-layout: fixed;*/
 }
 
-#pokemongo-table .sortable {
+#pokedex-move-table .sortable {
     cursor: pointer;
     text-decoration: underline;
 }
 
-#pokemongo-table td {
+#pokedex-move-table td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-#pokemongo-table tr > *:nth-child(1) { width: 18%; }
-#pokemongo-table tr > *:nth-child(2) { width: 18%; }
+#pokedex-move-table tr > *:nth-child(1) { width: 18%; }
+#pokedex-move-table tr > *:nth-child(2) { width: 18%; }
 
 #strongest { display: none; }
 

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
     <title>DialgaDex</title>
     <link rel="icon" type="image/ico" href="favicon.ico"/>
+
     <link rel="stylesheet" href="style_general.css">
     <link rel="stylesheet" href="style_darkmode.css">
     <link rel="stylesheet" href="style_switch.css">
@@ -14,10 +15,18 @@
     <link rel="stylesheet" href="style_autocomplete.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style_mobile.css" media="screen and (max-width:900px)">
+
     <script src="jquery-3.6.0.min.js"></script>
     <script src="autoComplete.js"></script>
-    <script src="pokemon_utils.js"></script>
     <script src="jenks.js"></script>
+    
+    <script src="dataload.js"></script>
+    <script src="settings.js"></script>
+    <script src="pokemon_enums.js"></script>
+    <script src="pokemon_utils.js"></script>
+    <script src="calc.js"></script>
+    <script src="rankings.js"></script>
+    <script src="pokedex.js"></script>
     <script src="index.js"></script>
 </head>
 
@@ -243,8 +252,8 @@
         <div class=pokemon-containers id=additional-containers></div>
     </div>
 
-    <!-- pokemon go stats and moves table -->
-    <div id=pokemongo>
+    <!-- pokedex stats and moves table -->
+    <div id=pokedex-entry>
         <div id=not-released>
             <br>
             <p class="center">Not found in the <b>Pokémon GO</b> files yet :(</p>
@@ -365,11 +374,11 @@
             </div>
             </div>
             <p class="center" id="movesets-title"></p>
-            <table class=table-bg id=pokemongo-table>
+            <table class=table-bg id=pokedex-move-table>
                 <thead>
                     <tr class=table-header>
                         <th style="position: relative">
-                            <button class="plus-button tooltip" id="pokemongo-add-any" onclick="ShowMoveInput(this, 'any')">+
+                            <button class="plus-button tooltip" id="pokedex-add-any" onclick="ShowMoveInput(this, 'any')">+
                                 <div class="tooltiptext">
                                     <div class="tooltip-title">Add a new Move</div>
                                     <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
@@ -377,7 +386,7 @@
                             </button>
                             <span style="position: relative">
                                 Fast<br>Move
-                                <button class="plus-button tooltip" id="pokemongo-add-fast" onclick="ShowMoveInput(this, 'fast')">+
+                                <button class="plus-button tooltip" id="pokedex-add-fast" onclick="ShowMoveInput(this, 'fast')">+
                                     <div class="tooltiptext">
                                         <div class="tooltip-title">Add a new Fast Move</div>
                                         <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
@@ -388,7 +397,7 @@
                         <th>
                             <span style="position: relative">
                                 Charged<br>Move
-                                <button class="plus-button tooltip" id="pokemongo-add-charged" onclick="ShowMoveInput(this, 'charged')">+
+                                <button class="plus-button tooltip" id="pokedex-add-charged" onclick="ShowMoveInput(this, 'charged')">+
                                     <div class="tooltiptext">
                                         <div class="tooltip-title">Add a new Charged Move</div>
                                         <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
@@ -400,7 +409,7 @@
                         <th>DPS<br>(Shadow)</th>
                         <th>TDO</th>
                         <th>TDO<br>(Shadow)</th>
-                        <th id=table-metric-header class=sortable onclick=SortPokemongoTable(6)>
+                        <th id=table-metric-header class=sortable onclick=SortPokedexTable(6)>
                             EER <span class=th-triangle>▿</span>
                         </th>
                         <th id=table-metric-header-sh>EER<br>(Shadow)</th>
@@ -413,8 +422,8 @@
                     </ul></td>
                 </tr></tfoot>
             </table>
-        </div> <!-- end of 'released' div -->
-    </div> <!-- end of 'pokemongo' div -->
+        </div>
+    </div>
 
     <!-- strongest pokemon section -->
     <div id=strongest>
