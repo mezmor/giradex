@@ -60,6 +60,13 @@ function GetPokemonMoves(pkm_obj) {
         //shadow_only_cm.push('Frustration'); // Ignore Frustration because BAD
         pure_only_cm.push('Return');
     }
+    else if (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY") { // Check Return for purified megas
+        const def_form = GetPokemonForms(pkm_obj.id)[0];
+        const def_pkm_obj = jb_pkm.find(e => e.id == pkm_obj.id && e.form == def_form);
+
+        if (def_pkm_obj.shadow_released)
+            pure_only_cm.push('Return');
+    }
 
     // Add moves to Apex Forms
     if (pkm_obj.form == "S") {
