@@ -2,7 +2,7 @@
  * Gets the Pokemon GO stats of a specific pokemon. If level or ivs aren't
  * specified, they default to the settings level and the maximum ivs.
  */
-function GetPokemonStats(jb_pkm_obj, mega, mega_y, level = null, ivs = null) {
+function GetPokemonStats(pkm_obj, level = null, ivs = null) {
 
     if (!level) {
         level = settings_default_level[0];
@@ -10,14 +10,7 @@ function GetPokemonStats(jb_pkm_obj, mega, mega_y, level = null, ivs = null) {
     if (!ivs)
         ivs = { atk: 15, def: 15, hp: 15 };
 
-    let stats;
-
-    if (mega && mega_y) // mega y
-        stats = jb_pkm_obj.mega[1].stats;
-    else if (mega) // mega x or normal mega
-        stats = jb_pkm_obj.mega[0].stats;
-    else // any form non mega
-        stats = jb_pkm_obj.stats;
+    let stats = pkm_obj.stats;
 
     let cpm = GetCPMForLevel(level);
 
@@ -35,24 +28,24 @@ function GetPokemonStats(jb_pkm_obj, mega, mega_y, level = null, ivs = null) {
  * charged moves, elite charged moves,
  * pure-only charged moves, and shadow-only charged moves.
  */
-function GetPokemonMoves(jb_pkm_obj) {
+function GetPokemonMoves(pkm_obj) {
 
-    if (!jb_pkm_obj.fm && !jb_pkm_obj.cm)
+    if (!pkm_obj.fm && !pkm_obj.cm)
         return [];
 
-    let fm = jb_pkm_obj.fm.slice();
+    let fm = pkm_obj.fm.slice();
     let elite_fm = [];
-    if (jb_pkm_obj.elite_fm)
-        elite_fm = jb_pkm_obj.elite_fm.slice();
-    let cm = jb_pkm_obj.cm.slice();
+    if (pkm_obj.elite_fm)
+        elite_fm = pkm_obj.elite_fm.slice();
+    let cm = pkm_obj.cm.slice();
     let elite_cm = [];
-    if (jb_pkm_obj.elite_cm)
-        elite_cm = jb_pkm_obj.elite_cm.slice();
+    if (pkm_obj.elite_cm)
+        elite_cm = pkm_obj.elite_cm.slice();
 
     // checks for hidden power
     if (fm.includes("Hidden Power") || elite_fm.includes("Hidden Power")) {
         for (let type of POKEMON_TYPES) {
-            if (!["Normal", "Fairy"].includes(type) && jb_pkm_obj.types.includes(type)) {
+            if (!["Normal", "Fairy"].includes(type) && pkm_obj.types.includes(type)) {
                 if (fm.includes("Hidden Power"))
                     fm.push("Hidden Power " + type);
                 if (elite_fm.includes("Hidden Power"))
@@ -63,18 +56,18 @@ function GetPokemonMoves(jb_pkm_obj) {
 
     let shadow_only_cm = [];
     let pure_only_cm = [];
-    if (jb_pkm_obj.shadow_released) {
+    if (pkm_obj.shadow_released) {
         //shadow_only_cm.push('Frustration'); // Ignore Frustration because BAD
         pure_only_cm.push('Return');
     }
 
     // Add moves to Apex Forms
-    if (jb_pkm_obj.form == "S") {
-        if (jb_pkm_obj.id == 249) { // Apex Lugia
+    if (pkm_obj.form == "S") {
+        if (pkm_obj.id == 249) { // Apex Lugia
             shadow_only_cm.push('Aeroblast Plus');
             pure_only_cm.push('Aeroblast Plus Plus');
         }
-        if (jb_pkm_obj.id == 250) { // Apex Ho-Oh
+        if (pkm_obj.id == 250) { // Apex Ho-Oh
             shadow_only_cm.push('Sacred Fire Plus');
             pure_only_cm.push('Sacred Fire Plus Plus');
         }
@@ -95,8 +88,6 @@ function GetPokemonMoves(jb_pkm_obj) {
 function GetUniqueIdentifier(pkm_obj, unique_shadow = true) {
     return pkm_obj.id + "-" + 
         pkm_obj.form + "-" + 
-        pkm_obj.mega + "-" + 
-        pkm_obj.mega_y + "-" + 
         (unique_shadow ? pkm_obj.shadow + "-" : "") + 
         (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]);
 }
@@ -139,51 +130,24 @@ function GetPokemonId(clean_input) {
 }
 
 /**
- * Gets array of specific pokemon types. Takes into account form and whether
- * is mega.
- */
-function GetPokemonTypesFromId(pokemon_id, form, mega, mega_y) {
-
-    let jb_pkm_obj = jb_pkm.find(entry =>
-            entry.id == pokemon_id && entry.form == form);
-    return (jb_pkm_obj) ? GetPokemonTypes(jb_pkm_obj, mega, mega_y) : [];
-}
-
-/**
- * Gets array of specific pokemon types.
- */
-function GetPokemonTypes(jb_pkm_obj, mega, mega_y) {
-
-    types = [];
-
-    if (mega_y) {
-        if (jb_pkm_obj.mega && jb_pkm_obj.mega[1])
-            types = jb_pkm_obj.mega[1].types;
-    } else if (mega) {
-        if (jb_pkm_obj.mega && jb_pkm_obj.mega[0])
-            types = jb_pkm_obj.mega[0].types;
-    } else {
-        types = jb_pkm_obj.types;
-    }
-
-    return types;
-}
-
-/**
  * Gets a pokemon container div element set up with a specified pokemon.
  */
-function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
-        mega = false, mega_y = false) {
+function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
 
-    const pokemon_name = jb_names[pokemon_id].name;
-    const clean_name = CleanPokeName(pokemon_name);
-    const img_src_name = GetPokemonImgSrcName(pokemon_id, clean_name, form,
-            mega, mega_y);
-    let img_src = GIFS_URL + img_src_name + ".gif";
-    const can_be_mega_y = pokemon_id == 6 || pokemon_id == 150; 
     const poke_obj = jb_pkm.find(e => e.id == pokemon_id && e.form == form);
-    const can_be_shadow = poke_obj !== undefined && poke_obj.shadow && poke_obj.shadow_released;
-    const primal = mega && (pokemon_id == 382 || pokemon_id == 383);
+
+    let pokemon_name;
+    let can_be_shadow = false;
+    if (poke_obj) {
+        pokemon_name = poke_obj.name;
+        can_be_shadow = poke_obj.shadow && poke_obj.shadow_released;
+    }
+    else {
+        pokemon_name = jb_names[pokemon_id].name;
+    }
+    
+    const img_src_name = GetPokemonImgSrcName(pokemon_id, form);
+    let img_src = GIFS_URL + img_src_name + ".gif";
     const form_text = GetFormText(pokemon_id, form);
 
     // container div
@@ -215,14 +179,12 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
     pokemon_container_div.append(img_container_div);
 
     // pokemon name p
-    const pokemon_name_p= $("<p class='pokemon-name pokefont unselectable'"
-            + "onclick='LoadPokedexAndUpdateURL(" + pokemon_id + ", \""
-            + form + "\", " + mega + ", " + mega_y + ")'>#" + pokemon_id
-            + ((primal) ? (" Primal ") : ((mega) ? " Mega " : " "))
+    const pokemon_name_p= $("<p class='pokemon-name pokefont unselectable'>#" 
+            + pokemon_id + " "
             + pokemon_name
-            + ((mega && can_be_mega_y) ? ((mega_y) ? " Y " : " X ") : "")
             + "</p>");
-    if (is_selected && poke_obj !== undefined && !mega && !mega_y) {
+    pokemon_name_p.on('click', e => LoadPokedexAndUpdateURL(GetPokeDexMon(pokemon_id, form)));
+    if (is_selected && poke_obj && form != "Mega" && form != "MegaY") {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + "'></img>");
         shadow_icon.on('click', function(e) { 
             poke_obj.shadow = !can_be_shadow;
@@ -233,7 +195,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal",
     pokemon_container_div.append(pokemon_name_p);
 
     // pokemon types
-    const types = GetPokemonTypesFromId(pokemon_id, form, mega, mega_y);
+    const types = poke_obj !== undefined ? poke_obj.types : [];
     const pokemon_types_div = $("<div class=pokemon-types></div>");
     for (type of types) {
         pokemon_types_div.append($("<img src=imgs/types/"

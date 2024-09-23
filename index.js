@@ -41,9 +41,7 @@ let loading_pogo_moves = false;
 // whether pokemon go counters are currently being loaded asynchronously
 let loading_counters = false;
 
-let current_jb_pkm_obj = null; // current pokemon's jb_pkm_obj
-let current_mega = false; // whether current pokemon is a mega
-let current_mega_y = false; // whether current pokemon is a mega y
+let current_pkm_obj = null; // current pokedex pokemon's pkm_obj
 
 // whether counters of current pokemon have been loaded yet
 let counters_loaded = false;
@@ -114,44 +112,8 @@ function CheckURLAndAct() {
 
     // if url has pokemon params...
     if (params.has("p")) {
-
-        const pkm = params.get("p");
-
-        let form = "def";
-        if (params.has("f"))
-            form = params.get("f");
-
-        let mega = false;
-        if (params.has("m"))
-            mega = true;
-
-        let mega_y = false;
-        if (params.has("y"))
-            mega_y = true;
-
-        let level = null;
-        if (params.has("lvl"))
-            level = Number(params.get("lvl"));
-
-        let ivs = null;
-        if (params.has("ivs")) {
-            let ivs_str = params.get("ivs");
-            ivs = {
-                atk: parseInt(ivs_str.slice(0, 2)),
-                def: parseInt(ivs_str.slice(2, 4)),
-                hp: parseInt(ivs_str.slice(4, 6))
-            };
-            function IsValidIV(val) {
-                return (Number.isInteger(val) && val >= 0 && val <= 15);
-            }
-            if (!IsValidIV(ivs.atk) || !IsValidIV(ivs.def)
-                    || !IsValidIV(ivs.hp)) {
-                ivs = null;
-            }
-        }
-
         // loads pokemon
-        LoadPokedex(pkm, form, mega, mega_y, level, ivs);
+        LoadPokedex(ParsePokedexURL(params));
 
         return;
     }
@@ -191,22 +153,7 @@ function CheckURLAndAct() {
  * Sets up autocomplete for the Pokemon Search Box
  */
 function InitializePokemonSearch() {
-    // Only use active forms
-    let search_values = jb_pkm.filter((item) => {
-        return GetPokemonForms(item.id).includes(item.form);
-    });
-
-    // Add entries for megas
-    search_values.filter(pkm => 'mega' in pkm).forEach(pkm => {
-        pkm.mega.forEach((megaEvo, i) => {
-            const megaMon = structuredClone(pkm);
-            megaMon.megaID = i;
-            megaMon.name = (pkm.id == 382 || pkm.id == 383 ? "Primal" : "Mega") + " " + megaMon.name;
-            if (pkm.id == 6 || pkm.id == 150) // charizard and mewtwo
-                megaMon.name = megaMon.name + " " + (i == 0 ? "X" : "Y");
-            search_values.push(megaMon);
-        });
-    });
+    let search_values = jb_pkm.slice();
 
     // Add entries for mons completely missing from game data
     const all_names = search_values.map(e => e.name);
@@ -280,7 +227,7 @@ function InitializePokemonSearch() {
                 $(item).append(idTD);
                 
                 // Add Icon
-                const coords = GetPokemonIconCoords(data.value.id, data.value.form, data.value.megaID !== undefined, data.value.megaID == 1);
+                const coords = GetPokemonIconCoords(data.value.id, data.value.form);
                 $(item).append("<td class=pokemon-icon style='background-image:url("
                     + ICONS_URL + ");background-position:" + coords.x + "px "
                     + coords.y + "px'></td>");
@@ -321,6 +268,6 @@ function InitializePokemonSearch() {
         if (pokemonSearch.cursor == -1) { pokemonSearch.goTo(0); }
     });
     pokemonSearch.input.addEventListener("selection", function(e) {
-        LoadPokedexAndUpdateURL(e.detail.selection.value.id, e.detail.selection.value.form, e.detail.selection.value.megaID !== undefined, e.detail.selection.value.megaID == 1);
+        LoadPokedexAndUpdateURL(GetPokeDexMon(e.detail.selection.value.id, e.detail.selection.value.form));
     });
 }

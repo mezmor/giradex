@@ -386,6 +386,57 @@ function GetCPMForLevel(level) {
 function GetPokemonForms(pokemon_id) {
 
     switch (pokemon_id) {
+        case 6: // Charizard
+        case 150: // Mewtwo
+            return ["Normal", "Mega", "MegaY"];
+        case 3: // Venusaur
+        case 9: // Blastoise
+        case 15: // Beedrill
+        case 18: // Pidgeot
+        case 65: // Alakazam
+        case 94: // Gengar
+        case 115: // Kangaskhan
+        case 127: // Pinsir
+        case 130: // Gyarados
+        case 142: // Aerodactyl
+        case 181: // Ampharos
+        case 208: // Steelix
+        case 212: // Scizor
+        case 214: // Heracross
+        case 229: // Houndoom
+        case 248: // Tyranitar
+        case 254: // Sceptile
+        case 257: // Blaziken
+        case 260: // Swampert
+        case 282: // Gardevoir
+        case 302: // Sableye
+        case 303: // Mawile
+        case 306: // Aggron
+        case 308: // Medicham
+        case 310: // Manectric
+        case 319: // Sharpedo
+        case 323: // Camerupt
+        case 334: // Altaria
+        case 354: // Banette
+        case 359: // Absol
+        case 362: // Glalie
+        case 373: // Salamence
+        case 376: // Metagross
+        case 380: // Latias
+        case 381: // Latios
+        case 382: // Kyogre
+        case 383: // Groudon
+        case 384: // Rayquaza
+        case 428: // Lopunny
+        case 445: // Garchomp
+        case 448: // Lucario
+        case 460: // Abomasnow
+        case 475: // Gallade
+        case 531: // Audino
+        case 719: // Diancie
+            return ["Normal", "Mega"]
+        case 80: // Slowbro
+            return [ "Normal", "Galarian", "Mega" ];
         case 19: // Rattata
         case 20: // Raticate
         case 26: // Raichu
@@ -407,7 +458,6 @@ function GetPokemonForms(pokemon_id) {
         case 77: // Ponyta
         case 78: // Rapidash
         case 79: // Slowpoke
-        case 80: // Slowbro
         case 83: // Farfetch'd
         case 110: // Weezing
         case 122: // Mr. Mime
@@ -586,30 +636,26 @@ function GetPokemonDefaultForm(pokemon_id) {
  * Gets a specific pokemon's name used for its image source url.
  * The name varies depending on the pokemon's form and whether it's a mega.
  */
-function GetPokemonImgSrcName(pokemon_id, clean_name, form, mega, mega_y) {
+function GetPokemonImgSrcName(pokemon_id, form) {
+    let poke_name = CleanPokeName(jb_names[pokemon_id].name);
 
     // checks for stupid nidoran
     if (pokemon_id == 29)
-        clean_name = "nidoranf";
+        poke_name = "nidoranf";
     else if (pokemon_id == 32)
-        clean_name = "nidoranm";
+        poke_name = "nidoranm";
 
-    let img_src_name = clean_name;
+    let img_src_name = poke_name;
 
     if (form != "Normal") {
+        if (form == "Mega" && (pokemon_id == 382 || pokemon_id == 383))
+            form = "Primal";
+        if (form == "Mega" && (pokemon_id == 6 || pokemon_id == 150))
+            form = "MegaX";
+
         img_src_name += "-";
         img_src_name += form.toLowerCase().replace(/_/g, "");
     }
-
-    if (mega) {
-        if (pokemon_id == 382 || pokemon_id == 383) // Kyogre or Groudon
-            img_src_name += "-primal";
-        else
-            img_src_name += "-mega";
-    }
-    const can_be_mega_y = pokemon_id == 6 || pokemon_id == 150; 
-    if (mega && can_be_mega_y)
-        img_src_name += ((mega_y) ? "y" : "x");
 
     return img_src_name;
 }
@@ -864,14 +910,14 @@ function GetFormText(pokemon_id, form) {
  * TODO:
  * - polteageist, mimikyu, urshifu
  */
-function GetPokemonIconCoords(pokemon_id, form, mega, mega_y) {
+function GetPokemonIconCoords(pokemon_id, form) {
 
     const NUM_COLS = 12, W = 40, H = 30;
 
     let offsetID = pokemon_id;
     // offset reference: https://github.com/smogon/sprites/blob/master/ps-pokemon.sheet.mjs
 
-    if (mega) {
+    if (form == "Mega" || form == "MegaY") {
         const megaOffset = 1320;
         const megaLookup = [
             3, // Venusaur
@@ -927,7 +973,7 @@ function GetPokemonIconCoords(pokemon_id, form, mega, mega_y) {
         ];
 
         offsetID = megaOffset + megaLookup.indexOf(pokemon_id);
-        if (mega_y) offsetID += 1;
+        if (form == "MegaY") offsetID += 1;
     }
     else if (form == "Alola") {
         const alolaOffset = 1151;

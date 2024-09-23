@@ -1,45 +1,26 @@
 /**
  * Loads a pokemon page.
  */
-function LoadPokedex(clean_input, form = "def", mega = false,
-    mega_y = false, level = null, ivs = null) {
+function LoadPokedex(pokedex_mon) {
 
     if (!finished_loading || loading_pogo_moves || loading_counters)
         return;
 
-    // gets the pokemon id from the input and returns if it doesn't find it
-    const pokemon_id = GetPokemonId(clean_input);
-    if (pokemon_id == 0)
+    if (pokedex_mon.pokemon_id == 0)
         return;
 
     // sets the page title
-    const pokemon_name = jb_names[pokemon_id].name;
-    document.title = "#" + pokemon_id + " " + pokemon_name
+    const pokemon_name = jb_names[pokedex_mon.pokemon_id].name;
+    document.title = "#" + pokedex_mon.pokemon_id + " " + pokemon_name
             + " - DialgaDex";
 
-    // sets the default form
-    if (form == "def")
-        form = GetPokemonDefaultForm(pokemon_id);
-
-    // sets the default level
-    if (level == null) {
-        level = settings_default_level[0];
-        const poke_obj = jb_pkm.find(e=>e.id == pokemon_id);
-        if (poke_obj !== undefined && poke_obj.class == undefined && settings_xl_budget)
-            level = 50;
-    }
-
     // sets level input value
-    $("#input-lvl").val(level);
-
-    // sets the default ivs
-    if (ivs == null)
-        ivs = { atk: 15, def: 15, hp: 15 };
+    $("#input-lvl").val(pokedex_mon.level);
 
     // sets ivs inputs values
-    $("#input-atk").val(ivs.atk);
-    $("#input-def").val(ivs.def);
-    $("#input-hp").val(ivs.hp);
+    $("#input-atk").val(pokedex_mon.ivs.atk);
+    $("#input-def").val(pokedex_mon.ivs.def);
+    $("#input-hp").val(pokedex_mon.ivs.hp);
 
     // empties the search box
     $("#poke-search-box").val("");
@@ -50,22 +31,22 @@ function LoadPokedex(clean_input, form = "def", mega = false,
     $("#next-containers").empty();
     $("#additional-containers").empty();
 
-    const forms = GetPokemonForms(pokemon_id);
+    const forms = GetPokemonForms(pokedex_mon.pokemon_id);
     const def_form = forms[0];
 
     // sets main pokemon container
-    $("#main-container").append(GetPokemonContainer(pokemon_id,
-            (form == def_form && !mega), def_form));
+    $("#main-container").append(GetPokemonContainer(pokedex_mon.pokemon_id,
+            (pokedex_mon.form == def_form), def_form));
 
     // sets previous and next pokemon containers
     for (i = 1; i <= 2; i++) {
-        const prev_pokemon_id = parseInt(pokemon_id) - i;
+        const prev_pokemon_id = parseInt(pokedex_mon.pokemon_id) - i;
         if (prev_pokemon_id > 0) {
             $("#previous-containers").prepend(
                 GetPokemonContainer(prev_pokemon_id, false,
                     GetPokemonDefaultForm(prev_pokemon_id)));
         }
-        const next_pokemon_id = parseInt(pokemon_id) + i;
+        const next_pokemon_id = parseInt(pokedex_mon.pokemon_id) + i;
         if (next_pokemon_id <= jb_max_id) {
             $("#next-containers").append(
                 GetPokemonContainer(next_pokemon_id, false,
@@ -76,26 +57,11 @@ function LoadPokedex(clean_input, form = "def", mega = false,
     // sets additional pokemon containers
 
     let additional_cs = $("#additional-containers");
-
-    const can_be_mega = jb_mega[pokemon_id];
-
-    if (can_be_mega) {
-        if (pokemon_id == 6 || pokemon_id == 150) { // charizard and mewtwo
-            additional_cs.append(GetPokemonContainer(
-                    pokemon_id, mega && !mega_y, "Normal", true, false));
-            additional_cs.append(GetPokemonContainer(
-                    pokemon_id, mega && mega_y, "Normal", true, true));
-        } else {
-            additional_cs.append(
-                GetPokemonContainer(pokemon_id, mega, "Normal", true));
-        }
-    }
-
     const additional_forms = forms.slice(1);
 
     for (f of additional_forms) {
         additional_cs.append(
-            GetPokemonContainer(pokemon_id, form == f, f));
+            GetPokemonContainer(pokedex_mon.pokemon_id, pokedex_mon.form == f, f));
     }
 
     // Will Scroll
@@ -111,14 +77,14 @@ function LoadPokedex(clean_input, form = "def", mega = false,
         $("#strongest").css("display", "none");
     if ($("#pokedex").css("display") == "none")
         $("#pokedex").css("display", "block");
-    if ($("#pokedex-entry").css("display") == "none")
-        $("#pokedex-entry").css("display", "initial");
+    if ($("#pokedex-page").css("display") == "none")
+        $("#pokedex-page").css("display", "initial");
     if ($("#counters").css("display") != "none")
         $("#counters").css("display", "none");
     if ($("#counters-popup").css("display") != "none")
         $("#counters-popup").css("display", "none");
 
-    LoadPokedexData(pokemon_id, form, mega, mega_y, level, ivs);
+    LoadPokedexData(pokedex_mon);
 }
 
 
@@ -126,29 +92,24 @@ function LoadPokedex(clean_input, form = "def", mega = false,
  * Calls the 'LoadPokemon' function and updates the url to match the
  * pokemon being loaded.
  */
-function LoadPokedexAndUpdateURL(clean_input, form = "def", mega = false,
-    mega_y = false, level = null, ivs = null) {
+function LoadPokedexAndUpdateURL(pokedex_mon) {
 
     if (!finished_loading || loading_pogo_moves || loading_counters)
         return false;
 
-    LoadPokedex(clean_input, form, mega, mega_y, level, ivs);
+    LoadPokedex(pokedex_mon);
 
-    let url = "?p=" + clean_input;
+    let url = "?p=" + pokedex_mon.pokemon_id;
 
-    if (form != "def")
-        url += "&f=" + form;
-    if (mega)
-        url += "&m";
-    if (mega_y)
-        url += "&y";
-    if (level)
-        url += "&lvl=" + String(level);
-    if (ivs) {
+    if (pokedex_mon.form != "def")
+        url += "&f=" + pokedex_mon.form;
+    if (pokedex_mon.level)
+        url += "&lvl=" + String(pokedex_mon.level);
+    if (pokedex_mon.ivs) {
         url += "&ivs="
-            + String(ivs.atk).padStart(2, "0")
-            + String(ivs.def).padStart(2, "0")
-            + String(ivs.hp).padStart(2, "0");
+            + String(pokedex_mon.ivs.atk).padStart(2, "0")
+            + String(pokedex_mon.ivs.def).padStart(2, "0")
+            + String(pokedex_mon.ivs.hp).padStart(2, "0");
     }
 
     window.history.pushState({}, "", url);
@@ -159,15 +120,11 @@ function LoadPokedexAndUpdateURL(clean_input, form = "def", mega = false,
 /**
  * Loads one pokemon data for the Pokemon GO section.
  */
-function LoadPokedexData(pokemon_id, form, mega, mega_y, level, ivs) {
+function LoadPokedexData(pokedex_mon) {
 
-    let jb_pkm_obj = jb_pkm.find(entry =>
-            entry.id == pokemon_id && entry.form == form);
-    let released = true && jb_pkm_obj;
-    if (mega)
-        released = released && jb_pkm_obj.mega;
-    if (mega_y)
-        released = released && jb_pkm_obj.mega.length == 2;
+    let pkm_obj = jb_pkm.find(entry =>
+            entry.id == pokedex_mon.pokemon_id && entry.form == pokedex_mon.form);
+    let released = true && pkm_obj;
 
     // if this pokemon is not released in pokemon go yet...
     if (!released) {
@@ -185,25 +142,54 @@ function LoadPokedexData(pokemon_id, form, mega, mega_y, level, ivs) {
     if ($("#legend").css("display") == "none")
         $("#legend").css("display", "initial");
 
-    const stats = GetPokemonStats(jb_pkm_obj, mega, mega_y, level, ivs);
+    const stats = GetPokemonStats(pkm_obj, pokedex_mon.level, pokedex_mon.ivs);
     let max_stats = null;
-    if (ivs.atk != 15 || ivs.def != 15 || ivs.hp != 15)
-        max_stats = GetPokemonStats(jb_pkm_obj, mega, mega_y, level);
+    if (pokedex_mon.ivs.atk != 15 || pokedex_mon.ivs.def != 15 || pokedex_mon.ivs.hp != 15)
+        max_stats = GetPokemonStats(pkm_obj, pokedex_mon.level);
 
     // sets global variables
-    current_jb_pkm_obj = jb_pkm_obj;
-    current_mega = mega;
-    current_mega_y = mega_y;
+    current_pkm_obj = pkm_obj;
     counters_loaded = false;
 
     LoadPokedexBaseStats(stats);
     LoadPokedexCP(stats);
-    UpdatePokedexCPText(level, ivs);
-    LoadPokedexEffectiveness(jb_pkm_obj, mega, mega_y);
-    ResetPokedexCounters(jb_pkm_obj);
-    LoadPokedexMoveTable(jb_pkm_obj, mega, mega_y, stats, max_stats);
+    UpdatePokedexCPText(pokedex_mon.level, pokedex_mon.ivs);
+    LoadPokedexEffectiveness(pkm_obj);
+    ResetPokedexCounters();
+    LoadPokedexMoveTable(pkm_obj, stats, max_stats);
 }
 
+/**
+ * Returns an object representing the Pokemon being requested via URL params
+ */
+function GetPokeDexMon(pokemon_id, form = "def", level = null, ivs = null) {
+    
+    if (pokemon_id == 0)
+        return;
+    
+    // sets the default form
+    if (form == "def")
+        form = GetPokemonDefaultForm(pokemon_id);
+
+    // sets the default level
+    if (level == null) {
+        level = settings_default_level[0];
+        const poke_obj = jb_pkm.find(e=>e.id == pokemon_id);
+        if (poke_obj !== undefined && poke_obj.class == undefined && settings_xl_budget)
+            level = 50;
+    }
+
+    // sets the default ivs
+    if (ivs == null)
+        ivs = { atk: 15, def: 15, hp: 15 };
+
+    return {
+        pokemon_id: pokemon_id,
+        form: form,
+        level: level,
+        ivs: ivs
+    };
+}
 
 /**
  * Loads the section containing the base stats of the selected pokemon.
@@ -299,15 +285,9 @@ function UpdatePokedexCPText(level, ivs) {
  * their effectiveness against the selected pokemon. Note that types that are
  * neutral towards the selected pokemon aren't displayed.
  */
-function LoadPokedexEffectiveness(jb_pkm_obj, mega, mega_y) {
+function LoadPokedexEffectiveness(pkm_obj) {
 
-    let types = jb_pkm_obj.types;
-    if (mega) {
-        if (mega_y)
-            types = jb_pkm_obj.mega[1].types;
-        else
-            types = jb_pkm_obj.mega[0].types;
-    }
+    let types = pkm_obj.types;
 
     let effectiveness_0391 = [];
     let effectiveness_0625 = [];
@@ -336,7 +316,7 @@ function LoadPokedexEffectiveness(jb_pkm_obj, mega, mega_y) {
     }
 
     $("#effectiveness-title").html("Types effectiveness against<br><b>"
-            + jb_pkm_obj.name + "</b>");
+            + pkm_obj.name + "</b>");
 
     let effectiveness_0391_html = "";
     for (let type of effectiveness_0391) {
@@ -375,16 +355,16 @@ function LoadPokedexEffectiveness(jb_pkm_obj, mega, mega_y) {
 /**
  * Resets the pokemon go counters section for the current selected pokemon.
  */
-function ResetPokedexCounters(enemy_jb_pkm_obj) {
+function ResetPokedexCounters() {
 
     // sets proper counters title and disclaimer
     const verb = ($("#counters").css("display") == "none") ? "show" : "hide";
-    $("#counters-button").html(verb + " <b>" + enemy_jb_pkm_obj.name + "</b>'s counters")
+    $("#counters-button").html(verb + " <b>" + current_pkm_obj.name + "</b>'s counters")
     $("#counters-disclaimer").html(
         "calculations take into account the counters effectiveness against "
-        + enemy_jb_pkm_obj.name
+        + current_pkm_obj.name
         + "<br>and the counters resistance to the average of "
-        + enemy_jb_pkm_obj.name + "'s movesets");
+        + current_pkm_obj.name + "'s movesets");
     
     // shows cell with loading image in the counters table
     $("#counters-tr").empty();
@@ -402,172 +382,24 @@ function ResetPokedexCounters(enemy_jb_pkm_obj) {
  * the best counters taking into account their effectiveness against the selected
  * mon and their resistance to the average of the selected mon's movesets.
  */
-function LoadPokedexCounters(enemy_jb_pkm_obj, enemy_mega, enemy_mega_y) {
-
-    const enemy_types = GetPokemonTypes(enemy_jb_pkm_obj, enemy_mega, enemy_mega_y);
-    const enemy_effectiveness = GetTypesEffectivenessAgainstTypes(enemy_types);
+function LoadPokedexCounters() {
+    let search_params = {}
 
     // gets checkboxes filters
-    let search_unreleased =
+    search_params.unreleased =
         $("#counters input[value='unreleased']:checkbox").is(":checked");
-    let search_mega =
+    search_params.mega =
         $("#counters input[value='mega']:checkbox").is(":checked");
-    let search_shadow =
+    search_params.shadow =
         $("#counters input[value='shadow']:checkbox").is(":checked");
-    let search_legendary =
+    search_params.legendary =
         $("#counters input[value='legendary']:checkbox").is(":checked");
-    let search_elite =
+    search_params.elite =
         $("#counters input[value='elite']:checkbox").is(":checked");
 
-    const num_counters = 50;
-
     // array of counters pokemon and movesets found so far
-    let counters = [];
-
-    /**
-     * Checks if any of the movesets of a specific pokemon is stronger than any
-     * of the current counters. If it is, updates the counters arrays.
-     * 
-     * There is one array for regular pokemon and other for mega pokemon.
-     *
-     * The arrays are sorted every time so that it is always the weakest
-     * pokemon in it that gets replaced.
-     */
-    function CheckIfStronger(jb_pkm_obj, mega, mega_y, shadow) {
-
-        const movesets = GetPokemonStrongestMovesetsAgainstEnemy(jb_pkm_obj,
-                mega, mega_y, shadow, search_elite, enemy_jb_pkm_obj,
-                enemy_mega, enemy_mega_y, enemy_types, enemy_effectiveness);
-        if (movesets.length == 0)
-            return;
-
-        for (let moveset of movesets) {
-
-            let is_strong_enough = false;
-
-            let not_full = counters.length < num_counters;
-            let weakest = counters[0];
-
-            if (not_full) { // if array isn't full...
-                if (moveset.rat > 0)
-                    is_strong_enough = true;
-            } else { // if array is full...
-                // if finds something better than worst in array...
-                if (moveset.rat > weakest.rat)
-                    is_strong_enough = true;
-            }
-
-            if (is_strong_enough) {
-
-                // adds pokemon to array of counters
-                const counter = {
-                    rat: moveset.rat, id: jb_pkm_obj.id,
-                    name: jb_pkm_obj.name, form: jb_pkm_obj.form,
-                    mega: mega, mega_y: mega_y, shadow: shadow,
-                    fm: moveset.fm, fm_is_elite: moveset.fm_is_elite,
-                    fm_type: moveset.fm_type,
-                    cm: moveset.cm, cm_is_elite: moveset.cm_is_elite,
-                    cm_type: moveset.cm_type,
-                    deaths: moveset.deaths
-                };
-
-                
-                if (counters.length < num_counters)
-                    counters.push(counter);
-                else
-                    counters[0] = counter;
-                // sorts array
-                counters.sort(function compareFn(a , b) {
-                    return ((a.rat > b.rat) || - (a.rat < b.rat));
-                });
-            }
-        }
-    }
-
-    // searches for pokemon asynchronously in chunks - one chunk every frame
-
-    // number of pokemon searched in each chunk
-    const chunk_size = Math.ceil(jb_max_id / 10);
-
-    /**
-     * Searches one chunk of pokemon.
-     * Receives the index of the chunk to search and the callback function
-     * for when all chunks have been searched.
-     */
-    function SearchOneChunkOfPokemon(chunk_i, callback) {
-
-        for (let id = chunk_i * chunk_size;
-                id < (chunk_i + 1) * chunk_size && id <= jb_max_id; id++) {
-
-            const forms = GetPokemonForms(id);
-            const def_form = forms[0];
-
-            let jb_pkm_obj = jb_pkm.find(entry =>
-                    entry.id == id && entry.form == def_form);
-
-            // checks whether pokemon should be skipped
-            // (not released or legendary when not allowed)
-            if (!jb_pkm_obj || !search_unreleased && !jb_pkm_obj.released
-                    || !search_legendary && jb_pkm_obj.class) {
-                continue;
-            }
-
-            const can_be_shadow = jb_pkm_obj.shadow;
-            const can_be_mega = jb_pkm_obj.mega;
-
-            // default form
-            CheckIfStronger(jb_pkm_obj, false, false, false);
-
-            // shadow (except not released when it shouldn't)
-            if (search_shadow && can_be_shadow
-                    && !(!search_unreleased && !jb_pkm_obj.shadow_released)) {
-                CheckIfStronger(jb_pkm_obj, false, false, true);
-            }
-
-            // mega(s)
-            if (search_mega && can_be_mega) {
-                CheckIfStronger(jb_pkm_obj, true, false, false);
-                if (id == 6 || id == 150) // charizard and mewtwo
-                    CheckIfStronger(jb_pkm_obj, true, true, false);
-            }
-
-            // other forms
-            for (let form_i = 1; form_i < forms.length; form_i++) {
-
-                jb_pkm_obj = jb_pkm.find(entry =>
-                        entry.id == id && entry.form == forms[form_i]);
-
-                // checks whether pokemon should be skipped (form not released)
-                if (!jb_pkm_obj || !search_unreleased && !jb_pkm_obj.released)
-                    continue;
-
-                CheckIfStronger(jb_pkm_obj, false, false, false);
-                // other forms and shadow (except not released when it shouldn't)
-                if (search_shadow && can_be_shadow
-                        && !(!search_unreleased && !jb_pkm_obj.shadow_released)) {
-                    CheckIfStronger(jb_pkm_obj, false, false, true);
-                }
-            }
-        }
-
-        // searches the next chunk of pokemon, if there is more
-        chunk_i++;
-        if (chunk_i * chunk_size <= jb_max_id) {
-            setTimeout(function() { SearchOneChunkOfPokemon(chunk_i, callback); }, 0);
-            return;
-        } else {
-            callback();
-        }
-    }
-
-    loading_counters = true;
-    // searches for the first chunk of pokemon
-    setTimeout(function() {
-        SearchOneChunkOfPokemon(0, function () {
-            ProcessAndSetCountersFromArray(counters);
-            loading_counters = false;
-        });
-    }, 0);
+    let counters = GetStrongestVersus(current_pkm_obj, search_params);
+    ProcessAndSetCountersFromArray(counters);
 }
 
 
@@ -644,8 +476,7 @@ function ProcessAndSetCountersFromArray(counters,
                     ShowCountersPopup(this, false);
                 });
                 rat_tr.click(function() {
-                    LoadPokedexAndUpdateURL(counter.id, counter.form,
-                        counter.mega, counter.mega_y);
+                    LoadPokedexAndUpdateURL(GetPokeDexMon(counter.id, counter.form));
                     window.scrollTo(0, 0);
                 });
             }
@@ -654,8 +485,7 @@ function ProcessAndSetCountersFromArray(counters,
 
         // sets counter's image
         let img = $("<img onload='HideLoading(this)' onerror='TryNextSrc(this)'></img>");
-        let img_src_name = GetPokemonImgSrcName(counter_0.id, CleanPokeName(counter_0.name),
-                counter_0.form, counter_0.mega, counter_0.mega_y);
+        let img_src_name = GetPokemonImgSrcName(counter_0.id, counter_0.form);
         let img_src = GIFS_URL + img_src_name + ".gif";
         img.attr("src", img_src);
         const td = $("<td></td>");
@@ -734,8 +564,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
         if (has_touch_screen) {
             $("#counters-popup").unbind("click");
             $("#counters-popup").click( function() {
-                LoadPokedexAndUpdateURL(counter.id, counter.form,
-                    counter.mega, counter.mega_y);
+                LoadPokedexAndUpdateURL(GetPokeDexMon(counter.id, counter.form));
                 window.scrollTo(0, 0);
             });
         }
@@ -758,16 +587,16 @@ function ShowCountersPopup(hover_element, show, counter = null) {
  * percentage of the specific stats against the max stats (15/15/15 ivs)
  * of all movesets. This percentage is then displayed on the CP section.
  */
-function LoadPokedexMoveTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null) {
+function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
 
     // sets movesets title
-    $("#movesets-title").html("<b>" + jb_pkm_obj.name + "'s movesets</b>");
+    $("#movesets-title").html("<b>" + pkm_obj.name + "'s movesets</b>");
 
     // whether can be shadow
-    const can_be_shadow = jb_pkm_obj.shadow && !mega;
+    const can_be_shadow = pkm_obj.shadow;
 
     // types
-    const types = GetPokemonTypes(jb_pkm_obj, mega, mega_y);
+    const types = pkm_obj.types;
 
     const atk = stats.atk;
     const def = stats.def;
@@ -780,7 +609,7 @@ function LoadPokedexMoveTable(jb_pkm_obj, mega, mega_y, stats, max_stats = null)
     // removes previous table rows
     $("#pokedex-move-table tbody tr").remove();
 
-    const moves = GetPokemonMoves(jb_pkm_obj);
+    const moves = GetPokemonMoves(pkm_obj);
     if (moves.length != 6)
         return;
 
@@ -1038,13 +867,50 @@ function MergeRows(a, b, column_i, sec_column_j) {
 }
 
 
+/**
+ * Parse all parts of the URL related to a Pokedex page entry
+ * Returns object representing the pokemon to be loaded
+ */
+function ParsePokedexURL(params) {
+    const pkm = params.get("p");
+
+    let form = "def";
+    if (params.has("f"))
+        form = params.get("f");
+    if (params.has("m"))
+        form = "Mega";
+    if (params.has("y"))
+        form = "MegaY";
+
+    let level = null;
+    if (params.has("lvl"))
+        level = Number(params.get("lvl"));
+
+    let ivs = null;
+    if (params.has("ivs")) {
+        let ivs_str = params.get("ivs");
+        ivs = {
+            atk: parseInt(ivs_str.slice(0, 2)),
+            def: parseInt(ivs_str.slice(2, 4)),
+            hp: parseInt(ivs_str.slice(4, 6))
+        };
+        function IsValidIV(val) {
+            return (Number.isInteger(val) && val >= 0 && val <= 15);
+        }
+        if (!IsValidIV(ivs.atk) || !IsValidIV(ivs.def)
+                || !IsValidIV(ivs.hp)) {
+            ivs = null;
+        }
+    }
+    return GetPokeDexMon(GetPokemonId(pkm), form, level, ivs);
+}
+
 
 /**
  * Callback function for when pokemon stats are updated (level or/and IVs).
  * Reloads the pokemon page and the url with the new specified stats.
  */
 function UpdatePokemonStatsAndURL() {
-
     const params = new URLSearchParams(location.search);
 
     // if url has pokemon params...
@@ -1055,14 +921,10 @@ function UpdatePokemonStatsAndURL() {
         let form = "def";
         if (params.has("f"))
             form = params.get("f");
-
-        let mega = false;
         if (params.has("m"))
-            mega = true;
-
-        let mega_y = false;
+            form = "Mega";
         if (params.has("y"))
-            mega_y = true;
+            form = "MegaY";
 
         let level = Number($("#input-lvl").val());
 
@@ -1071,7 +933,7 @@ function UpdatePokemonStatsAndURL() {
         ivs.def = parseInt($("#input-def").val());
         ivs.hp = parseInt($("#input-hp").val());
 
-        LoadPokedexAndUpdateURL(pkm, form, mega, mega_y, level, ivs);
+        LoadPokedexAndUpdateURL(GetPokeDexMon(GetPokemonId(pkm), form, level, ivs));
     }
 }
 
@@ -1100,7 +962,7 @@ function ShowCounters() {
     // if counters haven't been loaded for the current pokemon, loads them
     if (!counters_loaded) {
         counters_loaded = true;
-        LoadPokedexCounters(current_jb_pkm_obj, current_mega, current_mega_y);
+        LoadPokedexCounters();
     }
 }
 
@@ -1116,9 +978,9 @@ function BindPokeDex() {
 
     // Options for Counters
     $("#counters :checkbox").change(function() {
-        if (current_jb_pkm_obj) {
-            ResetPokedexCounters(current_jb_pkm_obj);
-            LoadPokedexCounters(current_jb_pkm_obj, current_mega, current_mega_y);
+        if (current_pkm_obj) {
+            ResetPokedexCounters();
+            LoadPokedexCounters();
         }
     });
 }
@@ -1174,14 +1036,14 @@ function ShowMoveInput(caller, moveType) {
         const newMove = e.detail.selection.value;
 
         if (moveType == "fast" || (moveType == "any" && jb_fm.map(e => e.name).includes(newMove))) {
-            if (!current_jb_pkm_obj.elite_fm) 
-                current_jb_pkm_obj.elite_fm = [];
-            current_jb_pkm_obj.elite_fm.push(newMove);
+            if (!current_pkm_obj.elite_fm) 
+                current_pkm_obj.elite_fm = [];
+            current_pkm_obj.elite_fm.push(newMove);
         }
         else if (moveType == "charged" || (moveType == "any" && jb_cm.map(e => e.name).includes(newMove))) {
-            if (!current_jb_pkm_obj.elite_cm) 
-                current_jb_pkm_obj.elite_cm = [];
-            current_jb_pkm_obj.elite_cm.push(newMove);
+            if (!current_pkm_obj.elite_cm) 
+                current_pkm_obj.elite_cm = [];
+            current_pkm_obj.elite_cm.push(newMove);
         }
 
         $(moveSearch.wrapper).remove();
