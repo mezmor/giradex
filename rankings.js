@@ -127,7 +127,7 @@ function LoadStrongest(type = "Any") {
                         || settings_metric == 'TER'))
             str_pokemons.forEach(str_pok => str_pok.rat /= 1.6);*/
 
-        ProcessAndGroup(str_pokemons);
+        ProcessAndGroup(str_pokemons, type);
         SetRankingTable(str_pokemons, settings_strongest_count, true, true, true);
     }
 
@@ -198,7 +198,7 @@ function GetComparisonMon(str_pokemons) {
  * Group pokemon if needed, with ratings relative to best moveset.
  * Else build tiers and calculate ratings relative to a baseline.
  */
-function ProcessAndGroup(str_pokemons) {
+function ProcessAndGroup(str_pokemons, type) {
     const display_grouped = $("#strongest input[value='grouped']:checkbox").is(":checked") 
         && $("#strongest input[value='suboptimal']:checkbox").is(":checked");
         
@@ -238,7 +238,7 @@ function ProcessAndGroup(str_pokemons) {
             str_pok.pct = 100.0 * str_pok.rat / top_compare;
             str_pok.pct_display = str_pok.pct * (top_compare / best_mon);
         }
-        BuildTiers(str_pokemons, top_compare);
+        BuildTiers(str_pokemons, top_compare, type);
     
         str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); // truncate late so all movesets could be evaluated
     }
@@ -252,7 +252,7 @@ function ProcessAndGroup(str_pokemons) {
  * 
  * Tier-making methods can optionally use the top_compare parameter as a benchmark
  */
-function BuildTiers(str_pokemons, top_compare) {
+function BuildTiers(str_pokemons, top_compare, type) {
     const best_mon = str_pokemons[0].rat;
 
     // Compare to benchmark, building tiers based on ratio (str_pok.pct)
@@ -329,6 +329,7 @@ function BuildTiers(str_pokemons, top_compare) {
     else if (settings_tiermethod == "absolute") {
         for (let str_pok of str_pokemons) {
             let check_rat = str_pok.rat;
+            if (type != 'Any') check_rat /= 1.6;
 
             /* Disable rescale
             const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
@@ -339,26 +340,26 @@ function BuildTiers(str_pokemons, top_compare) {
 
             switch (settings_metric) {
                 case 'DPS':
-                    if (check_rat >= 20.0) str_pok.tier = 'SSS';
-                    else if (check_rat >= 19.5) str_pok.tier = 'SS';
-                    else if (check_rat >= 19.0) str_pok.tier = 'S';
-                    else if (check_rat >= 18.5) str_pok.tier = 'A';
-                    else if (check_rat >= 17.5) str_pok.tier = 'B';
-                    else if (check_rat >= 17.0) str_pok.tier = 'C';
-                    else if (check_rat >= 16.0) str_pok.tier = 'D';
+                    if (check_rat >= 27.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 25.0) str_pok.tier = 'SS';
+                    else if (check_rat >= 23.0) str_pok.tier = 'S';
+                    else if (check_rat >= 22.0) str_pok.tier = 'A';
+                    else if (check_rat >= 21.0) str_pok.tier = 'B';
+                    else if (check_rat >= 20.0) str_pok.tier = 'C';
+                    else if (check_rat >= 19.0) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
                 case 'TDO':
-                    if (check_rat >= 750) str_pok.tier = 'SSS';
-                    else if (check_rat >= 700) str_pok.tier = 'SS';
-                    else if (check_rat >= 650) str_pok.tier = 'S';
-                    else if (check_rat >= 600) str_pok.tier = 'A';
-                    else if (check_rat >= 550) str_pok.tier = 'B';
-                    else if (check_rat >= 500) str_pok.tier = 'C';
-                    else if (check_rat >= 450) str_pok.tier = 'D';
+                    if (check_rat >= 475) str_pok.tier = 'SSS';
+                    else if (check_rat >= 430) str_pok.tier = 'SS';
+                    else if (check_rat >= 400) str_pok.tier = 'S';
+                    else if (check_rat >= 350) str_pok.tier = 'A';
+                    else if (check_rat >= 325) str_pok.tier = 'B';
+                    else if (check_rat >= 310) str_pok.tier = 'C';
+                    else if (check_rat >= 285) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
-                case 'ER':
+                /*case 'ER':
                     if (check_rat >= 57.0) str_pok.tier = 'SSS';
                     else if (check_rat >= 53.5) str_pok.tier = 'SS';
                     else if (check_rat >= 49.0) str_pok.tier = 'S';
@@ -387,14 +388,14 @@ function BuildTiers(str_pokemons, top_compare) {
                     else if (check_rat >= 30.0) str_pok.tier = 'C';
                     else if (check_rat >= 29.0) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
-                    break;
+                    break;*/
                 case 'eDPS':
-                    if (check_rat >= 20.0) str_pok.tier = 'SSS';
-                    else if (check_rat >= 19.5) str_pok.tier = 'SS';
+                    if (check_rat >= 22.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 20.5) str_pok.tier = 'SS';
                     else if (check_rat >= 19.0) str_pok.tier = 'S';
                     else if (check_rat >= 18.5) str_pok.tier = 'A';
                     else if (check_rat >= 17.5) str_pok.tier = 'B';
-                    else if (check_rat >= 17.0) str_pok.tier = 'C';
+                    else if (check_rat >= 16.75) str_pok.tier = 'C';
                     else if (check_rat >= 16.0) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
