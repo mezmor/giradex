@@ -58,7 +58,10 @@ function LoadJSONData() {
             });
         });
     HttpGetAsync(JB_URL + "pogo_fm.json",
-        function(response) { jb_fm = JSON.parse(response); });
+        function(response) { 
+            jb_fm = JSON.parse(response); 
+            jb_fm.find(e => e.name=="Hidden Power").type = "None"; // Make non-specific Hidden Power typeless
+        });
     HttpGetAsync(JB_URL + "pogo_cm.json",
         function(response) { jb_cm = JSON.parse(response); });
 }

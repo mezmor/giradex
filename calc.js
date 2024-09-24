@@ -204,11 +204,14 @@ return (duration / 1000);
 /**
  * Gets array with an arbitrary number of a specific pokemon's strongest movesets
  * against a specific enemy pokemon.
- */
-function GetPokemonStrongestMovesetsAgainstEnemy(pkm_obj, shadow,
-    enemy_pkm_obj, search_params) {
+ *
+ * 'enemy_params' contains moves, types, weakness (defensive mults),  
+ *      stats, and enemy_ys[]
+*/
+function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow,
+    enemy_params, search_params) {
 
-    const num_movesets = 6;
+    const num_movesets = search_params.suboptimal ? 5 : 1;
     let movesets = [];
 
     // gets the necessary data to make the rating calculations
@@ -236,12 +239,15 @@ function GetPokemonStrongestMovesetsAgainstEnemy(pkm_obj, shadow,
 
     // enemy data
     //let avg_y = null;
-    let enemy_moveset_ys = null;
-    const enemy_types = enemy_pkm_obj.types;
-    const enemy_effectiveness = GetTypesEffectivenessAgainstTypes(enemy_types);
-    const enemy_stats = GetPokemonStats(enemy_pkm_obj);
-    const enemy_moves = GetPokemonMoves(enemy_pkm_obj);
-    if (enemy_moves.length == 6) {
+    let enemy_moveset_ys = enemy_params.enemy_ys;
+    const enemy_types = enemy_params.types;
+    const enemy_effectiveness = enemy_params.weakness;
+    const enemy_stats = enemy_params.stats;
+    const enemy_def = enemy_stats ? enemy_stats.def : null;
+    const enemy_moves = enemy_params.moves;
+    if ((!enemy_moveset_ys || enemy_moveset_ys.length == 0)
+            && enemy_moves && enemy_moves.length == 6
+            && enemy_stats) {
         const enemy_fms = enemy_moves[0];
         const enemy_cms = enemy_moves[1];
         const enemy_elite_fms = []; //enemy_moves[2]; enemies don't use elite moves
@@ -266,6 +272,14 @@ function GetPokemonStrongestMovesetsAgainstEnemy(pkm_obj, shadow,
         const fm_obj = jb_fm.find(entry => entry.name == fm);
         if (!fm_obj)
             continue;
+
+        // checks that fm type matches the type searched
+        // if search type isn't specified, any type goes
+        // if checking "versus", any type goes
+        if (search_params.type && search_params.type != "Any" && !search_params.versus &&
+            fm_obj.type != search_params.type && !search_params.mixed)
+            continue;
+
         const fm_mult =
             GetEffectivenessMultOfType(enemy_effectiveness, fm_obj.type);
 
@@ -280,6 +294,23 @@ function GetPokemonStrongestMovesetsAgainstEnemy(pkm_obj, shadow,
             const cm_obj = jb_cm.find(entry => entry.name == cm);
             if (!cm_obj)
                 continue;
+
+            // checks that cm type matches the type searched
+            // if search type isn't specified, any type goes
+            // if checking "versus", any type goes
+            if (search_params.type && search_params.type != "Any" && !search_params.versus && 
+                cm_obj.type != search_params.type && !search_params.mixed)
+                continue;
+
+            // ensure at least one type matches if mixing
+            if (search_params.type && search_params.type != "Any" && !search_params.versus &&
+                search_params.mixed && fm_obj.type != search_params.type && cm_obj.type != search_params.type)
+                continue;
+
+            // checks that both moves types are equal (unless mixing)
+            if (fm_obj.type != cm_obj.type && !search_params.mixed)
+                continue;
+            
             const cm_mult =
                 GetEffectivenessMultOfType(enemy_effectiveness, cm_obj.type);
             
@@ -287,7 +318,7 @@ function GetPokemonStrongestMovesetsAgainstEnemy(pkm_obj, shadow,
             for (enemy_y of enemy_moveset_ys) {
                 // calculates the data
                 const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
-                    fm_mult, cm_mult, enemy_stats.def, enemy_y.y, enemy_y.cm_dmg);
+                    fm_mult, cm_mult, enemy_def, enemy_y.y, enemy_y.cm_dmg);
                 const tdo = GetTDO(dps, hp, def, enemy_y.y);
                 // metrics from Reddit user u/Elastic_Space
                 const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
@@ -367,214 +398,72 @@ function GetMovesetYs(types, atk, fms, cms, enemy_effectiveness, enemy_def = nul
     return all_ys;
 }
 
+/**
+ * Searches the strongest pokemon of each type and returns the strongest
+ * pokemon per type.
+ */
+function GetStrongestOfEachType(search_params) {
+    // map of strongest pokemon and moveset found so far for each type
+    let str_pokemons = new Map();
+
+    // build a basic enemy to "sim" against
+    let enemy_params = {
+        weakness: null,
+        enemy_ys: [{y: null, in_cm_dmg: null}] // use defaults
+    };
+
+    for (const type of POKEMON_TYPES) {
+        search_params.type = type; // Find strongest movesets regardless of type
+        enemy_params.weakness = GetTypesEffectivenessSingleBoost(search_params.type);
+
+        const str_pok = GetStrongestVersus(enemy_params, search_params, 1)[0];
+        str_pokemons.set(type, str_pok);
+    }
+
+    // converts map into array
+    let str_pokemons_array = [];
+    for (const type of POKEMON_TYPES) {
+        if (str_pokemons.has(type))
+            str_pokemons_array.push(str_pokemons.get(type));
+    }
+    return str_pokemons_array;
+}
 
 /**
- * Gets map of a specific pokemon's strongest movesets for each type.
- * 
- * If the 'search_type' param is specified, only tries to find movesets
- * of that type.
- * 
- * However, if 'search_different_type' is true, all other types are allowed but
- * their rating is calculated as if they are not very effective but the selected
- * type is neutral.
+ * Searches the strongest pokemon of one type and returns the strongest
+ * pokemon of that type.
  */
-function GetPokemonStrongestMovesets(pkm_obj, shadow, moveset_count, 
-    search_params, level = null) {
+function GetStrongestOfOneType(search_params) {
 
-    let types_movesets = new Map();
+    // build a basic enemy to "sim" against
+    let enemy_params = {
+        weakness: (search_params.versus ? 
+            GetTypesEffectivenessAgainstTypes([search_params.type]) : 
+            GetTypesEffectivenessSingleBoost(search_params.type)),
+        enemy_ys: [{y: null, in_cm_dmg: null}] // use defaults
+    };
 
-    // gets the necessary data to make the rating calculations
+    // array of strongest pokemon and moveset found so far
+    let str_pokemons = GetStrongestVersus(enemy_params, search_params);
 
-    const types = pkm_obj.types;
+    // reverses strongest pokemon array
+    str_pokemons.reverse();
 
-    const stats = GetPokemonStats(pkm_obj, level);
-    const atk = (shadow) ? (stats.atk * 6 / 5) : stats.atk;
-    const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
-    const hp = stats.hp;
-
-    const moves = GetPokemonMoves(pkm_obj);
-    if (moves.length != 6)
-        return types_movesets;
-
-    const fms = moves[0];
-    const cms = moves[1];
-    const elite_fms = moves[2];
-    const elite_cms = moves[3];
-    const pure_only_cms = moves[4];
-    const shadow_only_cms = moves[5];
-
-    const all_fms = fms.concat(elite_fms);
-    let all_cms = cms.concat(elite_cms);
-    if (shadow === true) all_cms = all_cms.concat(shadow_only_cms);
-    else if (shadow === false) all_cms = all_cms.concat(pure_only_cms);
-
-    let atk_mult_map;
-    if (search_params.versus) {
-        atk_mult_map = GetTypesEffectivenessAgainstTypes([search_type]);
-    }
-    const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
-
-    // searches for the moveset
-
-    for (fm of all_fms) {
-
-        const fm_is_elite = elite_fms.includes(fm);
-
-        if (!search_params.elite && fm_is_elite)
-            continue;
-
-        // gets the fast move object
-        const fm_obj = jb_fm.find(entry => entry.name == fm);
-        if (!fm_obj || fm_obj.name == "Hidden Power")
-            continue;
-
-        // checks that fm type matches the type searched
-        // if search type isn't specified, any type goes
-        // if checking "versus", any type goes
-        if (search_params.type && search_params.type != "Any" && !search_params.versus &&
-            fm_obj.type != search_params.type && !search_params.mixed)
-            continue;
-
-        for (cm of all_cms) {
-
-            const cm_is_elite = elite_cms.includes(cm);
-
-            if (!search_params.elite && cm_is_elite)
-                continue;
-
-            // gets the charged move object
-            const cm_obj = jb_cm.find(entry => entry.name == cm);
-            if (!cm_obj)
-                continue;
-
-            // checks that cm type matches the type searched
-            // if search type isn't specified, any type goes
-            // if checking "versus", any type goes
-            if (search_params.type && search_params.type != "Any" && !search_params.versus && 
-                cm_obj.type != search_params.type && !search_params.mixed)
-                continue;
-
-            // ensure at least one type matches if mixing
-            if (search_params.type && search_params.type != "Any" && !search_params.versus &&
-                search_params.mixed && fm_obj.type != search_params.type && cm_obj.type != search_params.type)
-                continue;
-
-            // checks that both moves types are equal (unless mixing)
-            if (fm_obj.type != cm_obj.type && !search_params.mixed)
-                continue;
-
-            // determine what move types we're ranking
-            let moves_types;
-            if (search_params.type)
-                moves_types = [search_params.type]
-            else if (fm_obj.type == cm_obj.type)
-                moves_types = [fm_obj.type]
-            else
-                moves_types = [fm_obj.type, cm_obj.type]
-
-            // calculates the data
-            for (let mt of moves_types) {
-                let dps;
-                let tdo;
-
-                // use appropriate multipliers if searching "versus"
-                if (search_params.versus) {
-                    let fm_mult = GetEffectivenessMultOfType(atk_mult_map, fm_obj.type);
-                    let cm_mult = GetEffectivenessMultOfType(atk_mult_map, cm_obj.type);
-
-                    let def_types = pkm_obj.types;
-                    const def_mult_map = GetTypesEffectivenessAgainstTypes(def_types);
-                    const defense_mult = 1; //GetEffectivenessMultOfType(def_mult_map, search_type);
-
-                    const y_est = estimated_y_numerator/def*defense_mult;
-                    const in_cm_est = estimated_cm_power*defense_mult/def;
-                    dps = GetDPS(types, atk, def, hp, 
-                        fm_obj, cm_obj,
-                        fm_mult, cm_mult, null, y_est, in_cm_est);
-                    tdo = GetTDO(dps, hp, def, y_est);
-
-                    if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO') {
-                        dps /= 1.6;
-                        tdo /= 1.6; // have to ALSO remove the extra scalar on the dps used in the TDO calc
-                    }
-                }
-                else if (search_params.mixed && search_params.type != "Any") { // mixed movesets scale based on search type (super-effective mult)
-                    dps = GetDPS(types, atk, def, hp, 
-                        fm_obj, cm_obj,
-                        (fm_obj.type == mt) ? 1.60 : 1,
-                        (cm_obj.type == mt) ? 1.60 : 1);
-
-                    if (rescale && settings_metric != 'DPS' && settings_metric != 'TDO')
-                        dps /= 1.6;
-                    tdo = GetTDO(dps, hp, def);
-                }
-                // non-mixed or "anything-goes" searches use traditional dps
-                else {
-                    dps = GetDPS(types, atk, def, hp, 
-                        fm_obj, cm_obj);
-                    tdo = GetTDO(dps, hp, def);
-                }
-                
-                // metrics from Reddit user u/Elastic_Space
-                const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
-
-                // summary of this moveset and its rating
-                const cur_moveset = {
-                    rat: rat, 
-                    fm: fm, fm_is_elite: fm_is_elite, fm_type: fm_obj.type,
-                    cm: cm, cm_is_elite: cm_is_elite, cm_type: cm_obj.type,
-                };
-
-                // build array of all valid movesets
-                if (!types_movesets.has(mt)) {
-                    types_movesets.set(mt, [cur_moveset]);
-                }
-                else {
-                    types_movesets.get(mt).push(cur_moveset);
-                }
-            }
-        }
-    }
-
-    let combined_movesets = [];
-
-    for (let t of types_movesets.keys()) {
-        t_movesets = types_movesets.get(t);
-
-        // add all movesets to "Any" array
-        combined_movesets = combined_movesets.concat(t_movesets); 
-
-        t_movesets.sort((a,b) => b.rat - a.rat); 
-        
-        // truncate to top N found movesets
-        t_movesets.length = Math.min(t_movesets.length, moveset_count);
-    }
-
-    // apply same logic to our "combination" array
-    combined_movesets.sort((a,b) => b.rat - a.rat); 
-    combined_movesets.length = Math.min(combined_movesets.length, moveset_count);    
-    types_movesets.set("Any", combined_movesets);
-
-    return types_movesets;
+    return str_pokemons;
 }
 
 /**
  * Find all strongest counters to this pokemon, filtering based on params
  */
-function GetStrongestVersus(enemy_pkm_obj, search_params) {
-    const num_counters = 50;
+function GetStrongestVersus(enemy_params, search_params, num_counters = 200) {
     const counters = [];
 
     /**
      * Checks if any of the movesets of a specific pokemon is stronger than any
      * of the current counters. If it is, updates the counters arrays.
-     *
-     * The arrays are sorted every time so that it is always the weakest
-     * pokemon in it that gets replaced.
      */
-    function CheckIfStronger(pkm_obj, shadow) {
-
-        const movesets = GetPokemonStrongestMovesetsAgainstEnemy(pkm_obj, shadow, enemy_pkm_obj, search_params);
+    function UpdateIfStronger(pkm_obj, shadow) {
+        const movesets = GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, enemy_params, search_params);
         if (movesets.length == 0)
             return;
 
@@ -600,7 +489,7 @@ function GetStrongestVersus(enemy_pkm_obj, search_params) {
                 const counter = {
                     rat: moveset.rat, id: pkm_obj.id,
                     name: pkm_obj.name, form: pkm_obj.form,
-                    shadow: shadow,
+                    shadow: shadow, class: pkm_obj.class,
                     fm: moveset.fm, fm_is_elite: moveset.fm_is_elite,
                     fm_type: moveset.fm_type,
                     cm: moveset.cm, cm_is_elite: moveset.cm_is_elite,
@@ -620,50 +509,7 @@ function GetStrongestVersus(enemy_pkm_obj, search_params) {
         }
     }
 
-    for (let id = 0; id <= jb_max_id; id++) {
-
-        const forms = GetPokemonForms(id);
-        const def_form = forms[0];
-
-        let pkm_obj = jb_pkm.find(entry =>
-                entry.id == id && entry.form == def_form);
-
-        // checks whether pokemon should be skipped
-        // (not released or legendary when not allowed)
-        if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
-                || (!search_params.legendary && pkm_obj.class)) {
-            continue;
-        }
-
-        // default form
-        CheckIfStronger(pkm_obj, false);
-
-        // shadow (except not released when it shouldn't)
-        if (search_params.shadow && pkm_obj.shadow
-                && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
-            CheckIfStronger(pkm_obj, true);
-        }
-
-        // other forms
-        for (let form_i = 1; form_i < forms.length; form_i++) {
-
-            pkm_obj = jb_pkm.find(entry =>
-                    entry.id == id && entry.form == forms[form_i]);
-
-            // checks whether pokemon should be skipped (form not released)
-            if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
-                || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")))
-                continue;
-
-            CheckIfStronger(pkm_obj, false);
-
-            // other forms and shadow (except not released when it shouldn't)
-            if (search_params.shadow && pkm_obj.shadow
-                && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
-                CheckIfStronger(pkm_obj, true);
-            }
-        }
-    }
+    SearchAll(search_params, UpdateIfStronger);
 
     return counters;
 }

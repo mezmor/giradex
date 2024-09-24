@@ -398,7 +398,7 @@ function LoadPokedexCounters() {
         $("#counters input[value='elite']:checkbox").is(":checked");
 
     // array of counters pokemon and movesets found so far
-    let counters = GetStrongestVersus(current_pkm_obj, search_params);
+    let counters = GetStrongestVersus(GetEnemyParams(current_pkm_obj), search_params);
     ProcessAndSetCountersFromArray(counters);
 }
 

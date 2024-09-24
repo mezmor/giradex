@@ -150,6 +150,27 @@ function GetTypesEffectivenessAgainstTypes(types) {
 }
 
 /**
+ * Gets a map of effectiveness of all types, where everything is neutral except
+ * the one chosen type, which is super effective.
+ */
+function GetTypesEffectivenessSingleBoost(type) {
+
+    let effectiveness = new Map();
+    effectiveness.set(0.391, []);
+    effectiveness.set(0.625, []);
+    effectiveness.set(1, []);
+    effectiveness.set(1.60, [type]);
+    effectiveness.set(2.56, []);
+
+    for (let attacker_type of POKEMON_TYPES) {
+        if (attacker_type != type)
+            effectiveness.get(1).push(attacker_type);
+    }
+
+    return effectiveness;
+}
+
+/**
  * Gets the multiplier value of a single type against a specific map of
  * types effectiveness.
  */

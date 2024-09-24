@@ -222,3 +222,67 @@ function CleanPokeName(string) {
 
     return string.toLowerCase().replace(/\W/g, "");
 }
+
+/**
+ * Loops through all pokemon, finding those that match 'search_params' and
+ * calling a helper function for all matches.
+ * 
+ * 'f_process_pokemon' hs signature function(pkm_obj, is_shadow, search_params)
+ */
+function SearchAll(search_params, f_process_pokemon) {
+    for (let id = 1; id <= jb_max_id; id++) {
+        const forms = GetPokemonForms(id);
+        const def_form = forms[0];
+    
+        let pkm_obj = jb_pkm.find(entry =>
+                entry.id == id && entry.form == def_form);
+    
+        // checks whether pokemon should be skipped
+        // (not released or legendary when not allowed)
+        if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
+                || (!search_params.legendary && pkm_obj.class)) {
+            continue;
+        }
+    
+        // default form
+        f_process_pokemon(pkm_obj, false, search_params);
+    
+        // shadow (except not released when it shouldn't)
+        if (search_params.shadow && pkm_obj.shadow
+            && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
+                f_process_pokemon(pkm_obj, true, search_params);
+        }
+    
+        // other forms
+        for (let form_i = 1; form_i < forms.length; form_i++) {
+    
+            pkm_obj = jb_pkm.find(entry =>
+                    entry.id == id && entry.form == forms[form_i]);
+    
+            // checks whether pokemon should be skipped (form not released)
+            if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
+                || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")))
+                continue;
+    
+            f_process_pokemon(pkm_obj, false, search_params);                                                    
+            // other forms and shadow (except not released when it shouldn't)
+            if (search_params.shadow && pkm_obj.shadow
+                && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
+                    f_process_pokemon(pkm_obj, true, search_params);
+            }
+        }
+    }
+    
+}
+
+/**
+ * Take a pokemon object and convert it into an enemy that can be calc'd against
+ */
+function GetEnemyParams(enemy_pkm_obj) {
+    return {
+        moves: GetPokemonMoves(enemy_pkm_obj),
+        types: enemy_pkm_obj.types,
+        weakness: GetTypesEffectivenessAgainstTypes(enemy_pkm_obj.types),
+        stats: enemy_pkm_obj.stats
+    };
+}

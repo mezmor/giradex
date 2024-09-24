@@ -115,10 +115,19 @@ function LoadStrongest(type = "Any") {
         versus_chk.is(":checked");
     search_params.type = type;
 
-    if (type != "Each") {
-        SetTableOfStrongestOfOneType(search_params);
+    if (type == "Each") {
+        SetRankingTable(GetStrongestOfEachType(search_params));
     } else {
-        SetTableOfStrongestOfEachType(search_params);
+        let str_pokemons = GetStrongestOfOneType(search_params);
+        
+        const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
+        if (rescale && (settings_metric == 'ER'
+                        || settings_metric == 'EER'
+                        || settings_metric == 'TER'))
+            str_pokemons.forEach(str_pok => str_pok.rat /= 1.6);
+
+        ProcessAndGroup(str_pokemons);
+        SetRankingTable(str_pokemons, settings_strongest_count, true, true, true);
     }
 
     // Display relevant footnotes
@@ -150,252 +159,10 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
     window.history.pushState({}, "", url);
 }
 
-
 /**
- * Searches the strongest pokemon of each type and sets the strongest
- * pokemon table with the result.
+ * Find the "baseline" mon to compare against for tier-making
  */
-function SetTableOfStrongestOfEachType(search_params) {
-    search_params.type = null; // Find strongest movesets regardless of type
-
-    // map of strongest pokemon and moveset found so far for each type
-    let str_pokemons = new Map();
-
-    /**
-     * Checks if the any of the strongest movesets of a specific pokemon
-     * is stronger than any of the current strongest pokemon of each type.
-     * If it is, updates the strongest pokemon map.
-     */
-    function CheckIfStronger(pkm_obj, shadow) {
-
-        const types_movesets = GetPokemonStrongestMovesets(pkm_obj, shadow, 1, search_params);
-
-        for (const type of POKEMON_TYPES) {
-
-            // checks that pokemon has a moveset of this type
-            if (!types_movesets.has(type))
-                continue;
-
-            const moveset = types_movesets.get(type)[0];
-            let is_stronger = false;
-
-            if (!str_pokemons.has(type)) { // if no strong pkm yet...
-
-                if (moveset.rat > 0)
-                    is_stronger = true;
-
-            } else { // if some strong pkm already...
-
-                // if finds something better than worst in array...
-                if (moveset.rat > str_pokemons.get(type).rat)
-                    is_stronger = true;
-            }
-
-            if (is_stronger) {
-
-                // adds pokemon to array of strongest
-                const str_pokemon = {
-                    rat: moveset.rat, id: pkm_obj.id,
-                    name: pkm_obj.name, form: pkm_obj.form,
-                    shadow: shadow, class: pkm_obj.class,
-                    fm: moveset.fm, fm_is_elite: moveset.fm_is_elite, fm_type: moveset.fm_type,
-                    cm: moveset.cm, cm_is_elite: moveset.cm_is_elite, cm_type: moveset.cm_type
-                };
-                str_pokemons.set(type, str_pokemon);
-            }
-        }
-    }
-
-    // searches for pokemons...
-
-    for (let id = 1; id <= jb_max_id; id++) {
-
-        const forms = GetPokemonForms(id);
-        const def_form = forms[0];
-
-        let pkm_obj = jb_pkm.find(entry =>
-                entry.id == id && entry.form == def_form);
-
-        // checks whether pokemon should be skipped
-        // (not released or legendary when not allowed)
-        if (!pkm_obj || !search_params.unreleased && !pkm_obj.released
-                || !search_params.legendary && pkm_obj.class) {
-            continue;
-        }
-
-        // default form
-        CheckIfStronger(pkm_obj, false);
-
-        // shadow (except not released when it shouldn't)
-        if (search_params.shadow && pkm_obj.shadow
-                && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
-            CheckIfStronger(pkm_obj, true);
-        }
-
-        // other forms
-        for (let form_i = 1; form_i < forms.length; form_i++) {
-
-            pkm_obj = jb_pkm.find(entry =>
-                    entry.id == id && entry.form == forms[form_i]);
-
-            // checks whether pokemon should be skipped (form not released)
-            if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
-                || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")))
-                continue;
-
-            CheckIfStronger(pkm_obj, false);
-            // other forms and shadow (except not released when it shouldn't)
-            if (search_params.shadow && pkm_obj.shadow
-                    && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
-                CheckIfStronger(pkm_obj, true);
-            }
-        }
-    }
-
-    // converts map into array
-    let str_pokemons_array = [];
-    for (const type of POKEMON_TYPES) {
-        if (str_pokemons.has(type))
-            str_pokemons_array.push(str_pokemons.get(type));
-    }
-
-    // sets table from array
-    SetStrongestTableFromArray(str_pokemons_array);
-}
-
-/**
- * Searches the strongest pokemon of a specific type and sets the strongest
- * pokemon table with the result.
- * 
- * The number of rows in the table is set to match the table with one
- * pokemon of each type, therefore, there are as many rows as pkm types.
- */
-function SetTableOfStrongestOfOneType(search_params) {
-
-    // over-create list, then filter down later
-    const num_rows = 200; //settings_strongest_count;
-
-    // array of strongest pokemon and moveset found so far
-    let str_pokemons = [];
-
-    /**
-     * Checks if the strongest moveset of a specific pokemon and type is
-     * stronger than any of the current strongest pokemons. If it is,
-     * updates the strongest pokemons array.
-     *
-     * The array is sorted every time so that it is always the weakest
-     * pokemon in it that gets replaced.
-     */
-    function CheckIfStronger(pkm_obj, shadow, level) {
-
-        // Consider max 5 best movesets per pokemon
-        let moveset_count = (search_params.suboptimal) ? 5 : 1; 
-        const types_movesets = GetPokemonStrongestMovesets(pkm_obj, shadow,
-            moveset_count, search_params, level);
-        
-        if (!types_movesets.has(search_params.type))
-            return;
-        const movesets = types_movesets.get(search_params.type);
-
-        for (let moveset of movesets) {
-            let is_strong_enough = false;
-
-            if (str_pokemons.length < num_rows) { // if array isn't full...
-
-                if (moveset.rat > 0)
-                    is_strong_enough = true;
-
-            } else { // if array isn't empty...
-
-                // if finds something better than worst in array...
-                if (moveset.rat > str_pokemons[0].rat)
-                    is_strong_enough = true;
-
-            }
-
-            if (is_strong_enough) {
-
-                // adds pokemon to array of strongest
-                const str_pokemon = {
-                    rat: moveset.rat, id: pkm_obj.id,
-                    name: pkm_obj.name, form: pkm_obj.form,
-                    shadow: shadow, class: pkm_obj.class,
-                    fm: moveset.fm, fm_is_elite: moveset.fm_is_elite, fm_type: moveset.fm_type,
-                    cm: moveset.cm, cm_is_elite: moveset.cm_is_elite, cm_type: moveset.cm_type,
-                    level: level
-                };
-
-                if (str_pokemons.length < num_rows)
-                    str_pokemons.push(str_pokemon);
-                else
-                    str_pokemons[0] = str_pokemon;
-
-
-                // sorts array
-                str_pokemons.sort(function compareFn(a , b) {
-                    return ((a.rat > b.rat) || - (a.rat < b.rat));
-                });
-            }
-        }
-    }
-
-    // searches for pokemons...
-    for (lvl of settings_default_level) {
-        for (let id = 1; id <= jb_max_id; id++) {
-
-            const forms = GetPokemonForms(id);
-            const def_form = forms[0];
-
-            let pkm_obj = jb_pkm.find(entry =>
-                    entry.id == id && entry.form == def_form);
-
-            let search_level = lvl
-            if (settings_xl_budget && pkm_obj !== undefined && !pkm_obj.class)
-                search_level = 50;
-
-            // checks whether pokemon should be skipped
-            // (not released or legendary when not allowed)
-            if (!pkm_obj || !search_params.unreleased && !pkm_obj.released
-                    || !search_params.legendary && pkm_obj.class) {
-                continue;
-            }
-
-            // default form
-            CheckIfStronger(pkm_obj, false, search_level);
-
-            // shadow (except not released when it shouldn't)
-            if (search_params.shadow && pkm_obj.shadow
-                    && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
-                CheckIfStronger(pkm_obj, true, search_level);
-            }
-
-            // other forms
-            for (let form_i = 1; form_i < forms.length; form_i++) {
-
-                pkm_obj = jb_pkm.find(entry =>
-                        entry.id == id && entry.form == forms[form_i]);
-
-                // checks whether pokemon should be skipped (form not released)
-                if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
-                    || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")))
-                    continue;
-
-                CheckIfStronger(pkm_obj, false, search_level);
-                // other forms and shadow (except not released when it shouldn't)
-                if (search_params.shadow && pkm_obj.shadow
-                        && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
-                    CheckIfStronger(pkm_obj, true, search_level);
-                }
-            }
-        }
-    }
-
-    // reverses strongest pokemon array
-    str_pokemons.reverse();
-
-    const display_grouped =
-        $("#strongest input[value='grouped']:checkbox").is(":checked") && search_params.suboptimal;
-    
+function GetComparisonMon(str_pokemons) {
     let top_compare;
     const best_mon = str_pokemons[0].rat;
     
@@ -405,7 +172,7 @@ function SetTableOfStrongestOfOneType(search_params) {
             break;
         case "budget":
             try {
-                top_compare = str_pokemons.find(e => e.class == undefined && !e.shadow && !e.mega).rat;
+                top_compare = str_pokemons.find(e => e.class == undefined && !e.shadow && e.form != "Mega" && e.form != "MegaY").rat;
             } catch (err) {
                 top_compare = str_pokemons[str_pokemons.length-1].rat; // budget must be even lower
             }
@@ -413,7 +180,7 @@ function SetTableOfStrongestOfOneType(search_params) {
         case "ESpace":
             try {
                 top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && 
-                                                    !e.mega && !e.mega_y && 
+                                                    e.form != "Mega" && e.form != "MegaY" &&
                                                     !(e.name == 'Rayquaza' && e.cm == 'Dragon Ascent') &&
                                                     !(e.name == 'Necrozma' && e.form != 'Normal')
                                                 ).rat;
@@ -422,6 +189,19 @@ function SetTableOfStrongestOfOneType(search_params) {
             }
             break;
     }
+
+    return top_compare;
+}
+
+/**
+ * Group pokemon if needed, with ratings relative to best moveset.
+ * Else build tiers and calculate ratings relative to a baseline.
+ */
+function ProcessAndGroup(str_pokemons) {
+    const display_grouped = $("#strongest input[value='grouped']:checkbox").is(":checked") 
+        && $("#strongest input[value='suboptimal']:checkbox").is(":checked");
+        
+    const top_compare = GetComparisonMon(str_pokemons);
 
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
@@ -451,6 +231,8 @@ function SetTableOfStrongestOfOneType(search_params) {
         str_pokemons.sort((a,b) => a.grouped_rat - b.grouped_rat || b.rat - a.rat);
     }
     else { // determine tiers
+        best_mon = str_pokemons[0].rat;
+
         for (let str_pok of str_pokemons) {
             str_pok.pct = 100.0 * str_pok.rat / top_compare;
             str_pok.pct_display = str_pok.pct * (top_compare / best_mon);
@@ -459,10 +241,8 @@ function SetTableOfStrongestOfOneType(search_params) {
     
         str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); // truncate late so all movesets could be evaluated
     }
-
-    // sets table from array
-    SetStrongestTableFromArray(str_pokemons, str_pokemons.length, display_grouped, true, true, true, (best_mon / top_compare));
 }
+
 
 /**
  * Modifies str_pokemons to include a "tier" attribute
@@ -621,8 +401,12 @@ function BuildTiers(str_pokemons, top_compare) {
  * the remaining rows with "-". If the number of rows isn't specified,
  * there will be as many rows as pokemon in the array.
  */
-function SetStrongestTableFromArray(str_pokemons, num_rows = null, 
-    display_grouped = false, display_numbered = false, highlight_suboptimal = false, show_pct = false, best_pct = 1.0) {
+function SetRankingTable(str_pokemons, num_rows = null, 
+    display_numbered = false, highlight_suboptimal = false, show_pct = false) {
+    const display_grouped = $("#strongest input[value='grouped']:checkbox").is(":checked") 
+        && $("#strongest input[value='suboptimal']:checkbox").is(":checked");
+
+    const best_pct = str_pokemons[0].pct / 100;
 
     if (!num_rows)
         num_rows = str_pokemons.length;
