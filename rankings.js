@@ -120,11 +120,12 @@ function LoadStrongest(type = "Any") {
     } else {
         let str_pokemons = GetStrongestOfOneType(search_params);
         
+        /* Disable Rescale
         const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
         if (rescale && (settings_metric == 'ER'
                         || settings_metric == 'EER'
                         || settings_metric == 'TER'))
-            str_pokemons.forEach(str_pok => str_pok.rat /= 1.6);
+            str_pokemons.forEach(str_pok => str_pok.rat /= 1.6);*/
 
         ProcessAndGroup(str_pokemons);
         SetRankingTable(str_pokemons, settings_strongest_count, true, true, true);
@@ -327,12 +328,15 @@ function BuildTiers(str_pokemons, top_compare) {
     //   its counterparts
     else if (settings_tiermethod == "absolute") {
         for (let str_pok of str_pokemons) {
-            const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
             let check_rat = str_pok.rat;
+
+            /* Disable rescale
+            const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
             if ((!rescale || (settings_metric == 'DPS' || settings_metric == 'TDO')) 
                 && (search_params.versus || (search_params.type != 'Any' && search_params.mixed))) {
                 check_rat /= 1.6;
-            }
+            }*/
+
             switch (settings_metric) {
                 case 'DPS':
                     if (check_rat >= 20.0) str_pok.tier = 'SSS';
@@ -382,6 +386,16 @@ function BuildTiers(str_pokemons, top_compare) {
                     else if (check_rat >= 31.0) str_pok.tier = 'B';
                     else if (check_rat >= 30.0) str_pok.tier = 'C';
                     else if (check_rat >= 29.0) str_pok.tier = 'D';
+                    else str_pok.tier = 'F';
+                    break;
+                case 'eDPS':
+                    if (check_rat >= 20.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 19.5) str_pok.tier = 'SS';
+                    else if (check_rat >= 19.0) str_pok.tier = 'S';
+                    else if (check_rat >= 18.5) str_pok.tier = 'A';
+                    else if (check_rat >= 17.5) str_pok.tier = 'B';
+                    else if (check_rat >= 17.0) str_pok.tier = 'C';
+                    else if (check_rat >= 16.0) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
             }

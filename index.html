@@ -65,6 +65,7 @@
                                     <li>Favors glass cannons</li>
                                     <li><i>TOF-exponent: 0.00</i></li>
                                 </ul></span></span>
+                        <!-- Disable Outdated Metrics
                         <span id=metric-ter class="settings-opt tooltip unselectable">TER
                             <span class="tooltiptext">
                                 <div class="tooltip-title">Time Equivalent Rating</div>
@@ -73,7 +74,7 @@
                                     <li>Best for large raid lobbies</li>
                                     <li><i>TOF-exponent: 0.15</i></li>
                                 </ul></span></span>
-                        <span id=metric-eer class="settings-opt tooltip settings-opt-sel unselectable">EER
+                        <span id=metric-eer class="settings-opt tooltip unselectable">EER
                             <span class="tooltiptext">
                                 <div class="tooltip-title">Estimator Equivalent Rating</div>
                                 <ul>
@@ -87,7 +88,7 @@
                                 <ul>
                                     <li>Deprecated/un-fitted DPS-TDO mix</li>
                                     <li><i>TOF-exponent: 0.25</i></li>
-                                </ul></span></span>
+                                </ul></span></span> -->
                         <span id=metric-tdo class="settings-opt tooltip unselectable">TDO
                             <span class="tooltiptext">
                                 <div class="tooltip-title">Total Damage Output</div>
@@ -96,8 +97,30 @@
                                     <li>Favors bulk</li>
                                     <li><i>TOF-exponent: 1.00</i></li>
                                 </ul></span></span>
+                        <!-- Not yet tuned enough to be comparable to PokeBattler
+                        <span id=metric-estimator class="settings-opt tooltip settings-opt-sel unselectable">Estimator
+                        <span class="tooltiptext">
+                            <div class="tooltip-title">Estimator</div>
+                            <ul>
+                                <li>If all players were using a full party with 6 copies of this mon,
+                                    this is the number of players needed to clear the raid.
+                                </li>
+                                <li>Mixes bulk and DPS by using relobby penalties.</li>
+                                <li><i>Assumes T5 Raid Boss</i></li>
+                                <li><i>Uses 15s Relobby Time</i></li>
+                            </ul></span></span>
+                        -->
+                        <span id=metric-edps class="settings-opt tooltip settings-opt-sel unselectable">eDPS
+                            <span class="tooltiptext">
+                                <div class="tooltip-title">Effective DPS</div>
+                                <ul>
+                                    <li>In an infinite-length raid, this is the actual DPS that would be
+                                        achieved when accounting for the time lost relobbying.
+                                    </li>
+                                    <li><i>Uses 15s Relobby Time</i></li>
+                                </ul></span></span>
                     </div>
-                    <div id=settings-tof-exponent class="tooltip">TOF Exponent → 
+                    <div id=settings-tof-exponent class="tooltip" style="display: none">TOF Exponent → 
                         <span class="tooltiptext">
                             <div class="tooltip-title">Time On Field Exponent</div>
                             <p>Defines the mixture between DPS and TDO</p>
@@ -120,7 +143,7 @@
                         <!--<span id=lvl-both class="settings-opt unselectable tooltip">40+50
                             <span class="tooltiptext">Shows both level 40 and level 50 entries in type ranks, otherwise uses level 40 for PokeDex</span></span>-->
                     </div>
-                    <div id=settings-rescale class="tooltip">Rescale Effectiveness 
+                    <!--<div id=settings-rescale class="tooltip">Rescale Effectiveness 
                         <span class="tooltiptext">
                             <p>Corrects for type effectiveness multipliers.</p>
                             <p>Forces ratings to a common scale, allowing them to be compared more easily.</p></span>
@@ -128,7 +151,7 @@
                             <input id=chk-rescale type=checkbox value=rescale checked>
                             <span class="slider"></span>
                         </label>
-                    </div>
+                    </div>-->
                     <div id=settings-pve-turns class="tooltip">Turn-Based PvE
                         <span class="tooltiptext">
                             <div class="tooltip-title">PvE using 0.5s "Turns"</div>

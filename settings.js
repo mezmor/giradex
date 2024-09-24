@@ -1,12 +1,13 @@
 // settings constants and variables
 const METRICS = new Set();
-METRICS.add("ER");
+/*METRICS.add("ER");
 METRICS.add("EER");
 METRICS.add("TER");
+METRICS.add("Custom");*/
 METRICS.add("DPS");
 METRICS.add("TDO");
-METRICS.add("Custom");
-let settings_metric = "EER";
+METRICS.add("eDPS");
+let settings_metric = "eDPS";
 let settings_metric_exp = 0.225;
 let settings_default_level = [40];
 let settings_xl_budget = false;
@@ -45,12 +46,13 @@ function BindSettings() {
     $("#note-title").click(function() { ToggleNote(); });
 
     // Metrics
-    $("#metric-er").click(function() { SetMetric("ER"); });
+    /*$("#metric-er").click(function() { SetMetric("ER"); });
     $("#metric-eer").click(function() { SetMetric("EER"); });
     $("#metric-ter").click(function() { SetMetric("TER"); });
+    $("#tof-exp").change(function() { SetMetric("Custom"); });*/
     $("#metric-dps").click(function() { SetMetric("DPS"); });
     $("#metric-tdo").click(function() { SetMetric("TDO"); });
-    $("#tof-exp").change(function() { SetMetric("Custom"); });
+    $("#metric-edps").click(function() { SetMetric("eDPS"); });
 
     // Party Power
     $("#pp-1").click(function() { SetPartySize(1); });
@@ -62,10 +64,10 @@ function BindSettings() {
     $("#lvl-40").click(function() { SetDefaultLevel([40], false); });
     $("#lvl-50").click(function() { SetDefaultLevel([50], false); });
     $("#lvl-xl-budget").click(function() { SetDefaultLevel([40], true); });
-    $("#lvl-both").click(function() { SetDefaultLevel([40, 50], false); });
+    //$("#lvl-both").click(function() { SetDefaultLevel([40, 50], false); });
 
     // Metric Calc options
-    $("#chk-rescale").change(function() { CheckURLAndAct(); });
+    //$("#chk-rescale").change(function() { CheckURLAndAct(); });
     $("#chk-pve-turns").change(function() { 
         settings_pve_turns = this.checked;
         CheckURLAndAct(); 
@@ -140,11 +142,12 @@ function SetMetric(metric) {
         }
     }
     // sets settings options selected class
-    $("#metric-er").removeClass("settings-opt-sel");
+    /*$("#metric-er").removeClass("settings-opt-sel");
     $("#metric-eer").removeClass("settings-opt-sel");
-    $("#metric-ter").removeClass("settings-opt-sel");
+    $("#metric-ter").removeClass("settings-opt-sel");*/
     $("#metric-dps").removeClass("settings-opt-sel");
     $("#metric-tdo").removeClass("settings-opt-sel");
+    $("#metric-edps").removeClass("settings-opt-sel");
     switch (settings_metric) {
         case "ER":
             $("#metric-er").addClass("settings-opt-sel");
@@ -165,6 +168,9 @@ function SetMetric(metric) {
         case "TDO":
             $("#metric-tdo").addClass("settings-opt-sel");
             settings_metric_exp = 1.00;
+            break;
+        case "eDPS":
+            $("#metric-edps").addClass("settings-opt-sel");
             break;
         case "Custom":
             settings_metric_exp = parseFloat($("#tof-exp").val());

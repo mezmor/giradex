@@ -342,7 +342,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow,
                     fm_mult, cm_mult, enemy_def, enemy_y.y, enemy_y.cm_dmg);
                 const tdo = GetTDO(dps, hp, def, enemy_y.y);
                 // metrics from Reddit user u/Elastic_Space
-                const rat = Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
+                const rat = GetMetric(dps, tdo);
                 all_ratings.push(rat);
             }
 
@@ -533,4 +533,29 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 200) {
     SearchAll(search_params, UpdateIfStronger);
 
     return counters;
+}
+
+
+/**
+ * Give the effective DPS when accounting for relobbying after every 6 deaths
+ */
+function GetEDPS(dps, tdo) {
+    const RAID_PARTY_SIZE = 6;
+    const REJOIN_TIME = 15;
+
+    const tof = tdo/dps;
+
+    const edps = (RAID_PARTY_SIZE * tdo) / (RAID_PARTY_SIZE * tof + REJOIN_TIME);
+    
+    return edps;
+}
+
+function GetMetric(dps, tdo) {
+    switch (settings_metric) {
+        case "eDPS":
+            return GetEDPS(dps, tdo);
+        default:
+            // metrics from Reddit user u/Elastic_Space
+            return Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
+    }
 }
