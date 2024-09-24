@@ -268,7 +268,7 @@ function BuildTiers(str_pokemons, top_compare) {
         for (let str_pok of str_pokemons) {
             if (str_pok.pct >= S_breakpoint + 0.00001) { //S+
                 const num_S = Math.floor((str_pok.pct - S_breakpoint + 0.00001)/S_tier_size)+1;
-                if (num_S > 3 && str_pok.name == "Rayquaza" && str_pok.mega) 
+                if (num_S > 3 && str_pok.name == "Mega Rayquaza") 
                     str_pok.tier = "MRay";
                 else if (num_S >= 3)
                     str_pok.tier = "SSS";
@@ -308,7 +308,7 @@ function BuildTiers(str_pokemons, top_compare) {
             }
             
             if (this_tier <= 0) {
-                if (str_pok.rat == best_mon && str_pok.name == "Rayquaza" && str_pok.mega)
+                if (str_pok.rat == best_mon && str_pok.name == "Mega Rayquaza")
                     str_pok.tier = "MRay";
                 else
                     str_pok.tier = "S".repeat(1 - this_tier);
@@ -386,7 +386,7 @@ function BuildTiers(str_pokemons, top_compare) {
                     break;
             }
 
-            if (str_pok.rat == best_mon && str_pok.name == "Rayquaza" && str_pok.mega)
+            if (str_pok.rat == best_mon && str_pok.name == "Mega Rayquaza")
                 str_pok.tier = "MRay";
         }
     }
@@ -422,9 +422,7 @@ function SetRankingTable(str_pokemons, num_rows = null,
             const p = str_pokemons[row_i];
 
             const name = p.name;
-            const coords = GetPokemonIconCoords(p.id, p.form, p.mega, p.mega_y);
-            const can_be_mega_y = p.id == 6 || p.id == 150; 
-            const primal = p.mega && (p.id == 382 || p.id == 383);
+            const coords = GetPokemonIconCoords(p.id, p.form);
             const form_text = GetFormText(p.id, p.form).replace(/\s+Forme?/,"");
             const legendary = p.class !== undefined;
 
@@ -471,12 +469,9 @@ function SetRankingTable(str_pokemons, num_rows = null,
                 + ICONS_URL + ");background-position:" + coords.x + "px "
                 + coords.y + "px'></span>"
                 + " <span class='strongest-name'>"
-                + ((primal) ? ("Primal ") : ((p.mega) ? "Mega " : ""))
                 + ((p.shadow)
                     ? "<span class=shadow-text>Shadow</span> " : "")
                 + name
-                + ((p.mega && can_be_mega_y)
-                    ? ((p.mega_y) ? " Y" : " X") : "")
                 + ((p.level == 50) ? "<sup class='xl'>XL</sup>" : "")
                 +"</span>"
                 + ((form_text.length > 0)

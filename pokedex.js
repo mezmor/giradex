@@ -537,15 +537,11 @@ function ShowCountersPopup(hover_element, show, counter = null) {
 
         // sets the popup's content
 
-        const can_be_mega_y = counter.id == 6 || counter.id == 150; 
-        const primal = counter.mega && (counter.id == 382 || counter.id == 383);
         const form_text = GetFormText(counter.id, counter.form);
 
         const name = "<p class='counter-name'>"
-            + ((primal) ? ("Primal ") : ((counter.mega) ? "Mega " : ""))
             + ((counter.shadow) ? "<span class=shadow-text>Shadow</span> " : "")
             + counter.name
-            + ((counter.mega && can_be_mega_y) ? ((counter.mega_y) ? " Y" : " X") : "")
             + ((form_text.length > 0)
                 ? " <span class=small-text>(" + form_text + ")</span>" : "")
             + "</p>"
