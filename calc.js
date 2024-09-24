@@ -39,7 +39,7 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     // fast move variables
     const fm_dmg_mult = fm_mult
         * ((types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? 1.2 : 1);
-    const fm_dmg = 0.5 * fm_obj.power * (atk / enemy_def) * fm_dmg_mult + 0.5;
+    const fm_dmg = 0.5 * ProcessPower(fm_obj) * (atk / enemy_def) * fm_dmg_mult + 0.5;
     const fm_dps = fm_dmg / ProcessDuration(fm_obj.duration);
     const fm_eps = fm_obj.energy_delta / ProcessDuration(fm_obj.duration);
 
@@ -50,12 +50,12 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
 
     // charged move variables
     const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
-    const cm_dmg = 0.5 * cm_obj.power * (atk / enemy_def) * cm_dmg_mult + 0.5;
+    const cm_dmg = 0.5 * ProcessPower(cm_obj) * (atk / enemy_def) * cm_dmg_mult + 0.5;
     const cm_dps = cm_dmg / ProcessDuration(cm_obj.duration);
     const cm_dps_adj = cm_dps * (1 + pp_boost);
     let cm_eps = -cm_obj.energy_delta / ProcessDuration(cm_obj.duration);
     // penalty to one-bar charged moves in old raid system (they use more energy (cm_eps))
-    if (!settings_pve_turns && cm_obj.energy_delta == -100) {
+    if (cm_obj.energy_delta == -100) {
         const dws = (settings_pve_turns ? 0 : cm_obj.damage_window_start / 1000); // dws in seconds
         cm_eps = (-cm_obj.energy_delta + 0.5 * fm_obj.energy_delta
             + 0.5 * y * dws) / ProcessDuration(cm_obj.duration);
@@ -143,11 +143,11 @@ const CM_DELAY = 0.5;
 // fast move variables
 const fm_dmg_mult = fm_mult
     * ((types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? 1.2 : 1);
-const fm_dmg = 0.5 * fm_obj.power * (atk / enemy_def) * fm_dmg_mult + 0.5;
+const fm_dmg = 0.5 * ProcessPower(fm_obj) * (atk / enemy_def) * fm_dmg_mult + 0.5;
 
 // charged move variables
 const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
-const cm_dmg = 0.5 * cm_obj.power * (atk / enemy_def) * cm_dmg_mult + 0.5;
+const cm_dmg = 0.5 * ProcessPower(cm_obj) * (atk / enemy_def) * cm_dmg_mult + 0.5;
 
 let fms_per_cm = 1;
 let fm_dur = ProcessDuration(fm_obj.duration);
@@ -199,6 +199,27 @@ function ProcessDuration(duration) {
 if (settings_pve_turns)
     return (Math.round((duration / 1000) * 2) / 2);
 return (duration / 1000);
+}
+
+
+/**
+ * Processes the power of fast moves and charged moves.
+ * Any move with a calculated modifier above ~10% gets a power adjustment
+ * to compensate for their speed buff.
+ * The output differs according to 'settings_raid_system'.
+ * 
+ * https://www.reddit.com/r/TheSilphRoad/comments/1fkrjxx/analysis_dynamax_raid_mechanics_even_more_move/
+ */
+function ProcessPower(move_obj) {
+
+    if (settings_pve_turns) {
+        const newDuration = ProcessDuration(move_obj.duration);
+        const modifier = (newDuration - move_obj.duration / 1000) / newDuration;
+        if (Math.abs(modifier) >= 0.199)
+            return move_obj.power * (1 + modifier);
+    }
+    
+    return move_obj.power;
 }
 
 /**
