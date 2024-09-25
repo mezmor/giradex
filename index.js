@@ -238,7 +238,8 @@ function InitializePokemonSearch() {
                 $(item).append(nameTD);
 
                 // Add Form
-                if (data.value.form !== "Normal") {
+                if (data.value.form !== "Normal"
+                    && data.value.form !== "Mega" && data.value.form !== "MegaY") {
                     const formSpan = $("<span class='poke-form-name'></span>");
                     formSpan.html(" (" + ((data.match.match_type == "form") ? data.match.match_value : GetFormText(data.value.id, data.value.form).replace(/\s+Forme?/,"")) + ")");
                     nameTD.append(formSpan);
