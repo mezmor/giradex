@@ -73,8 +73,11 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
 
     // charged move is strictly better, and can be used indefinitely
     // (don't allow party power)
+    /* Temporarily disable because unrealistic 
+     * (usually triggered w/ such high incoming y that charged moves aren't even used)
     if (cm_dps > dps && -cm_obj.energy_delta < y * ProcessDuration(cm_obj.duration) * 0.5) 
         dps = cm_dps;
+    */
 
     return ((dps < 0) ? 0 : dps);
 }
