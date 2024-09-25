@@ -343,12 +343,23 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow,
                 const tdo = GetTDO(dps, hp, def, enemy_y.y);
                 // metrics from Reddit user u/Elastic_Space
                 const rat = GetMetric(dps, tdo);
-                all_ratings.push(rat);
+                all_ratings.push({rat: rat, dps: dps, tdo: tdo});
             }
 
-            const avg_rating = (all_ratings.length > 0 ? all_ratings.reduce((a, b) => a+b, 0) / all_ratings.length : 0);
+            let avg_rating = {rat: 0, dps: 0, tdo: 0};
+            all_ratings.forEach(r => {
+                avg_rating.rat += r.rat;
+                avg_rating.dps += r.dps;
+                avg_rating.tdo += r.tdo;
+            });
+            if (all_ratings.length > 0) {
+                avg_rating.rat /= all_ratings.length;
+                avg_rating.dps /= all_ratings.length;
+                avg_rating.tdo /= all_ratings.length;
+            }
             const moveset = {
-                rat: avg_rating,
+                rat: avg_rating.rat, dps: avg_rating.dps, tdo: avg_rating.tdo,
+                all_rat: all_ratings,
                 fm: fm, fm_is_elite: fm_is_elite, fm_type: fm_obj.type,
                 cm: cm, cm_is_elite: cm_is_elite, cm_type: cm_obj.type
             };
@@ -361,7 +372,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow,
                 movesets.sort(function compareFn(a , b) {
                     return ((a.rat > b.rat) || - (a.rat < b.rat));
                 });
-            } else if (avg_rating > movesets[0].rat) {
+            } else if (avg_rating.rat > movesets[0].rat) {
                 movesets[0] = moveset;
                 // sorts array
                 movesets.sort(function compareFn(a , b) {
@@ -508,7 +519,9 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 200) {
 
                 // adds pokemon to array of counters
                 const counter = {
-                    rat: moveset.rat, id: pkm_obj.id,
+                    rat: moveset.rat, dps: moveset.dps, tdo: moveset.tdo,
+                    all_rat: moveset.all_rat,
+                    id: pkm_obj.id,
                     name: pkm_obj.name, form: pkm_obj.form,
                     shadow: shadow, class: pkm_obj.class,
                     fm: moveset.fm, fm_is_elite: moveset.fm_is_elite,
