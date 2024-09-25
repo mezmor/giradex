@@ -423,7 +423,7 @@ function SetRankingTable(str_pokemons, num_rows = null,
 
     const best_pct = str_pokemons[0].pct / 100;
 
-    if (!num_rows)
+    if (!num_rows || num_rows > str_pokemons.length)
         num_rows = str_pokemons.length;
 
     const encountered_mons = new Set();
