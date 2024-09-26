@@ -20,21 +20,26 @@ const estimated_cm_power = 10800;
  * Also can receive the enemy defense stat and the y - enemy's DPS - if known.
  */
 function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
-    enemy_def = 160, y = null, in_cm_dmg = null) {
+    enemy_def = 160, enemy_y = null) {
 
     if (!fm_obj || !cm_obj)
         return 0;
 
+    if (!enemy_y)
+        enemy_y = {y: null, cm_dmg: null}
+
     if (!enemy_def)
         enemy_def = 160;
-    if (!y)
-        y = estimated_y_numerator / def;
-    if (!in_cm_dmg)
-        in_cm_dmg = estimated_cm_power / def;
+    const y = (enemy_y.y) ? enemy_y.y : estimated_y_numerator / def;
+    const in_cm_dmg = (enemy_y.cm_dmg) ? enemy_y.cm_dmg : estimated_cm_power / def;
+
+    let tof = hp / y;
 
     let x = 0.5 * -cm_obj.energy_delta + 0.5 * fm_obj.energy_delta;
-    if (settings_newdps)
-        x = x + 0.5 * in_cm_dmg; // Assume waste of all energy from 1 incoming CM
+    if (settings_newdps) {
+        // Assume waste of all energy from 1 incoming CM
+        x = x + 0.5 * in_cm_dmg; 
+    }
 
     // fast move variables
     const fm_dmg_mult = fm_mult
@@ -43,7 +48,6 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     const fm_dps = fm_dmg / ProcessDuration(fm_obj.duration);
     const fm_eps = fm_obj.energy_delta / ProcessDuration(fm_obj.duration);
 
-    const tof = hp / y;
     const f_to_c_ratio = (tof * -cm_obj.energy_delta + ProcessDuration(cm_obj.duration) * (x - 0.5 * hp)) / 
         (tof * fm_obj.energy_delta - ProcessDuration(fm_obj.duration) * (x - 0.5 * hp));
     const pp_boost = GetPartyBoost(f_to_c_ratio);
@@ -79,7 +83,9 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         dps = cm_dps;
     */
 
-    return ((dps < 0) ? 0 : dps);
+    return dps > 0 ? dps 
+        : (fm_dps > 0 ? fm_dps 
+            : 0);
 }
 
 /**
@@ -88,11 +94,12 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
  * Formula credit to https://gamepress.gg .
  * https://gamepress.gg/pokemongo/how-calculate-comprehensive-dps
  */
-function GetTDO(dps, hp, def, y = null) {
+function GetTDO(dps, hp, def, enemy_y) {
+    const y = (enemy_y && enemy_y.y) ? enemy_y.y : estimated_y_numerator / def;
 
-    if (!y)
-        y = estimated_y_numerator / def;
-    return (dps * (hp / y));
+    let tof = hp / y;
+
+    return (dps * tof);
 }
 
 /* Returns % extra damage on charged move from party power 
@@ -135,59 +142,63 @@ function GetPartyBoost(f_to_c_ratio) {
 function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     enemy_def = 160, total_incoming_dps = 50) {
 
-if (!fm_obj || !cm_obj)
-    return 0;
+    if (!fm_obj || !cm_obj)
+        return 0;
 
-const CHARGED_MOVE_CHANCE = 0.5;
-const ENERGY_PER_HP = 0.5;
-const FM_DELAY = 1.75; // Random between 1.5 and 2.0
-const CM_DELAY = 0.5;
+    const CHARGED_MOVE_CHANCE = 0.5;
+    const ENERGY_PER_HP = 0.5;
+    const FM_DELAY = 1.75; // Random between 1.5 and 2.0
+    const CM_DELAY = 0.5;
 
-// fast move variables
-const fm_dmg_mult = fm_mult
-    * ((types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? 1.2 : 1);
-const fm_dmg = 0.5 * ProcessPower(fm_obj) * (atk / enemy_def) * fm_dmg_mult + 0.5;
+    // fast move variables
+    const fm_dmg_mult = fm_mult
+        * ((types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? 1.2 : 1);
+    const fm_dmg = 0.5 * ProcessPower(fm_obj) * (atk / enemy_def) * fm_dmg_mult + 0.5;
 
-// charged move variables
-const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
-const cm_dmg = 0.5 * ProcessPower(cm_obj) * (atk / enemy_def) * cm_dmg_mult + 0.5;
+    // charged move variables
+    const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
+    const cm_dmg = 0.5 * ProcessPower(cm_obj) * (atk / enemy_def) * cm_dmg_mult + 0.5;
 
-let fms_per_cm = 1;
-let fm_dur = ProcessDuration(fm_obj.duration);
-let cm_dur = ProcessDuration(cm_obj.duration);
-if (settings_newdps) {
-    const eps_for_damage = ENERGY_PER_HP * total_incoming_dps;
-    fm_dur = fm_dur + FM_DELAY;
-    cm_dur = cm_dur + CM_DELAY;
+    let fms_per_cm = 1;
+    let fm_dur = ProcessDuration(fm_obj.duration);
+    let cm_dur = ProcessDuration(cm_obj.duration);
+    if (settings_newdps) {
+        const eps_for_damage = ENERGY_PER_HP * total_incoming_dps;
+        fm_dur = fm_dur + FM_DELAY;
+        cm_dur = cm_dur + CM_DELAY;
 
-    let fms_per_cm = (-cm_obj.energy_delta - eps_for_damage * cm_dur) /
-        (fm_obj.energy_delta + eps_for_damage * fm_dur);
-    if (fms_per_cm < 0) fms_per_cm = 0;
-    fms_per_cm += 1 / CHARGED_MOVE_CHANCE - 1;
-}
-else {
-    switch (cm_obj.energy_delta) {
-        case -100:
-            fms_per_cm = 3;
-            break;
-        case -50:
-            fms_per_cm = 1.5;
-            break;
-        case -33:
-            fms_per_cm = 1;
-            break;
+        let fms_per_cm = (-cm_obj.energy_delta - eps_for_damage * cm_dur) /
+            (fm_obj.energy_delta + eps_for_damage * fm_dur);
+        if (fms_per_cm < 0) fms_per_cm = 0;
+        fms_per_cm += 1 / CHARGED_MOVE_CHANCE - 1;
+    }
+    else {
+        switch (cm_obj.energy_delta) {
+            case -100:
+                fms_per_cm = 3;
+                break;
+            case -50:
+                fms_per_cm = 1.5;
+                break;
+            case -33:
+                fms_per_cm = 1;
+                break;
+        }
+
+        fms_per_cm = fms_per_cm * 0.5; // used to be 'y_mult'
+        fm_dur += 2;
+        cm_dur += 2;
     }
 
-    fms_per_cm = fms_per_cm * 0.5; // used to be 'y_mult'
-    fm_dur += 2;
-    cm_dur += 2;
-}
+    // specific y
+    const y = (fms_per_cm * fm_dmg + cm_dmg)
+        / (fms_per_cm * fm_dur + cm_dur);
 
-// specific y
-const y = (fms_per_cm * fm_dmg + cm_dmg)
-    / (fms_per_cm * fm_dur + cm_dur);
-
-return {y: ((y < 0) ? 0 : y), cm_dmg: cm_dmg};
+    return {
+        y: ((y < 0) ? 0 : y), 
+        cm_dmg: cm_dmg,
+        time_to_cm: fms_per_cm * fm_dur
+    };
 }
 
 /**
@@ -199,9 +210,9 @@ return {y: ((y < 0) ? 0 : y), cm_dmg: cm_dmg};
 */
 function ProcessDuration(duration) {
 
-if (settings_pve_turns)
-    return (Math.round((duration / 1000) * 2) / 2);
-return (duration / 1000);
+    if (settings_pve_turns)
+        return (Math.round((duration / 1000) * 2) / 2);
+    return (duration / 1000);
 }
 
 
@@ -342,8 +353,8 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow,
             for (enemy_y of enemy_moveset_ys) {
                 // calculates the data
                 const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
-                    fm_mult, cm_mult, enemy_def, enemy_y.y, enemy_y.cm_dmg);
-                const tdo = GetTDO(dps, hp, def, enemy_y.y);
+                    fm_mult, cm_mult, enemy_def, enemy_y);
+                const tdo = GetTDO(dps, hp, def, enemy_y);
                 // metrics from Reddit user u/Elastic_Space
                 const rat = GetMetric(dps, tdo);
                 all_ratings.push({rat: rat, dps: dps, tdo: tdo});
@@ -444,7 +455,7 @@ function GetStrongestOfEachType(search_params) {
     // build a basic enemy to "sim" against
     let enemy_params = {
         weakness: null,
-        enemy_ys: [{y: null, in_cm_dmg: null}] // use defaults
+        enemy_ys: [{y: null, cm_dmg: null, time_to_cm: null}] // use defaults
     };
 
     for (const type of POKEMON_TYPES) {
@@ -475,7 +486,7 @@ function GetStrongestOfOneType(search_params) {
         weakness: (search_params.versus ? 
             GetTypesEffectivenessAgainstTypes([search_params.type]) : 
             GetTypesEffectivenessSingleBoost(search_params.type)),
-        enemy_ys: [{y: null, in_cm_dmg: null}] // use defaults
+        enemy_ys: [{y: null, cm_dmg: null, time_to_cm: null}] // use defaults
     };
 
     // array of strongest pokemon and moveset found so far
