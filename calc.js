@@ -1,10 +1,10 @@
 // magic numbers for incoming damage calc
 
 // estimated incoming average DPS (usually ~900)
-// tuned to a more recent estimate of ~1970 for T4-T5 eligible mons
-let estimated_y_numerator = 1970; 
-// estimated incoming charged move power
-const estimated_cm_power = 10800;
+// tuned to a more recent estimate of ~2100 for T4+ eligible mons
+let estimated_y_numerator = 2100; 
+// estimated incoming charged move power (basically atk*move power*modifiers, w/o def)
+const estimated_cm_power = 11770;
 
 
 /**
