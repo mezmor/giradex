@@ -1,3 +1,5 @@
+let str_pokemons;
+
 /**
  * Bind event handlers for a rankings table
  */
@@ -116,9 +118,9 @@ function LoadStrongest(type = "Any") {
     search_params.type = type;
 
     if (type == "Each") {
-        SetRankingTable(GetStrongestOfEachType(search_params));
+        str_pokemons = SetRankingTable(GetStrongestOfEachType(search_params));
     } else {
-        let str_pokemons = GetStrongestOfOneType(search_params);
+        str_pokemons = GetStrongestOfOneType(search_params);
         
         /* Disable Rescale
         const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
