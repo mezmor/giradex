@@ -1,10 +1,10 @@
 // magic numbers for incoming damage calc
 
 // estimated incoming average DPS (usually ~900)
-// tuned to a more recent estimate of ~1520 for T4+ eligible mons
-let estimated_y_numerator = 1520; 
+// tuned to a more recent estimate of ~1340 for T4+ eligible mons (using real "neutral" sims)
+let estimated_y_numerator = 1340; 
 // estimated incoming charged move power (basically atk*move power*modifiers, w/o def)
-const estimated_cm_power = 11770;
+const estimated_cm_power = 11670;
 
 
 /**
