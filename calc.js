@@ -83,9 +83,9 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         dps = cm_dps;
     */
 
-    return dps > 0 ? dps 
-        : (fm_dps > 0 ? fm_dps 
-            : 0);
+    return (fm_dps > dps ? fm_dps 
+        : (dps > 0 ? dps 
+            : 0));
 }
 
 /**
