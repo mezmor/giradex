@@ -117,6 +117,7 @@ POKEMON_TYPES_EFFECT.set("Fairy", [
 function GetTypesEffectivenessAgainstTypes(types) {
 
     let effectiveness = new Map();
+    effectiveness.set(0.244, []);
     effectiveness.set(0.391, []);
     effectiveness.set(0.625, []);
     effectiveness.set(1, []);
@@ -134,7 +135,9 @@ function GetTypesEffectivenessAgainstTypes(types) {
             else if (type_effect[2].includes(type))
                 mult *= 1.60;
         }
-        if (Math.abs(mult - 0.391) < 0.001)
+        if (Math.abs(mult - 0.244) < 0.001)
+            effectiveness.get(0.244).push(attacker_type);
+        else if (Math.abs(mult - 0.391) < 0.001)
             effectiveness.get(0.391).push(attacker_type);
         else if (Math.abs(mult - 0.625) < 0.001)
             effectiveness.get(0.625).push(attacker_type);
@@ -156,6 +159,7 @@ function GetTypesEffectivenessAgainstTypes(types) {
 function GetTypesEffectivenessSingleBoost(type) {
 
     let effectiveness = new Map();
+    effectiveness.set(0.244, []);
     effectiveness.set(0.391, []);
     effectiveness.set(0.625, []);
     effectiveness.set(1, []);
@@ -176,8 +180,10 @@ function GetTypesEffectivenessSingleBoost(type) {
  */
 function GetEffectivenessMultOfType(effectiveness, type) {
 
-    if (effectiveness.get(0.391).includes(type))
-        return 0.391;
+    if (effectiveness.get(0.244).includes(type))
+        return 0.244140625;
+    else if (effectiveness.get(0.391).includes(type))
+        return 0.390625;
     else if (effectiveness.get(0.625).includes(type))
         return 0.625;
     else if (effectiveness.get(1.60).includes(type))
