@@ -1164,7 +1164,7 @@ function GetPokemonIconCoords(pokemon_id, form) {
     } 
     else if (pokemon_id == 646) { // Kyurem
         const kyuremOffset = 1101;
-        const kyuremLookup = ['White','Black'];
+        const kyuremLookup = ['Black','White'];
 
         if (form == "Normal") offsetID = pokemon_id;
         else offsetID = kyuremOffset + kyuremLookup.indexOf(form);
