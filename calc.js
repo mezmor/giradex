@@ -20,7 +20,7 @@ const estimated_cm_power = 11670;
  * Also can receive the enemy defense stat and the y - enemy's DPS - if known.
  */
 function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
-    enemy_def = 160, enemy_y = null) {
+    enemy_def = 180, enemy_y = null) {
 
     if (!fm_obj || !cm_obj)
         return 0;
@@ -29,7 +29,7 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         enemy_y = {y: null, cm_dmg: null}
 
     if (!enemy_def)
-        enemy_def = 160;
+        enemy_def = 180;
     const y = (enemy_y.y) ? enemy_y.y : estimated_y_numerator / def;
     const in_cm_dmg = (enemy_y.cm_dmg) ? enemy_y.cm_dmg : estimated_cm_power / def;
 
@@ -568,7 +568,7 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 200) {
  */
 function GetEDPS(dps, tdo) {
     const RAID_PARTY_SIZE = 6;
-    const REJOIN_TIME = 15;
+    const REJOIN_TIME = 10;
 
     const tof = tdo/dps;
 
