@@ -151,7 +151,7 @@ function Main() {
     });
     $("#chk-newdps").change(function() { 
         settings_newdps = this.checked;
-        estimated_y_numerator = (settings_newdps ? 1970 : 900);
+        estimated_y_numerator = (settings_newdps ? 1520 : 900);
         CheckURLAndAct(); 
     });
     
