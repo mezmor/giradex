@@ -1,9 +1,6 @@
 /**
- * Author: Javi Bonafonte
- *
- * TODO:
- * - More forms... Minior, Necorzma, Magearma
- * - Missing shinies: Yungoos, Castform forms (pokemonshowdown)
+ * Author: Mikegrann
+ * Based on the work of Javi Bonafonte
  */
 
 $(document).ready(Main);

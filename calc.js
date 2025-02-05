@@ -356,7 +356,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow,
                     fm_mult, cm_mult, enemy_def, enemy_y);
                 const tdo = GetTDO(dps, hp, def, enemy_y);
                 // metrics from Reddit user u/Elastic_Space
-                const rat = GetMetric(dps, tdo);
+                const rat = GetMetric(dps, tdo, enemy_stats ? enemy_stats.hp : undefined);
                 all_ratings.push({rat: rat, dps: dps, tdo: tdo});
             }
 
@@ -486,7 +486,8 @@ function GetStrongestOfOneType(search_params) {
         weakness: (search_params.versus ? 
             GetTypesEffectivenessAgainstTypes([search_params.type]) : 
             GetTypesEffectivenessSingleBoost(search_params.type)),
-        enemy_ys: [{y: null, cm_dmg: null, time_to_cm: null}] // use defaults
+        enemy_ys: [{y: null, cm_dmg: null, time_to_cm: null}], // use defaults
+        stats: {atk: null, def: 180, hp: 1000000000} // Use huge HP to approach "theoretical" eDPS
     };
 
     // array of strongest pokemon and moveset found so far
@@ -566,21 +567,26 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 200) {
 /**
  * Give the effective DPS when accounting for relobbying after every 6 deaths
  */
-function GetEDPS(dps, tdo) {
+function GetEDPS(dps, tdo, hp = 15000) {
     const RAID_PARTY_SIZE = 6;
     const REJOIN_TIME = 10;
 
     const tof = tdo/dps;
+    const lives = hp / tdo; // total number of attacker-lives needed to kill raid boss
+    const deaths = Math.ceil(lives)-1; // total number of deaths experienced
+    const relobbies = Math.floor(deaths / RAID_PARTY_SIZE); // total relobby penalties incurred (1 relobby per certain # of deaths)
+    const ttw = (lives * tof + REJOIN_TIME * relobbies); // total battle time (time spent attacking + time spent relobbying)
 
-    const edps = (RAID_PARTY_SIZE * tdo) / (RAID_PARTY_SIZE * tof + REJOIN_TIME);
+    // naive formula
+    //const edps = (RAID_PARTY_SIZE * tdo) / (RAID_PARTY_SIZE * tof + REJOIN_TIME);
     
-    return edps;
+    return hp / ttw;
 }
 
-function GetMetric(dps, tdo) {
+function GetMetric(dps, tdo, hp) {
     switch (settings_metric) {
         case "eDPS":
-            return GetEDPS(dps, tdo);
+            return GetEDPS(dps, tdo, hp);
         default:
             // metrics from Reddit user u/Elastic_Space
             return Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);

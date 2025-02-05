@@ -16,10 +16,39 @@ function GetPokemonStats(pkm_obj, level = null, ivs = null) {
 
     stats.atk = (stats.baseAttack + ivs.atk) * cpm;
     stats.def = (stats.baseDefense + ivs.def) * cpm;
-    stats.hp = (stats.baseStamina + ivs.hp) * cpm;
+    stats.hp = Math.floor((stats.baseStamina + ivs.hp) * cpm);
 
     return {...stats}; // returns by copy to prevent reassignment of reference
 }
+
+/**
+ * Gets the Pokemon GO stats of a specific raid boss, using the correct CPM
+ * and HP value.
+ */
+function GetRaidStats(pkm_obj, tier = null) {
+
+    if (!tier) {
+        tier = 3;
+        if (pkm_obj.class)
+            tier = 5;
+        if (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")
+            tier = 4;
+        if (pkm_obj.class && pkm_obj.form == "Mega")
+            tier = 6;
+    }
+    
+    const ivs = { atk: 15, def: 15, hp: 15 };
+    const cpm = [,0.6,0.67,0.73,0.79,0.79,0.79,1.0][tier];
+
+    let stats = {...pkm_obj.stats};
+    
+    stats.atk = (stats.baseAttack + ivs.atk) * cpm;
+    stats.def = (stats.baseDefense + ivs.def) * cpm;
+    stats.hp = [,600,,3600,9000,15000,22500,20000][tier];
+
+    return stats; // returns by copy to prevent reassignment of reference
+}
+
 
 
 /**
@@ -283,6 +312,6 @@ function GetEnemyParams(enemy_pkm_obj) {
         moves: GetPokemonMoves(enemy_pkm_obj),
         types: enemy_pkm_obj.types,
         weakness: GetTypesEffectivenessAgainstTypes(enemy_pkm_obj.types),
-        stats: enemy_pkm_obj.stats
+        stats: GetRaidStats(enemy_pkm_obj)
     };
 }
