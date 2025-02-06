@@ -89,6 +89,9 @@ function BindSettings() {
         SetStrongestCount(this.value); 
         this.style.width = (this.value.length + 2) + "ch";
     });
+    $("#relobby-time").change(function() { 
+        SetRelobbyPenalty(this.value); 
+    });
     
     // Comparison baseline
     $("#cmp-top").click(function() { SetCompare("top"); });
@@ -238,6 +241,21 @@ function SetTeamSize(normal_mon_count, mega_count) {
         $("#rt-" + normal_mon_count.toString()).addClass("settings-opt-sel");
     else if (normal_mon_count == 6 && mega_count == 1)
         $("#rt-m1").addClass("settings-opt-sel");
+
+    // reload page
+    CheckURLAndAct();
+}
+
+/**
+ * Sets the relobby penalty timespan for each full raid team wipe
+ */
+function SetRelobbyPenalty(penalty) {
+    // round to nearest 1, clamped between 0 and 20
+    penalty = Math.max(0, Math.min(20, Math.round(penalty)))
+    $("#relobby-time").val(penalty);
+
+    // sets global variable
+    settings_relobbytime = penalty;
 
     // reload page
     CheckURLAndAct();
