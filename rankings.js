@@ -185,7 +185,11 @@ function GetComparisonMon(str_pokemons) {
                 top_compare = str_pokemons.find(e => !(e.class !== undefined && e.shadow) && 
                                                     e.form != "Mega" && e.form != "MegaY" &&
                                                     !(e.name == 'Rayquaza' && e.cm == 'Dragon Ascent') &&
-                                                    !(e.name == 'Necrozma' && e.form != 'Normal')
+                                                    !(e.name == 'Necrozma' && e.form != 'Normal') &&
+                                                    e.name != "Mew" && e.name != "Celebi" && e.name != "Jirachi" &&
+                                                    e.name != "Victini" && e.name != "Keldeo" && e.name != "Meloetta" &&
+                                                    e.name != "Shaymin" && e.name != "Diancie" && e.name != "Zarude" &&
+                                                    e.name != "Marshadow"
                                                 ).rat;
             } catch (err) {
                 top_compare = str_pokemons[str_pokemons.length-1].rat; // budget must be even lower
@@ -265,7 +269,7 @@ function BuildTiers(str_pokemons, top_compare, type) {
         if (settings_tiermethod == "ESpace") { // slightly tweak tier sizes and breakpoints
             S_breakpoint = 105.0;
             S_tier_size = 10.0;
-            letter_tier_size = 5.0;
+            letter_tier_size = 10.0;
         }
 
         for (let str_pok of str_pokemons) {
@@ -280,8 +284,8 @@ function BuildTiers(str_pokemons, top_compare, type) {
             }
             else {
                 let tier_cnt = Math.floor((S_breakpoint + 0.00001 - str_pok.pct)/letter_tier_size);
-                if (settings_tiermethod == "ESpace" && tier_cnt >=1) // Shift to an "A" breakpoint of 95.0
-                    tier_cnt--;
+                //if (settings_tiermethod == "ESpace" && tier_cnt >=1) // Shift to an "A" breakpoint of 85.0
+                //    tier_cnt--;
                 if (tier_cnt >= 4) // Everything past D -> F
                     tier_cnt = 5;
                 str_pok.tier = String.fromCharCode("A".charCodeAt(0) + tier_cnt);
