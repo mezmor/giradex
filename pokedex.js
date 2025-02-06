@@ -685,17 +685,15 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             const dps_sh = GetDPS(types, atk_sh, def_sh, hp, fm_obj, cm_obj);
             const tdo = GetTDO(dps, hp, def);
             const tdo_sh = GetTDO(dps_sh, hp, def_sh);
-            // metrics from Reddit user u/Elastic_Space
-            const rat = GetMetric(dps, tdo);
-            const rat_sh = GetMetric(dps_sh, tdo_sh);
+            const rat = GetMetric(dps, tdo, pkm_obj);
+            const rat_sh = GetMetric(dps_sh, tdo_sh, pkm_obj);
 
             // calculates average rating percentages against max stats
             if (max_stats) {
                 const max_dps = GetDPS(types, max_stats.atk, max_stats.def,
                     max_stats.hp, fm_obj, cm_obj);
                 const max_tdo = GetTDO(max_dps, max_stats.hp, max_stats.def);
-                // metrics from Reddit user u/Elastic_Space
-                const max_rat = GetMetric(max_dps, max_tdo);
+                const max_rat = GetMetric(max_dps, max_tdo, pkm_obj);
 
                 rat_pcts_vs_max += rat / max_rat;
                 rat_sh_pcts_vs_max += rat_sh / max_rat;

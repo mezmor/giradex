@@ -356,7 +356,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow,
                     fm_mult, cm_mult, enemy_def, enemy_y);
                 const tdo = GetTDO(dps, hp, def, enemy_y);
                 // metrics from Reddit user u/Elastic_Space
-                const rat = GetMetric(dps, tdo, enemy_stats ? enemy_stats.hp : undefined);
+                const rat = GetMetric(dps, tdo, pkm_obj, enemy_params);
                 all_ratings.push({rat: rat, dps: dps, tdo: tdo});
             }
 
@@ -567,15 +567,17 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 500) {
 /**
  * Give the effective DPS when accounting for relobbying after every 6 deaths
  */
-function GetEDPS(dps, tdo, hp = 15000) {
-    const RAID_PARTY_SIZE = 6;
-    const REJOIN_TIME = 10;
+function GetEDPS(dps, tdo, pkm_obj = null, enemy_params = null) {
+    const RESPAWN_TIME = 1;
+    const REJOIN_TIME = settings_relobbytime;
+    const RAID_PARTY_SIZE = (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY") ? settings_team_size_mega : settings_team_size_normal;
+    const hp = (enemy_params && enemy_params.stats && enemy_params.stats.hp) ? enemy_params.stats.hp : 1000000000;
 
     const tof = tdo/dps;
     const lives = hp / tdo; // total number of attacker-lives needed to kill raid boss
     const deaths = Math.ceil(lives)-1; // total number of deaths experienced
     const relobbies = Math.floor(deaths / RAID_PARTY_SIZE); // total relobby penalties incurred (1 relobby per certain # of deaths)
-    const ttw = (lives * tof + REJOIN_TIME * relobbies); // total battle time (time spent attacking + time spent relobbying)
+    const ttw = (lives * tof + (deaths-relobbies) * RESPAWN_TIME + REJOIN_TIME * relobbies); // total battle time (time spent attacking + time spent relobbying)
 
     // naive formula
     //const edps = (RAID_PARTY_SIZE * tdo) / (RAID_PARTY_SIZE * tof + REJOIN_TIME);
@@ -583,10 +585,10 @@ function GetEDPS(dps, tdo, hp = 15000) {
     return hp / ttw;
 }
 
-function GetMetric(dps, tdo, hp) {
+function GetMetric(dps, tdo, pkm_obj = null, enemy_params = null) {
     switch (settings_metric) {
         case "eDPS":
-            return GetEDPS(dps, tdo, hp);
+            return GetEDPS(dps, tdo, pkm_obj, enemy_params);
         default:
             // metrics from Reddit user u/Elastic_Space
             return Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);

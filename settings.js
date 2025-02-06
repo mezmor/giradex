@@ -8,16 +8,19 @@ METRICS.add("DPS");
 METRICS.add("TDO");
 METRICS.add("eDPS");
 let settings_metric = "eDPS";
-let settings_metric_exp = 0.225;
 let settings_default_level = [40];
 let settings_xl_budget = false;
 let settings_pve_turns = true;
 let settings_strongest_count = 20;
 let settings_compare = "budget";
 let settings_tiermethod = "jenks";
-
-// BETA
 let settings_party_size = 1;
+let settings_relobbytime = 10;
+let settings_team_size_normal = 6;
+let settings_team_size_mega = 6;
+
+// inaccessible
+let settings_metric_exp = 0.225;
 let settings_newdps = true;
 
 /**
@@ -59,6 +62,11 @@ function BindSettings() {
     $("#pp-2").click(function() { SetPartySize(2); });
     $("#pp-3").click(function() { SetPartySize(3); });
     $("#pp-4").click(function() { SetPartySize(4); });
+
+    // Raid Team Size
+    $("#rt-1").click(function() { SetTeamSize(1, 1); });
+    $("#rt-6").click(function() { SetTeamSize(6, 6); });
+    $("#rt-m1").click(function() { SetTeamSize(6, 1); });
 
     // Pokemon Lvl
     $("#lvl-40").click(function() { SetDefaultLevel([40], false); });
@@ -204,6 +212,32 @@ function SetPartySize(party_size) {
     $("#pp-4").removeClass("settings-opt-sel");
     
     $("#pp-" + party_size.toString()).addClass("settings-opt-sel");
+
+    // reload page
+    CheckURLAndAct();
+}
+
+/**
+ * Sets the size of raid team as an eDPS calculation parameter
+ * and updates the page accordingly.
+ */
+function SetTeamSize(normal_mon_count, mega_count) {
+    normal_mon_count = Math.max(1, Math.min(parseInt(normal_mon_count), 6));
+    mega_count = Math.max(1, Math.min(parseInt(mega_count), 6));
+
+    // sets global variable
+    settings_team_size_normal = normal_mon_count;
+    settings_team_size_mega = mega_count;
+
+    // sets settings options selected class
+    $("#rt-1").removeClass("settings-opt-sel");
+    $("#rt-6").removeClass("settings-opt-sel");
+    $("#rt-m1").removeClass("settings-opt-sel");
+    
+    if (normal_mon_count == mega_count && (normal_mon_count == 1 || normal_mon_count == 6))
+        $("#rt-" + normal_mon_count.toString()).addClass("settings-opt-sel");
+    else if (normal_mon_count == 6 && mega_count == 1)
+        $("#rt-m1").addClass("settings-opt-sel");
 
     // reload page
     CheckURLAndAct();
