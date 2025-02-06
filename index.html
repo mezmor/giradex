@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
     <title>DialgaDex</title>
     <link rel="icon" type="image/ico" href="favicon.ico"/>
+
     <link rel="stylesheet" href="style_general.css">
     <link rel="stylesheet" href="style_darkmode.css">
     <link rel="stylesheet" href="style_switch.css">
@@ -14,10 +15,18 @@
     <link rel="stylesheet" href="style_autocomplete.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style_mobile.css" media="screen and (max-width:900px)">
+
     <script src="jquery-3.6.0.min.js"></script>
     <script src="autoComplete.js"></script>
-    <script src="pokemon_utils.js"></script>
     <script src="jenks.js"></script>
+    
+    <script src="dataload.js"></script>
+    <script src="settings.js"></script>
+    <script src="pokemon_enums.js"></script>
+    <script src="pokemon_utils.js"></script>
+    <script src="calc.js"></script>
+    <script src="rankings.js"></script>
+    <script src="pokedex.js"></script>
     <script src="index.js"></script>
 </head>
 
@@ -56,6 +65,7 @@
                                     <li>Favors glass cannons</li>
                                     <li><i>TOF-exponent: 0.00</i></li>
                                 </ul></span></span>
+                        <!-- Disable Outdated Metrics
                         <span id=metric-ter class="settings-opt tooltip unselectable">TER
                             <span class="tooltiptext">
                                 <div class="tooltip-title">Time Equivalent Rating</div>
@@ -64,7 +74,7 @@
                                     <li>Best for large raid lobbies</li>
                                     <li><i>TOF-exponent: 0.15</i></li>
                                 </ul></span></span>
-                        <span id=metric-eer class="settings-opt tooltip settings-opt-sel unselectable">EER
+                        <span id=metric-eer class="settings-opt tooltip unselectable">EER
                             <span class="tooltiptext">
                                 <div class="tooltip-title">Estimator Equivalent Rating</div>
                                 <ul>
@@ -78,7 +88,7 @@
                                 <ul>
                                     <li>Deprecated/un-fitted DPS-TDO mix</li>
                                     <li><i>TOF-exponent: 0.25</i></li>
-                                </ul></span></span>
+                                </ul></span></span> -->
                         <span id=metric-tdo class="settings-opt tooltip unselectable">TDO
                             <span class="tooltiptext">
                                 <div class="tooltip-title">Total Damage Output</div>
@@ -87,8 +97,30 @@
                                     <li>Favors bulk</li>
                                     <li><i>TOF-exponent: 1.00</i></li>
                                 </ul></span></span>
+                        <!-- Not yet tuned enough to be comparable to PokeBattler
+                        <span id=metric-estimator class="settings-opt tooltip settings-opt-sel unselectable">Estimator
+                        <span class="tooltiptext">
+                            <div class="tooltip-title">Estimator</div>
+                            <ul>
+                                <li>If all players were using a full party with 6 copies of this mon,
+                                    this is the number of players needed to clear the raid.
+                                </li>
+                                <li>Mixes bulk and DPS by using relobby penalties.</li>
+                                <li><i>Assumes T5 Raid Boss</i></li>
+                                <li><i>Uses 15s Relobby Time</i></li>
+                            </ul></span></span>
+                        -->
+                        <span id=metric-edps class="settings-opt tooltip settings-opt-sel unselectable">eDPS
+                            <span class="tooltiptext">
+                                <div class="tooltip-title">Effective DPS</div>
+                                <ul>
+                                    <li>In an infinite-length raid, this is the actual DPS that would be
+                                        achieved when accounting for the time lost relobbying.
+                                    </li>
+                                    <li><i>Uses 15s Relobby Time</i></li>
+                                </ul></span></span>
                     </div>
-                    <div id=settings-tof-exponent class="tooltip">TOF Exponent → 
+                    <div id=settings-tof-exponent class="tooltip" style="display: none">TOF Exponent → 
                         <span class="tooltiptext">
                             <div class="tooltip-title">Time On Field Exponent</div>
                             <p>Defines the mixture between DPS and TDO</p>
@@ -108,10 +140,10 @@
                                     <li>Use stats at Level 50 for non-Legendaries</li>
                                     <li>Helps adjust for the scarcity of rare XL candies</li>
                                 </ul></span></span>
-                        <span id=lvl-both class="settings-opt unselectable tooltip">40+50
-                            <span class="tooltiptext">Shows both level 40 and level 50 entries in type ranks, otherwise uses level 40 for PokeDex</span></span>
+                        <!--<span id=lvl-both class="settings-opt unselectable tooltip">40+50
+                            <span class="tooltiptext">Shows both level 40 and level 50 entries in type ranks, otherwise uses level 40 for PokeDex</span></span>-->
                     </div>
-                    <div id=settings-rescale class="tooltip">Rescale Effectiveness 
+                    <!--<div id=settings-rescale class="tooltip">Rescale Effectiveness 
                         <span class="tooltiptext">
                             <p>Corrects for type effectiveness multipliers.</p>
                             <p>Forces ratings to a common scale, allowing them to be compared more easily.</p></span>
@@ -119,8 +151,8 @@
                             <input id=chk-rescale type=checkbox value=rescale checked>
                             <span class="slider"></span>
                         </label>
-                    </div>
-                    <div id=settings-pve-turns class="tooltip">Turn-Based PvE
+                    </div>-->
+                    <div id=settings-pve-turns class="tooltip" style="display: none">Turn-Based PvE
                         <span class="tooltiptext">
                             <div class="tooltip-title">PvE using 0.5s "Turns"</div>
                             <ul>
@@ -135,7 +167,7 @@
                             <span class="slider"></span>
                         </label>
                     </div>
-                    <div class=settings-subtitle><i>Beta</i> Features</div>
+                    <!--<div class=settings-subtitle><i>Beta</i> Features</div>-->
                     <div id=settings-party><span class="tooltip">Party Power →
                         <span class="tooltiptext">
                             <p>Size of party when computing party power boosts</p>
@@ -145,6 +177,7 @@
                         <span id=pp-3 class="settings-opt unselectable">3</span>
                         <span id=pp-4 class="settings-opt unselectable">4</span>
                     </div>
+                    <!-- Don't allow "old" dps if we know it's worse
                     <div id=settings-newdps><span class="tooltip">New DPS Calculation
                         <span class="tooltiptext">
                             <p>Uses a higher value for incoming damage estimates.</p>
@@ -154,7 +187,7 @@
                             <input id=chk-newdps type=checkbox value=newdps checked>
                             <span class="slider"></span>
                         </label>
-                    </div>
+                    </div>-->
                     <div class=settings-subtitle>Display</div>
                     <div id=settings-showstrongest class="tooltip">Show strongest →
                         <span class="tooltiptext">Number of rows to display in "Strongest" Tables</span>
@@ -182,7 +215,7 @@
                                 </ul>
                                 <p><i>Defined by <a href="http://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
                                 <p><i>Used in infographics by <a href="http://reddit.com/u/bulbavisual">/u/bulbavisual</a></i></p>
-                        </span></span>
+                            </span></span>
                         <span id=cmp-top class="settings-opt unselectable tooltip">Best
                             <span class="tooltiptext">Compare to the absolute best Pokemon</span></span>
                     </div>
@@ -198,7 +231,7 @@
                                 <p>Tiers with hardcoded breakpoints at every 10%</p>
                                 <p><i>Defined by <a href="http://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
                             </span></span>
-                        <span id=tier-abs class="settings-opt unselectable tooltip">Absol
+                        <span id=tier-abs class="settings-opt unselectable tooltip">Absolute
                             <span class="tooltiptext">
                                 <p>Absolute tiers based on only the displayed rating</p>
                                 <ul>
@@ -250,8 +283,8 @@
         <div class=pokemon-containers id=additional-containers></div>
     </div>
 
-    <!-- pokemon go stats and moves table -->
-    <div id=pokemongo>
+    <!-- pokedex stats and moves table -->
+    <div id=pokedex-page>
         <div id=not-released>
             <br>
             <p class="center">Not found in the <b>Pokémon GO</b> files yet :(</p>
@@ -376,11 +409,11 @@
             </div>
             </div>
             <p class="center" id="movesets-title"></p>
-            <table class=table-bg id=pokemongo-table>
+            <table class=table-bg id=pokedex-move-table>
                 <thead>
                     <tr class=table-header>
                         <th style="position: relative">
-                            <button class="plus-button tooltip" id="pokemongo-add-any" onclick="ShowMoveInput(this, 'any')">+
+                            <button class="plus-button tooltip" id="pokedex-add-any" onclick="ShowMoveInput(this, 'any')">+
                                 <div class="tooltiptext">
                                     <div class="tooltip-title">Add a new Move</div>
                                     <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
@@ -388,7 +421,7 @@
                             </button>
                             <span style="position: relative">
                                 Fast<br>Move
-                                <button class="plus-button tooltip" id="pokemongo-add-fast" onclick="ShowMoveInput(this, 'fast')">+
+                                <button class="plus-button tooltip" id="pokedex-add-fast" onclick="ShowMoveInput(this, 'fast')">+
                                     <div class="tooltiptext">
                                         <div class="tooltip-title">Add a new Fast Move</div>
                                         <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
@@ -399,7 +432,7 @@
                         <th>
                             <span style="position: relative">
                                 Charged<br>Move
-                                <button class="plus-button tooltip" id="pokemongo-add-charged" onclick="ShowMoveInput(this, 'charged')">+
+                                <button class="plus-button tooltip" id="pokedex-add-charged" onclick="ShowMoveInput(this, 'charged')">+
                                     <div class="tooltiptext">
                                         <div class="tooltip-title">Add a new Charged Move</div>
                                         <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
@@ -411,10 +444,10 @@
                         <th>DPS<br>(Shadow)</th>
                         <th>TDO</th>
                         <th>TDO<br>(Shadow)</th>
-                        <th id=table-metric-header class=sortable onclick=SortPokemongoTable(6)>
-                            EER <span class=th-triangle>▿</span>
+                        <th id=table-metric-header class=sortable onclick=SortPokedexTable(6)>
+                            eDPS <span class=th-triangle>▿</span>
                         </th>
-                        <th id=table-metric-header-sh>EER<br>(Shadow)</th>
+                        <th id=table-metric-header-sh>eDPS<br>(Shadow)</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -424,8 +457,8 @@
                     </ul></td>
                 </tr></tfoot>
             </table>
-        </div> <!-- end of 'released' div -->
-    </div> <!-- end of 'pokemongo' div -->
+        </div>
+    </div>
 
     <!-- strongest pokemon section -->
     <div id=strongest>
