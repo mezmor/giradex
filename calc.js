@@ -243,7 +243,7 @@ function ProcessPower(move_obj) {
  * 'enemy_params' contains moves, types, weakness (defensive mults),  
  *      stats, and enemy_ys[]
 */
-function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow,
+function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
     enemy_params, search_params) {
 
     const num_movesets = search_params.suboptimal ? 5 : 1;
@@ -254,7 +254,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow,
     // subject data
     const types = pkm_obj.types;
     const effectiveness = GetTypesEffectivenessAgainstTypes(types);
-    const stats = GetPokemonStats(pkm_obj);
+    const stats = GetPokemonStats(pkm_obj, level);
     const atk = (shadow) ? (stats.atk * 6 / 5) : stats.atk;
     const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
     const hp = stats.hp;
@@ -509,8 +509,8 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 500) {
      * Checks if any of the movesets of a specific pokemon is stronger than any
      * of the current counters. If it is, updates the counters arrays.
      */
-    function UpdateIfStronger(pkm_obj, shadow) {
-        const movesets = GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, enemy_params, search_params);
+    function UpdateIfStronger(pkm_obj, shadow, level, search_params) {
+        const movesets = GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level, enemy_params, search_params);
         if (movesets.length == 0)
             return;
 
@@ -539,6 +539,7 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 500) {
                     id: pkm_obj.id,
                     name: pkm_obj.name, form: pkm_obj.form,
                     shadow: shadow, class: pkm_obj.class,
+                    level: level,
                     fm: moveset.fm, fm_is_elite: moveset.fm_is_elite,
                     fm_type: moveset.fm_type,
                     cm: moveset.cm, cm_is_elite: moveset.cm_is_elite,

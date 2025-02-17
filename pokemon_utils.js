@@ -273,31 +273,36 @@ function SearchAll(search_params, f_process_pokemon) {
             continue;
         }
     
-        // default form
-        f_process_pokemon(pkm_obj, false, search_params);
-    
-        // shadow (except not released when it shouldn't)
-        if (search_params.shadow && pkm_obj.shadow
-            && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
-                f_process_pokemon(pkm_obj, true, search_params);
-        }
-    
-        // other forms
-        for (let form_i = 1; form_i < forms.length; form_i++) {
-    
-            pkm_obj = jb_pkm.find(entry =>
-                    entry.id == id && entry.form == forms[form_i]);
-    
-            // checks whether pokemon should be skipped (form not released)
-            if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
-                || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")))
-                continue;
-    
-            f_process_pokemon(pkm_obj, false, search_params);                                                    
-            // other forms and shadow (except not released when it shouldn't)
+        for (let level of settings_default_level) {
+            if (pkm_obj.class == undefined && settings_xl_budget)
+                level = 50;
+
+            // default form
+            f_process_pokemon(pkm_obj, false, level, search_params);
+        
+            // shadow (except not released when it shouldn't)
             if (search_params.shadow && pkm_obj.shadow
                 && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
-                    f_process_pokemon(pkm_obj, true, search_params);
+                    f_process_pokemon(pkm_obj, true, level, search_params);
+            }
+        
+            // other forms
+            for (let form_i = 1; form_i < forms.length; form_i++) {
+        
+                pkm_obj = jb_pkm.find(entry =>
+                        entry.id == id && entry.form == forms[form_i]);
+        
+                // checks whether pokemon should be skipped (form not released)
+                if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)
+                    || (!search_params.mega && (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")))
+                    continue;
+        
+                f_process_pokemon(pkm_obj, false, level, search_params);                                                    
+                // other forms and shadow (except not released when it shouldn't)
+                if (search_params.shadow && pkm_obj.shadow
+                    && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
+                        f_process_pokemon(pkm_obj, true, level, search_params);
+                }
             }
         }
     }
