@@ -34,7 +34,7 @@
     }
 
     label.togglebutton {
-        background-color: #505050;
+        background-color: var(--col-bar-fg);
     }
 
     .switch {
