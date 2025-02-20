@@ -100,9 +100,9 @@ jenksMatrices = function(data, n_classes) {
 	};
 };
 
-// # [Jenks natural breaks optimization](http://en.wikipedia.org/wiki/Jenks_natural_breaks_optimization)
+// # [Jenks natural breaks optimization](https://en.wikipedia.org/wiki/Jenks_natural_breaks_optimization)
 //
-// Implementations: [1](http://danieljlewis.org/files/2010/06/Jenks.pdf) (python),
+// Implementations: [1](https://danieljlewis.org/files/2010/06/Jenks.pdf) (python),
 // [2](https://github.com/vvoovv/djeo-jenks/blob/master/main.js) (buggy),
 // [3](https://github.com/simogeo/geostats/blob/master/lib/geostats.js#L407) (works)
 
