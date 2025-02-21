@@ -186,6 +186,7 @@ function GetComparisonMon(str_pokemons) {
                                                     e.form != "Mega" && e.form != "MegaY" &&
                                                     !(e.name == 'Rayquaza' && e.cm == 'Dragon Ascent') &&
                                                     !(e.name == 'Necrozma' && e.form != 'Normal') &&
+                                                    !(e.name == 'Kyurem' && e.form != 'Normal') &&
                                                     e.name != "Mew" && e.name != "Celebi" && e.name != "Jirachi" &&
                                                     e.name != "Victini" && e.name != "Keldeo" && e.name != "Meloetta" &&
                                                     e.name != "Shaymin" && e.name != "Diancie" && e.name != "Zarude" &&
