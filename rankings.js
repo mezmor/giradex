@@ -29,6 +29,32 @@ function BindRankings() {
     });
 }
 
+/**
+ * Gets the search parameters
+ * The type can be 'each', 'any' or an actual type.
+ */
+function GetSearchParms(type, versus) {
+    let search_params = {
+        versus,
+        type
+    };
+    search_params.unreleased =
+        $("#strongest input[value='unreleased']:checkbox").is(":checked");
+    search_params.mega =
+        $("#strongest input[value='mega']:checkbox").is(":checked");
+    search_params.shadow =
+        $("#strongest input[value='shadow']:checkbox").is(":checked");
+    search_params.legendary =
+        $("#strongest input[value='legendary']:checkbox").is(":checked");
+    search_params.elite =
+        $("#strongest input[value='elite']:checkbox").is(":checked");
+    search_params.suboptimal =
+        $("#strongest input[value='suboptimal']:checkbox").is(":checked");
+    search_params.mixed =
+        $("#strongest input[value='mixed']:checkbox").is(":checked");
+    return search_params;
+}
+
 
 /**
  * Loads the list of the strongest pokemon of a specific type in pokemon go.
@@ -97,25 +123,7 @@ function LoadStrongest(type = "Any") {
     // removes previous table rows
     $("#strongest-table tbody tr").remove();
 
-    // gets checkboxes filters
-    let search_params = {};
-    search_params.unreleased =
-        $("#strongest input[value='unreleased']:checkbox").is(":checked");
-    search_params.mega =
-        $("#strongest input[value='mega']:checkbox").is(":checked");
-    search_params.shadow =
-        $("#strongest input[value='shadow']:checkbox").is(":checked");
-    search_params.legendary =
-        $("#strongest input[value='legendary']:checkbox").is(":checked");
-    search_params.elite =
-        $("#strongest input[value='elite']:checkbox").is(":checked");
-    search_params.suboptimal =
-        $("#strongest input[value='suboptimal']:checkbox").is(":checked");
-    search_params.mixed =
-        $("#strongest input[value='mixed']:checkbox").is(":checked");
-    search_params.versus = 
-        versus_chk.is(":checked");
-    search_params.type = type;
+    const search_params = GetSearchParms(type, versus_chk.is(":checked"));
 
     if (type == "Each") {
         str_pokemons = SetRankingTable(GetStrongestOfEachType(search_params));
@@ -129,7 +137,7 @@ function LoadStrongest(type = "Any") {
                         || settings_metric == 'TER'))
             str_pokemons.forEach(str_pok => str_pok.rat /= 1.6);*/
 
-        ProcessAndGroup(str_pokemons, type);
+        ProcessAndGroup(str_pokemons, type, settings_strongest_count);
         SetRankingTable(str_pokemons, settings_strongest_count, true, true, true);
     }
 
@@ -205,7 +213,7 @@ function GetComparisonMon(str_pokemons) {
  * Group pokemon if needed, with ratings relative to best moveset.
  * Else build tiers and calculate ratings relative to a baseline.
  */
-function ProcessAndGroup(str_pokemons, type) {
+function ProcessAndGroup(str_pokemons, type, strongest_count) {
     const display_grouped = $("#strongest input[value='grouped']:checkbox").is(":checked") 
         && $("#strongest input[value='suboptimal']:checkbox").is(":checked");
         
@@ -213,7 +221,7 @@ function ProcessAndGroup(str_pokemons, type) {
 
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
-        str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); //truncate to top movesets early
+        str_pokemons.length = Math.min(str_pokemons.length, strongest_count); //truncate to top movesets early
 
         let str_pokemons_optimal = new Map(); // map of top movesets per mon
         let rat_order = 0;
@@ -247,7 +255,7 @@ function ProcessAndGroup(str_pokemons, type) {
         }
         BuildTiers(str_pokemons, top_compare, type);
     
-        str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); // truncate late so all movesets could be evaluated
+        str_pokemons.length = Math.min(str_pokemons.length, strongest_count); // truncate late so all movesets could be evaluated
     }
 }
 

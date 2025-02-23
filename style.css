@@ -527,11 +527,30 @@ span.poke-form-name, .poke-number {
     font-size: 1.25em;
 }
 
+#attack-tiers {
+    margin-top: 1em;
+}
+
+#attack-tiers .shadow-icon {
+    width: 16px;
+}
+
+#attack-tiers td { 
+    text-align: left;
+    padding: 2px .5em;
+}
+
+#attack-tiers .type-text {
+    margin-right: 0.5em;
+}
+
+#attack-tiers,
 #effectiveness {
     width: 85%;
     margin-left: 15%;
 }
 
+#attack-tiers a,
 #effectiveness a { cursor: pointer; }
 
 #effectiveness table td, #effectiveness table th {
@@ -539,16 +558,20 @@ span.poke-form-name, .poke-number {
     text-align: left;
 }
 
+#attack-tiers table tr:nth-child(1) td:nth-child(1),
 #effectiveness table tr:nth-child(1) td:nth-child(1) {
     width: 15%;
     text-align: center;
     border: 1px solid var(--col-off);
 }
 
+#attack-tiers table tr:nth-child(1) td:nth-child(2),
 #effectiveness table tr:nth-child(1) td:nth-child(2) {
     border-top: 1px solid var(--col-off);
 }
 
+#attack-tiers table tr:nth-child(1) td:nth-child(2),
+#attack-tiers table tr:not(:nth-child(1)) td:nth-child(1),
 #effectiveness table tr:nth-child(1) td:nth-child(2),
 #effectiveness table tr:not(:nth-child(1)) td:nth-child(1) {
     width: 7.5%;
@@ -558,6 +581,7 @@ span.poke-form-name, .poke-number {
     border-left: 1px solid var(--col-off);
 }
 
+#attack-tiers table tr:nth-last-child(1) td:nth-child(1),
 #effectiveness table tr:nth-child(5) td:nth-child(1) {
     border-bottom: 1px solid var(--col-off);
 }

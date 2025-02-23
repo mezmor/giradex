@@ -614,6 +614,9 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     const def = stats.def;
     const hp = stats.hp;
 
+    // cache attack tiers
+    const attackTiers = {};
+
     // shadow stats
     const atk_sh = atk * 6 / 5;
     const def_sh = def * 5 / 6;
@@ -641,6 +644,37 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     let rat_sh_pcts_vs_max = 0;
     let num_movesets = 0;
 
+    /**
+     * Builds the tier mapping by attack type. Iterates all pokemon
+     * entries and saves the highest rated shadow and non-shadow
+     * tier for the specified type
+     */
+    function MapPokemonAttacks(type) {
+        if (!!attackTiers[type]) {
+            return;
+        }
+
+        const search_params = {
+            ...GetSearchParms(null, false),
+            type,
+        };
+        const pokemon = GetStrongestOfOneType(search_params);
+        ProcessAndGroup(pokemon, type, Number.MAX_VALUE);
+
+        attackTiers[type] = [];
+        for (let entry of pokemon) {
+            if (entry.id !== pkm_obj.id || entry.form !== pkm_obj.form) {
+                continue;
+            }
+
+            // make shadow array-like for easier evaluation later
+            const isShadow = Number(entry.shadow);
+            if (!attackTiers[type][isShadow] || entry.rat > attackTiers[type][isShadow].rat) {
+                attackTiers[type][isShadow] = entry;
+            }
+        }
+    }
+
     // appends new table rows asynchronously (so that Mew loads fast)
     // each chunk of moves combinations with a specific fast move
     // is appended in a different frame
@@ -667,8 +701,9 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
         }
 
         const fm_type = fm_obj.type;
+        MapPokemonAttacks(fm_type);
 
-        for (cm of all_cms) {
+        for (let cm of all_cms) {
 
             const cm_is_elite = elite_cms.includes(cm);
 
@@ -678,6 +713,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
                 continue;
 
             const cm_type = cm_obj.type;
+            MapPokemonAttacks(cm_type);
 
             // calculates the data
 
@@ -780,10 +816,44 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     // appends the first fast move chunk
     AppendFMChunk(0, function() {
         SortPokedexTable(6, 7);
+        BuildAttackTiers(pkm_obj.name, attackTiers);
         loading_pogo_moves = false;
     });
 }
+function BuildAttackTierLabel(entry) {
+    const shadow = entry.shadow ? '<img src="imgs/flame.svg" class="shadow-icon filter-shadow">' : '';
+    return $(`<span style="position: relative;" class='type-text tier-${entry.tier}'>${entry.tier}${shadow}</span>`);
+}
 
+
+/**
+ * Builds the attack 
+ */
+function BuildAttackTiers(name, attackTiers) {
+    const table_container = $("#attack-tiers table tbody");
+    table_container.empty();
+    const types = Object.keys(attackTiers).sort((a, b) => 
+        attackTiers[b].reduce((acc, b) => acc + b.rat ?? 0, 0) - 
+        attackTiers[a].reduce((acc, b) => acc + b.rat ?? 0, 0)
+    ).filter(type => attackTiers[type].some(at => at.tier));
+
+    let firstRow = true;
+    for (let type of types) {
+        const attackTier = attackTiers[type];
+        const type_container = $(`<tr><td><a class='type-text bg-${type}' onClick='LoadStrongestAndUpdateURL("${type}", false)'>${type}</a></td></tr>`);
+
+        if (firstRow) {
+            type_container.prepend(`<td rowspan="${types.length}"><b>${name}'s</b> tier ranking by attack type</td>`);
+        }
+
+        const tier_cell = $("<td></td>");
+        tier_cell.append(attackTier.map(entry => BuildAttackTierLabel(entry)));
+        type_container.append(tier_cell);
+
+        table_container.append(type_container);
+        firstRow = false;
+    }
+}
 
 /**
  * Sorts the pokemon go moves combinations table rows according to the

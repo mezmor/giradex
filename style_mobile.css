@@ -201,7 +201,7 @@ body {
         width: 0%;
     }
 
-    #effectiveness {
+    #attack-tiers, #effectiveness {
         margin-left: 0%;
         width: 100%;
     }
