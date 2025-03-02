@@ -16,7 +16,7 @@ function GetPokemonStats(pkm_obj, level = null, ivs = null) {
 
     stats.atk = (stats.baseAttack + ivs.atk) * cpm;
     stats.def = (stats.baseDefense + ivs.def) * cpm;
-    stats.hp = Math.floor((stats.baseStamina + ivs.hp) * cpm);
+    stats.hp = (stats.baseStamina + ivs.hp) * cpm;
 
     return {...stats}; // returns by copy to prevent reassignment of reference
 }
