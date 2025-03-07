@@ -33,6 +33,7 @@
     <script src="calc.js"></script>
     <script src="rankings.js"></script>
     <script src="pokedex.js"></script>
+    <script src="moves.js"></script>
     <script src="index.js"></script>
 </head>
 
@@ -283,10 +284,13 @@
 
     <!-- search bar and strongest button -->
     <div id=page-nav class=center>
-        <div id=strongest-button-c><p id=strongest-button class="small-text off">or see the <a id=strongest-link href=#>strongest list</a></p></div>
-        <p id=search-label class="center small-text off no-top-m">search a Pokémon name or id...</p>
+        <div id=nav-links-c class="small-text">
+            <a id=rankings-link href=#>Attacker Rankings</a> | 
+            <a id=moves-link href=#>Move Data</a> |
+            <a id=typechart-link href=#>Type Chart</a>
+        </div>
         <form id=poke-search autocomplete=off>
-            <input id=poke-search-box type=text>
+            <input id=poke-search-box type=text placeholder="Search for a Pokémon">
         </form>
     </div>
 
@@ -428,7 +432,7 @@
             </div>
             </div>
             <p class="center" id="movesets-title"></p>
-            <table class=table-bg id=pokedex-move-table>
+            <table class="table-bg move-table" id=pokedex-move-table>
                 <thead>
                     <tr class=table-header>
                         <th style="position: relative">
@@ -482,7 +486,7 @@
     <!-- strongest pokemon section -->
     <div id=strongest>
         <!--<p class="center small-text off no-bottom-m">select what type's strongest Pokémon you want to see</p>-->
-        <div id=strongest-links class="small-text unselectable">
+        <div id=strongest-links class="small-text unselectable type-links">
             <ul>
                 <li><a class="type-text bg-any-type" onclick="LoadStrongestAndUpdateURL('Any')">All types</a></li>
                 <li><a class="type-text bg-any-type" onclick="LoadStrongestAndUpdateURL('Each')">Each type</a></li>
@@ -490,8 +494,8 @@
             <ul id=strongest-links-types></ul>
         </div>
         <br>
-        <div id=strongest-header>
-            <div width=100% class=center id=strongest-title>
+        <div id=strongest-header class="table-header-options">
+            <div width=100% class="center table-title">
                 <span>Strongest Pokemon </span>
                 <input type='checkbox' class='toggling' value='versus' id='chk-versus' unchecked>
                 <label class='togglebutton' for='chk-versus'>
@@ -572,6 +576,47 @@
             </tr></tfoot>
         </table>
     </div> <!-- end of 'strongest' div -->
+
+    <!-- Move List -->
+    <div id=move-data>
+        <div id=move-type-links class="small-text unselectable type-links">
+            <ul>
+                <li><a class="type-text bg-any-type" onclick="LoadMovesAndUpdateURL('Any')">All types</a></li>
+            </ul>
+            <ul id=move-type-links-bytype></ul>
+        </div>
+        <br>
+        <div id=move-data-header class="table-header-options">
+            <div width=100% class="center table-title">
+                <input type='checkbox' class='toggling' value='charged' id='chk-move-kind' unchecked>
+                <label class='togglebutton' for='chk-move-kind'>
+                    <div class='action'>
+                        <span class='option-1'>Fast</span>
+                        <span class='option-2'>Charged</span>
+                    </div>
+                </label>
+                <span> Move Data for </span>
+                <span id="move-type-title"></span>
+                <span> type</span>
+            </div>
+        </div>
+        <table class="table-bg move-table" id=move-data-table>
+            <thead>
+                <tr class=table-header>
+                    <th class=sortable>Move</th>
+                    <th class=sortable>Power</th>
+                    <th class=sortable>Energy</th>
+                    <th class=sortable>Duration</th>
+                    <th class=sortable>P/S</th>
+                    <th class=sortable>E/S</th>
+                    <th class=sortable id=ppe>P/E</th>
+                    <th class=sortable id=move-metric>PE/S<sup class="small-text">2</sup></th>
+                    <th>Top Users</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
     <!-- technical information legend and sources, and footer -->
     <div id=legend>

@@ -64,10 +64,16 @@ function BindAll() {
     BindSettings();
     BindPokeDex();
     BindRankings();
+    BindMoveData();
 
     // Link to Rankings Lists
-    $("#strongest-link").click(function() {
+    $("#rankings-link").click(function() {
         LoadStrongestAndUpdateURL("Any", false);
+        return false;
+    });
+    // Link to Move Data Lists
+    $("#moves-link").click(function() {
+        LoadMovesAndUpdateURL("Any");
         return false;
     });
     
@@ -141,6 +147,34 @@ function CheckURLAndAct() {
 
         // loads strongest (default)
         LoadStrongest();
+
+        return;
+    }
+
+    // if url has 'moves' param...
+    if (params.has("moves")) {
+
+        // preserve move-kind param
+        $("#chk-move-kind").prop("checked", params.get("moves") == "charged");
+
+        // if url has 't' param...
+        if (params.has("t")) {
+
+            // sets type to 't' value with first char as upper and rest as lower
+            let type = params.get("t");
+            type = type.charAt(0).toUpperCase()
+                + type.slice(1).toLowerCase();
+            
+            if (type == "Any")
+                LoadMoves("Any");
+            else if (POKEMON_TYPES.has(type))
+                LoadMoves(type);
+
+            return;
+        }
+
+        // loads strongest (default)
+        LoadMoves();
 
         return;
     }

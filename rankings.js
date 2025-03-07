@@ -48,6 +48,8 @@ function LoadStrongest(type = "Any") {
         $("#strongest").css("display", "initial");
     if ($("#legend").css("display") == "none")
         $("#legend").css("display", "initial");
+    if ($("#move-data").css("display") != "none")
+        $("#move-data").css("display", "none");
 
     // Only enable suboptimal filters if we're searching a specific type (not "Each")
     if (type == null)
@@ -58,19 +60,19 @@ function LoadStrongest(type = "Any") {
     // sets links
     let strongest_link_any = $("#strongest-links > ul:first() > li:nth-child(1)");
     let strongest_link_each = $("#strongest-links > ul:first() > li:nth-child(2)");
-    strongest_link_any.removeClass("strongest-link-selected");
-    strongest_link_each.removeClass("strongest-link-selected");
+    strongest_link_any.removeClass("selected");
+    strongest_link_each.removeClass("selected");
     if (type == "Any")
-        strongest_link_any.addClass("strongest-link-selected");
+        strongest_link_any.addClass("selected");
     else if (type == "Each")
-        strongest_link_each.addClass("strongest-link-selected");
+        strongest_link_each.addClass("selected");
     let links_types = $("#strongest-links-types");
     links_types.empty();
 
     let ndx = 0;
     for (const t of POKEMON_TYPES) {
         links_types.append("<li><a class='type-text bg-" + t
-                + ((t == type) ? " strongest-link-selected" : "")
+                + ((t == type) ? " selected" : "")
                 + "' onclick='LoadStrongestAndUpdateURL(\"" + t
                 + "\")'>" + t + "</a></li>");
         if ((ndx+1) % 6 == 0) { //every 6th type

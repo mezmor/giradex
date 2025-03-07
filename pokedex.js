@@ -33,6 +33,8 @@ function LoadPokedex(pokedex_mon) {
 
     const forms = GetPokemonForms(pokedex_mon.pokemon_id);
     const def_form = forms[0];
+    
+    window.scrollTo(0,0);
 
     // sets main pokemon container
     $("#main-container").append(GetPokemonContainer(pokedex_mon.pokemon_id,
@@ -83,6 +85,8 @@ function LoadPokedex(pokedex_mon) {
         $("#counters").css("display", "none");
     if ($("#counters-popup").css("display") != "none")
         $("#counters-popup").css("display", "none");
+    if ($("#move-data").css("display") != "none")
+        $("#move-data").css("display", "none");
 
     LoadPokedexData(pokedex_mon);
 }
@@ -1049,11 +1053,13 @@ function ShowMoveInput(caller, moveType) {
             if (!current_pkm_obj.elite_fm) 
                 current_pkm_obj.elite_fm = [];
             current_pkm_obj.elite_fm.push(newMove);
+            BuildMoveUserMap(true);
         }
         else if (moveType == "charged" || (moveType == "any" && jb_cm.map(e => e.name).includes(newMove))) {
             if (!current_pkm_obj.elite_cm) 
                 current_pkm_obj.elite_cm = [];
             current_pkm_obj.elite_cm.push(newMove);
+            BuildMoveUserMap(true);
         }
 
         $(moveSearch.wrapper).remove();
