@@ -696,6 +696,7 @@ span.poke-form-name, .poke-number {
 .move-table .sortable {
     cursor: pointer;
     text-decoration: underline;
+    user-select: none;
 }
 
 .move-table td {
@@ -704,12 +705,36 @@ span.poke-form-name, .poke-number {
     text-overflow: ellipsis;
 }
 
+.th-triangle {
+    text-decoration: none;
+    display: inline-block;
+}
+
 #pokedex-move-table tr > *:nth-child(1) { width: 18%; }
 #pokedex-move-table tr > *:nth-child(2) { width: 18%; }
 
-#move-data-table tr > *:nth-child(1) { width: auto; }
-#move-data-table tr > *:nth-child(n+2) { width: 80px; }
-#move-data-table tr > *:last-child { width: 140px; }
+#move-data-table {
+    table-layout: fixed;
+}
+
+#move-data-table tr > * { /* Pad all */
+    height: 37px;
+    color: var(--col-md-off);
+}
+#move-data-table tr > *:nth-child(1) { /* Move Name */
+    width: auto; 
+}
+#move-data-table tr > *:nth-child(n+2) { /* Move Data */
+    width: 90px; 
+    text-align: left;
+}
+#move-data-table tr > *:last-child { /* Users */
+    width: 140px; 
+    text-align: left;
+}
+#move-data-table td.selected {
+    color: var(--col-main);
+}
 
 #strongest, #pokedex, #move-data { display: none; }
 
@@ -794,12 +819,14 @@ sup.xl {
     margin: 5px;
     border: 1px solid var(--col-dark-bg);
     box-sizing: content-box;
+    text-align: left;
 }
 
 .bar-fg {
     background-color: var(--col-light);
     text-align: left;
     box-sizing: content-box;
+    display: inline-block;
 }
 
 .bar-txt {

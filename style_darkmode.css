@@ -1,6 +1,7 @@
 .darkmode {
     --col-bg: #0b0b28;
     --col-main: White;
+    --col-md-off: #dcdcdc;
     --col-so-off: #343434;
     --col-alt-bg: #222;
     --col-bar-bg: #606060;

@@ -1,4 +1,12 @@
-let top_move_users;
+let top_move_users, all_move_data;
+
+let cur_sort = {
+    move_data: [], 
+    move_type: "Any",
+    move_kind: "Fast", 
+    sort_by: "", 
+    reverse: false
+};
 
 /**
  * Bind event handlers for a move data table
@@ -9,6 +17,7 @@ function BindMoveData() {
         const urlParams = new URLSearchParams(window.location.search);
         
         urlParams.set('moves', this.checked ? "charged" : "fast");
+        cur_sort.sort_by = (this.checked ? "p2pes" : "peps2");
         
         window.history.pushState({}, "", "?" + urlParams.toString().replace(/=(?=&|$)/gm, ''));
         
@@ -25,6 +34,8 @@ function LoadMoves(type = "Any") {
     if (!finished_loading)
         return;
 
+    cur_sort.type = type;
+
     // displays what should be displayed 
     if ($("#pokedex").css("display") != "none")
         $("#pokedex").css("display", "none");
@@ -40,7 +51,7 @@ function LoadMoves(type = "Any") {
     // sets links
     let type_link_any = $("#move-type-links > ul:first() > li:nth-child(1)");
     type_link_any.removeClass("selected");
-    if (type == "Any")
+    if (cur_sort.type == "Any")
         type_link_any.addClass("selected");
     let links_types = $("#move-type-links-bytype");
     links_types.empty();
@@ -48,7 +59,7 @@ function LoadMoves(type = "Any") {
     let ndx = 0;
     for (const t of POKEMON_TYPES) {
         links_types.append("<li><a class='type-text bg-" + t
-                + ((t == type) ? " selected" : "")
+                + ((t == cur_sort.type) ? " selected" : "")
                 + "' onclick='LoadMovesAndUpdateURL(\"" + t
                 + "\")'>" + t + "</a></li>");
         if ((ndx+1) % 6 == 0) { //every 6th type
@@ -59,20 +70,17 @@ function LoadMoves(type = "Any") {
 
     // Handle logic for "versus"
     const move_kind_chk = $("#chk-move-kind");
-    const move_kind = move_kind_chk.prop("checked") ? "Charged" : "Fast";
+    cur_sort.move_kind = move_kind_chk.prop("checked") ? "Charged" : "Fast";
 
     // sets titles
-    let title = move_kind + " Moves of " + type + " type";
+    let title = cur_sort.move_kind + " Moves of " + cur_sort.type + " type";
     document.title = title + " - DialgaDex"; // page title
-    $("#move-type-title").text(type);
-
-    // removes previous table rows
-    $("#move-data-table tbody tr").remove();
+    $("#move-type-title").text(cur_sort.type);
 
     BuildMoveUserMap();
-    SetMoveTable(GetMoveData(type, move_kind), move_kind);
+    cur_sort.move_data = GetMoveData(cur_sort.type, cur_sort.move_kind);
+    SetMoveTable(cur_sort);
 }
-
 
 /**
  * Calls the 'LoadMoves' function and updates the url accordingly.
@@ -82,14 +90,27 @@ function LoadMovesAndUpdateURL(type = "Any", move_kind) {
     if (!finished_loading)
         return false;
 
-    LoadMoves(type);
-
     if (!move_kind) {
         move_kind = $("#chk-move-kind").prop("checked") ? "charged" : "fast";
     }
     let url = "?moves=" + move_kind + "&t=" + type;
 
     window.history.pushState({}, "", url);
+
+    LoadMoves(type);
+}
+
+/**
+ * Updates the move data table with a new sort order
+ */
+function MoveSort(sort_by) {
+    if (cur_sort.sort_by == sort_by)
+        cur_sort.reverse = !cur_sort.reverse;
+    else
+        cur_sort.reverse = false;
+    
+    cur_sort.sort_by = sort_by;
+    SetMoveTable(cur_sort);
 }
 
 /**
@@ -97,19 +118,29 @@ function LoadMovesAndUpdateURL(type = "Any", move_kind) {
  * Also sets the appropriate headers depending on what kind of move is displayed.
  */
 function GetMoveData(type = "Any", move_kind = "Fast") {
-    let move_data = (move_kind == "Charged") ? 
-        jb_cm.filter(e=>(e.type==type||type=="Any")
-            &&e.power < 1000
+    if (all_move_data) {
+        return all_move_data.filter(e=>(e.type==type||type=="Any")
+            &&e.kind==move_kind);
+    }
+
+    all_move_data = [];
+    all_move_data = all_move_data.concat(
+        jb_cm.filter(e=>
+            e.power < 1000
             &&!e.name.includes("Blastoise")
-            &&!['Leech Life', 'Crush Claw', 'Wrap Pink', 'Wrap Green'].includes(e.name)) : 
-        jb_fm.filter(e=>(e.type==type||type=="Any")
-            &&e.name!="Hidden Power");
+            &&!['Leech Life', 'Crush Claw', 'Wrap Pink', 'Wrap Green'].includes(e.name))
+        .map(e=> ({...e, kind: "Charged"})));
+    all_move_data = all_move_data.concat(
+        jb_fm.filter(e=>
+            e.name!="Hidden Power")
+        .map(e=> ({...e, kind: "Fast"})));
         
-    move_data.sort((a,b)=>(a.name.localeCompare(b.name)));
-    //move_data.sort((a,b)=>(a.type.localeCompare(b.type)));
+    all_move_data.sort((a,b)=>(a.name.localeCompare(b.name)));
+    //all_move_data.sort((a,b)=>(a.type.localeCompare(b.type)));
         
-    move_data = move_data.map(e=>({
+    all_move_data = all_move_data.map(e=>({
         name: e.name,
+        kind: e.kind,
         type: e.type,
         power: e.power,
         energy: Math.abs(e.energy_delta),
@@ -122,17 +153,11 @@ function GetMoveData(type = "Any", move_kind = "Fast") {
         p2pes: (e.energy_delta != 0) ? 
             e.power * e.power / (Math.abs(e.energy_delta) * e.duration / 1000) :
             0,
-        epps2: Math.abs(e.energy_delta) * e.power / e.duration * 1000 / e.duration * 1000,
+        peps2: Math.abs(e.energy_delta) * e.power / e.duration * 1000 / e.duration * 1000,
     }));
 
-    if (move_kind == "Charged") {
-        move_data.sort((a,b)=>(b.p2pes-a.p2pes));
-    }
-    else { // "Fast"
-        move_data.sort((a,b)=>(b.epps2-a.epps2));
-    }
-
-    return move_data;
+    return all_move_data.filter(e=>(e.type==type||type=="Any")
+        &&e.kind==move_kind);
 }
 
 const MAX_USERS = 3;
@@ -170,6 +195,13 @@ function BuildMoveUserMap(force_reload = false) {
     }
 }
 
+/** 
+ * Helper function to get an "effective" attack stat for sorting and finding
+ * the Pokemon best able to utilize a move.
+ * 
+ * +20% if a shadow form exists
+ * +100% if type matches (should be +20% for STAB, but this really emphasizes the most typical use)
+ */
 function GetAdjustedAttStat(pkm_obj, move_name) {
     let move_obj = jb_fm.find(e=>e.name==move_name);
     if (!move_obj) move_obj = jb_cm.find(e=>e.name==move_name);
@@ -179,45 +211,99 @@ function GetAdjustedAttStat(pkm_obj, move_name) {
         (pkm_obj.types.includes(move_obj.type) ? 2 : 1); // STAB is 1.2, but really incentivize it here
 }
 
+// Small Factory function for making TDs, to replace some repetition
+function MoveDataTD(innerHTML, is_selected) {
+    return `<td ${(is_selected ? " class='selected'" : "")}>${innerHTML}</td>`;
+}
+
+// Small Factory function for making bars for charged move energy
+function EnergyTD(energy) {
+    let innerHTML = "<td>" 
+        + "<div class='bar-bg' style='width: calc(100% - 15px); margin: 0'>";
+    for (let i=0; i<(energy==0 ? 1 : Math.round(100/energy)); i++) {
+        innerHTML += 
+            "<div class='bar-fg' style='width: calc("+ energy + "% - 4px); margin: 2px; border-radius: 4px'>"
+                + (i == 0 ? "<span class='bar-txt'>" + energy + "</span>" : "&nbsp;")
+            + "</div>";
+    }
+    innerHTML += "</div></td>";
+
+    return innerHTML;
+}
+
 /**
  * Adds rows to the move data table according to an input array.
  * Also sets the appropriate headers depending on what kind of move is displayed.
  */
-function SetMoveTable(move_data, move_kind) {
-    for (const md of move_data) {
+function SetMoveTable(sort_info) {
+    // sort as specified
+    if (!sort_info.sort_by || sort_info.move_data[0][sort_info.sort_by] == undefined) 
+        sort_info.sort_by = (sort_info.move_kind == "Charged" ? "p2pes" : "peps2");
+
+    if (sort_info.sort_by == "name") // sort as string
+        sort_info.move_data.sort((a,b)=>(a.name.localeCompare(b.name)));
+    else
+        sort_info.move_data.sort((a,b)=>(b[sort_info.sort_by]-a[sort_info.sort_by]));
+
+    if (sort_info.reverse)
+        sort_info.move_data.reverse();
+
+    // update header based on sort order
+    let triangles = $("#move-data-table .th-triangle");
+    for (triangle of triangles)
+        triangle.remove();
+    $("#move-"+sort_info.sort_by).append("<span class=th-triangle>" + (sort_info.reverse ? "▴" : "▾") + "</span>");
+
+    // removes previous table rows
+    $("#move-data-table tbody tr").remove();
+
+    for (const md of sort_info.move_data) {
         const tr = $("<tr></tr>");
         
-        const td_move_name =
-            "<td><span class='type-text bg-"
-            + ((md.name == "Hidden Power") ? "any-type" : md.type) + "'>"
-            + md.name.replaceAll(" Plus", "+") + "</span></td>";
+        const td_move_name ="<td" + (sort_info.sort_by=="name" ? " class='selected'" : "") + ">" + 
+                "<span class='type-text bg-" +
+                ((md.name == "Hidden Power") ? "any-type" : md.type) + "'>" +
+                md.name.replaceAll(" Plus", "+") + 
+            "</span></td>";
 
-        const td_power = "<td>" + md.power + "</td>";
-        const td_energy = "<td>" + md.energy + "</td>";
-        const td_duration = "<td>" + md.duration.toFixed(1) + "<span class='small-text off'>s<span></td>";
-        const td_pps = "<td>" + md.pps.toLocaleString("en", { maximumFractionDigits: 2 }) + "</td>";
-        const td_eps = "<td>" + md.eps.toLocaleString("en", { maximumFractionDigits: 2 }) + "</td>";
-        const td_ppe = "<td>" + md.ppe.toLocaleString("en", { maximumFractionDigits: 2 }) + "</td>";
-        const td_epps2 = "<td>" + md.epps2.toLocaleString("en", { maximumFractionDigits: 2 }) + "</td>";
-        const td_p2pes = "<td>" + md.p2pes.toLocaleString("en", { maximumFractionDigits: 2 }) + "</td>";
+        const td_power = MoveDataTD(FormatDecimal(md.power,3,0), 
+            sort_info.sort_by=="power");
+        const td_energy = (sort_info.move_kind == "Charged") ? 
+            EnergyTD(md.energy) :
+            MoveDataTD(FormatDecimal(md.energy,2,0), sort_info.sort_by=="energy");
+        const td_duration = MoveDataTD(md.duration.toFixed(1) + "s", 
+            sort_info.sort_by=="duration");
+        const td_pps = MoveDataTD(FormatDecimal(md.pps,3,2), 
+            sort_info.sort_by=="pps");
         
         tr.append(td_move_name);
         tr.append(td_power);
         tr.append(td_energy);
         tr.append(td_duration);
         tr.append(td_pps);
-        tr.append(td_eps);
 
-        if (move_kind == "Charged") {
-            $("#ppe").css("display", "");
-            tr.append(td_ppe);
-            $("#move-metric").html("P<sup class='small-text'>2</sup>/ES");
-            tr.append(td_p2pes);
+        if (sort_info.move_kind == "Charged") {
+            $("#move-ppe").css("display", "");
+            tr.append(MoveDataTD(
+                md.ppe.toLocaleString("en", { maximumFractionDigits: 2 }),
+                sort_info.sort_by=="ppe"));
+            $("#move-p2pes").css("display", "");
+            tr.append(MoveDataTD(FormatDecimal(md.p2pes,3,2), 
+                sort_info.sort_by=="p2pes"));
+
+            $("#move-peps2").css("display", "none");
+            $("#move-eps").css("display", "none");
         }
         else { // "Fast"
-            $("#ppe").css("display", "none");
-            tr.append(td_epps2);
-            $("#move-metric").html("PE/S<sup class='small-text'>2</sup>");
+            $("#move-ppe").css("display", "none");
+            $("#move-p2pes").css("display", "none");
+            
+            $("#move-eps").css("display", "");
+            tr.append(MoveDataTD(FormatDecimal(md.eps,2,2), 
+                sort_info.sort_by=="eps"));
+            $("#move-peps2").css("display", "");
+            tr.append(MoveDataTD(FormatDecimal(md.peps2,3,2), 
+                sort_info.sort_by=="peps2"));
         }
 
         const td_users = $("<td></td>")
@@ -238,4 +324,16 @@ function SetMoveTable(move_data, move_kind) {
         
         $("#move-data-table tbody").append(tr);
     }
+}
+
+/**
+ * Format a decimal value with spaces in the left-padding and rounding-off fractional parts
+ * (Aligns the decimal point for the whole column)
+ */
+function FormatDecimal(val, minIntDigits, maxFracDigits) {
+    if (val==0)
+        return "&#8199;".repeat(minIntDigits-1) + "0";
+
+    return "&#8199;".repeat(Math.max(0, minIntDigits - Math.floor(Math.max(0,Math.log10(val)) + 1)))
+        + val.toLocaleString("en", { maximumFractionDigits: maxFracDigits });
 }

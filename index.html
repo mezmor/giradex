@@ -603,14 +603,15 @@
         <table class="table-bg move-table" id=move-data-table>
             <thead>
                 <tr class=table-header>
-                    <th class=sortable>Move</th>
-                    <th class=sortable>Power</th>
-                    <th class=sortable>Energy</th>
-                    <th class=sortable>Duration</th>
-                    <th class=sortable>P/S</th>
-                    <th class=sortable>E/S</th>
-                    <th class=sortable id=ppe>P/E</th>
-                    <th class=sortable id=move-metric>PE/S<sup class="small-text">2</sup></th>
+                    <th id=move-name> <a class=sortable onclick="MoveSort('name')">Move</a></th>
+                    <th id=move-power> <a class=sortable onclick="MoveSort('power')">Power</a></th>
+                    <th id=move-energy> <a class=sortable onclick="MoveSort('energy')">Energy</a></th>
+                    <th id=move-duration> <a class=sortable onclick="MoveSort('duration')">Duration</a></th>
+                    <th id=move-pps> <a class=sortable onclick="MoveSort('pps')">P/S</a></th>
+                    <th id=move-eps> <a class=sortable onclick="MoveSort('eps')">E/S</a></th>
+                    <th id=move-ppe> <a class=sortable onclick="MoveSort('ppe')">P/E</a></th>
+                    <th id=move-p2pes> <a class=sortable onclick="MoveSort('p2pes')">P<sup class='small-text'>2</sup>/ES</a></th>
+                    <th id=move-peps2> <a class=sortable onclick="MoveSort('peps2')">PE/S<sup class="small-text">2</sup></a></th>
                     <th>Top Users</th>
                 </tr>
             </thead>
