@@ -520,12 +520,14 @@ function SetRankingTable(str_pokemons, num_rows = null,
                     : "")
                 + "</a></td>";
             const td_fm =
-                "<td><span class='type-text bg-"
-                + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "'>"
-                + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
+                "<td><a class='type-text bg-"
+                + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
+                + "onclick=LoadMovesAndUpdateURL('" + p.fm_type + "','Fast')>"
+                + p.fm + ((p.fm_is_elite) ? "*" : "") + "</a></td>";
             const td_cm =
-                "<td><span class='type-text bg-" + p.cm_type + "'>"
-                + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
+                "<td><a class='type-text bg-" + p.cm_type + "' "
+                + "onclick=LoadMovesAndUpdateURL('" + p.cm_type + "','Charged')>"
+                + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</a></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
             const td_pct = ((show_pct) ? "<td>" 

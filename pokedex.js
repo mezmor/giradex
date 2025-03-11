@@ -709,13 +709,15 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             // creates one row
 
             const tr = $("<tr></tr>");
-            const td_fm = $("<td><span class='type-text bg-"
+            const td_fm = $("<td><a class='type-text bg-"
                 + ((fm == "Hidden Power") ? "any-type" : fm_type)
-                + "'>" + fm + ((fm_is_elite) ? "*" : "")
-                + "</span></td>");
-            let td_cm = $("<td><span class='type-text bg-" + cm_type
-                + "'>" + cm.replaceAll(" Plus", "+") + ((cm_is_elite) ? "*" : "")
-                + "</span></td>");
+                + "' onclick=LoadMovesAndUpdateURL('" + fm_type + "','Fast')>"
+                + fm + ((fm_is_elite) ? "*" : "")
+                + "</a></td>");
+            let td_cm = $("<td><a class='type-text bg-" + cm_type
+                + "' onclick=LoadMovesAndUpdateURL('" + cm_type + "','Charged')>"
+                + cm.replaceAll(" Plus", "+") + ((cm_is_elite) ? "*" : "")
+                + "</a></td>");
             let td_dps = $("<td>" + dps.toFixed(3) + "</td>");
             let td_dps_sh = $("<td>"
                 + ((can_be_shadow) ? dps_sh.toFixed(3) : "-")

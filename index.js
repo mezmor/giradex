@@ -155,7 +155,7 @@ function CheckURLAndAct() {
     if (params.has("moves")) {
 
         // preserve move-kind param
-        $("#chk-move-kind").prop("checked", params.get("moves") == "charged");
+        $("#chk-move-kind").prop("checked", params.get("moves").toLowerCase() == "charged");
 
         // if url has 't' param...
         if (params.has("t")) {

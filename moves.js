@@ -93,6 +93,9 @@ function LoadMovesAndUpdateURL(type = "Any", move_kind) {
     if (!move_kind) {
         move_kind = $("#chk-move-kind").prop("checked") ? "charged" : "fast";
     }
+    else {
+        $("#chk-move-kind").prop("checked", (move_kind.toLowerCase() == "charged"));
+    }
     let url = "?moves=" + move_kind + "&t=" + type;
 
     window.history.pushState({}, "", url);
