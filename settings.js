@@ -194,6 +194,9 @@ function SetMetric(metric) {
     $("#table-metric-header").html(settings_metric);
     $("#table-metric-header-sh").html(settings_metric + "<br>(Shadow)");
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+
     // reload page
     CheckURLAndAct();
 }
@@ -215,6 +218,9 @@ function SetPartySize(party_size) {
     $("#pp-4").removeClass("settings-opt-sel");
     
     $("#pp-" + party_size.toString()).addClass("settings-opt-sel");
+
+    // Reset any cached tier rankings
+    ClearTypeTiers();
 
     // reload page
     CheckURLAndAct();
@@ -242,6 +248,9 @@ function SetTeamSize(normal_mon_count, mega_count) {
     else if (normal_mon_count == 6 && mega_count == 1)
         $("#rt-m1").addClass("settings-opt-sel");
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
 }
@@ -257,6 +266,9 @@ function SetRelobbyPenalty(penalty) {
     // sets global variable
     settings_relobbytime = penalty;
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
 }
@@ -284,6 +296,9 @@ function SetDefaultLevel(level, xl_budget = false) {
     else if (level[0] == 50)
         $("#lvl-50").addClass("settings-opt-sel");
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
 }
@@ -341,6 +356,9 @@ function SetCompare(compareTo = "top") {
             break;
     }
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
 }
@@ -372,6 +390,9 @@ function SetTierMethod(method = "jenks") {
             break;
     }
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
 }

@@ -121,11 +121,12 @@ function GetPokemonMoves(pkm_obj) {
  * 
  * If unique_shadow is false, shadows will hash to the same as their pure form.
  */
-function GetUniqueIdentifier(pkm_obj, unique_shadow = true) {
-    return pkm_obj.id + "-" + 
-        pkm_obj.form + "-" + 
-        (unique_shadow ? pkm_obj.shadow + "-" : "") + 
-        (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]);
+function GetUniqueIdentifier(pkm_obj, unique_shadow = true, unique_level = true) {
+    return pkm_obj.id + 
+        "-" + pkm_obj.form + 
+        (unique_shadow ? "-" + pkm_obj.shadow : "") + 
+        (unique_level ? 
+            "-" + (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]) : "");
 }
 
 

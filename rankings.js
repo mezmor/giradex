@@ -1,4 +1,4 @@
-let str_pokemons;
+let str_pokemons, type_tiers;
 
 /**
  * Bind event handlers for a rankings table
@@ -28,33 +28,6 @@ function BindRankings() {
         CheckURLAndAct();
     });
 }
-
-/**
- * Gets the search parameters
- * The type can be 'each', 'any' or an actual type.
- */
-function GetSearchParms(type, versus) {
-    let search_params = {
-        versus,
-        type
-    };
-    search_params.unreleased =
-        $("#strongest input[value='unreleased']:checkbox").is(":checked");
-    search_params.mega =
-        $("#strongest input[value='mega']:checkbox").is(":checked");
-    search_params.shadow =
-        $("#strongest input[value='shadow']:checkbox").is(":checked");
-    search_params.legendary =
-        $("#strongest input[value='legendary']:checkbox").is(":checked");
-    search_params.elite =
-        $("#strongest input[value='elite']:checkbox").is(":checked");
-    search_params.suboptimal =
-        $("#strongest input[value='suboptimal']:checkbox").is(":checked");
-    search_params.mixed =
-        $("#strongest input[value='mixed']:checkbox").is(":checked");
-    return search_params;
-}
-
 
 /**
  * Loads the list of the strongest pokemon of a specific type in pokemon go.
@@ -139,6 +112,9 @@ function LoadStrongest(type = "Any") {
 
         ProcessAndGroup(str_pokemons, type, settings_strongest_count);
         SetRankingTable(str_pokemons, settings_strongest_count, true, true, true);
+
+        if (IsDefaultSearchParams(search_params))
+            SetTypeTier(type, str_pokemons);
     }
 
     // Display relevant footnotes
@@ -558,4 +534,146 @@ function SetRankingTable(str_pokemons, num_rows = null,
             $("#strongest-table tbody").append(empty_row);
         }
     }
+}
+
+/**
+ * Look up a pokemon's tier ranking for a specific type
+ */
+function GetTypeTier(type, pkm_obj) {
+    BuildTypeTier(type);
+
+    let tiers = {
+        pure: type_tiers[type][GetUniqueIdentifier({
+            id: pkm_obj.id, 
+            form: pkm_obj.form,
+            shadow: false
+        }, true, false)] ?? "F"
+    };
+    if (pkm_obj.shadow) {
+        tiers.shadow = type_tiers[type][GetUniqueIdentifier({
+            id: pkm_obj.id, 
+            form: pkm_obj.form,
+            shadow: true
+        }, true, false)] ?? "F";
+    }
+
+    return tiers;
+}
+
+/**
+ * If not already built, create a lookup for tier rankings of mons' typed movesets
+ */
+function BuildTypeTier(type) {
+    if (type_tiers && type_tiers[type]) return; // Already built
+    
+    let search_params = {
+        ...GetDefaultSearchParams(),
+        type
+    };
+
+    let strongest = GetStrongestOfOneType(search_params);
+    ProcessAndGroup(strongest, type, Number.MAX_VALUE);
+    SetTypeTier(type, strongest);
+}
+
+/**
+ * Takes a ranking list of mons (with tier info) and caches it for later lookup
+ */
+function SetTypeTier(type, strongest_list) {
+    if (!type_tiers) type_tiers = {};
+    if (type_tiers[type]) return; // should always be the same, so don't re-write
+
+    type_tiers[type] = Object.fromEntries(
+        strongest_list.map(e=>[GetUniqueIdentifier(e, true, false), e.tier])
+    );
+}
+
+/**
+ * Reset type tiers (e.g. if a changed setting would alter how tiers are made)
+ */
+function ClearTypeTiers() {
+    type_tiers = undefined;
+}
+
+/**
+ * Converts a tier string label to an integer for sorting
+ * 
+ * Could be done "cleaner" programmatically, but this switch lookup will be faster
+ */
+function TierToInt(tierLabel) {
+    if (!tierLabel) return 0;
+
+    switch (tierLabel) {
+        case "MRay": 
+            return 1000;
+        case "A":
+            return 5;
+        case "B":
+            return 4;
+        case "C":
+            return 3;
+        case "D":
+            return 2;
+        case "F":
+            return 1;
+        default: // Some form of "S"
+            return 100 + tierLabel.length;
+    }
+}
+
+/**
+ * Gets the default search parameters (to be used for generic type-tier-making)
+ */
+function GetDefaultSearchParams() {
+    return {
+        versus: false,
+        unreleased: false,
+        mega: true,
+        shadow: true,
+        legendary: true,
+        elite: true,
+        suboptimal: false,
+        mixed: true
+    };
+}
+
+/**
+ * Gets the default search parameters (to be used for generic type-tier-making)
+ */
+function IsDefaultSearchParams(search_params) {
+    return search_params.type != 'Any' && search_params.type != 'Each' &&
+        search_params.versus===false &&
+        search_params.unreleased===false &&
+        search_params.mega===true &&
+        search_params.shadow===true &&
+        search_params.legendary===true &&
+        search_params.elite===true &&
+        search_params.suboptimal===false &&
+        search_params.mixed===true;
+}
+
+/**
+ * Gets the search parameters
+ * The type can be 'each', 'any' or an actual type.
+ */
+function GetSearchParms(type, versus) {
+    let search_params = {
+        versus,
+        type
+    };
+    search_params.unreleased =
+        $("#strongest input[value='unreleased']:checkbox").is(":checked");
+    search_params.mega =
+        $("#strongest input[value='mega']:checkbox").is(":checked");
+    search_params.shadow =
+        $("#strongest input[value='shadow']:checkbox").is(":checked");
+    search_params.legendary =
+        $("#strongest input[value='legendary']:checkbox").is(":checked");
+    search_params.elite =
+        $("#strongest input[value='elite']:checkbox").is(":checked");
+    search_params.suboptimal =
+        $("#strongest input[value='suboptimal']:checkbox").is(":checked");
+    search_params.mixed =
+        $("#strongest input[value='mixed']:checkbox").is(":checked");
+    return search_params;
 }
