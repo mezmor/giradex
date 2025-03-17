@@ -309,6 +309,10 @@
             <p class="center">Not found in the <b>Pokémon GO</b> files yet :(</p>
         </div>
         <div id=released>
+            <div id="attack-tiers">
+                <p class="center" id="attack-tiers-title"></p>
+                <div class="dex-layout-table" id="attack-tier-results"></div>
+            </div>
             <table id=base-stats class="center small-text">
                 <tr>
                     <td></td>
@@ -361,32 +365,59 @@
                 <span class=prgr><span class=prgr-val></span></span><br>
                 <span id=cp-text class="small-text off"></span>
             </p>
-            <br>
-            <div class="small-text" id=effectiveness>
-                <table>
-                    <tr>
-                        <td rowspan="5" id="effectiveness-title"></td>
-                        <td>2.56x</td>
-                        <td id="effectiveness-256"></td>
-                        <td rowspan="5" class="off">← click type to see the strongest of that type</td>
-                    </tr>
-                    <tr>
-                        <td>1.60x</td>
-                        <td id="effectiveness-160"></td>
-                    </tr>
-                    <tr>
-                        <td class="red">0.625x</td>
-                        <td id="effectiveness-0625"></td>
-                    </tr>
-                    <tr>
-                        <td class="red">0.391x</td>
-                        <td id="effectiveness-0391"></td>
-                    </tr>
-                    <tr>
-                        <td class="red">0.244x</td>
-                        <td id="effectiveness-0244"></td>
-                    </tr>
-                </table>
+            <div id=effectiveness>
+                <p class="center" id="effectiveness-title"></p>
+                <div class="dex-layout-table" id=effectiveness-table>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header">
+                            <span class="tooltip tooltip-top">
+                                <img src="imgs/resistance.svg" class="shield-icon">
+                                <img src="imgs/resistance.svg" class="shield-icon">
+                                <img src="imgs/resistance.svg" class="shield-icon">
+                                <span class="tooltiptext">Triple Resistance x 0.244</span>
+                            </span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-0244"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header">
+                            <span class="tooltip tooltip-top">
+                                <img src="imgs/resistance.svg" class="shield-icon">
+                                <img src="imgs/resistance.svg" class="shield-icon">
+                                <span class="tooltiptext">Double Resistance x 0.391</span>
+                            </span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-0391"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header">
+                            <span class="tooltip tooltip-top">
+                                <img src="imgs/resistance.svg" class="shield-icon">
+                                <span class="tooltiptext">Single Resistance x 0.625</span>
+                            </span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-0625"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header">
+                            <span class="tooltip tooltip-top">
+                                <img src="imgs/weakness.svg" class="shield-icon">
+                                <span class="tooltiptext">Single Weakness x 1.60</span>
+                            </span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-160"></div>
+                    </div>
+                    <div class="dex-layout-tablecell">
+                        <div class="dex-layout-header">
+                            <span class="tooltip tooltip-top">
+                                <img src="imgs/weakness.svg" class="shield-icon">
+                                <img src="imgs/weakness.svg" class="shield-icon">
+                                <span class="tooltiptext">Double Weakness x 2.56</span>
+                            </span>
+                        </div>
+                        <div class="dex-layout-content" id="effectiveness-256"></div>
+                    </div>
+                </div>
             </div>
             <p class="center no-bottom-m"><button id=counters-button onclick=ShowCounters()></button></p>
             <div class="small-text" id="counters">
@@ -476,11 +507,6 @@
                     </ul></td>
                 </tr></tfoot>
             </table>
-            <div class="small-text" id="attack-tiers">
-                <table>
-                    <tbody></tbody>
-                </table>
-            </div>
         </div>
     </div>
 

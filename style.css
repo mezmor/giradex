@@ -416,7 +416,7 @@ span.poke-form-name, .poke-number {
 }
 
 #pokedex {
-    height: 400px;
+    /*height: 400px;*/
 }
 
 #containers-father {
@@ -527,68 +527,80 @@ span.poke-form-name, .poke-number {
     font-size: 1.25em;
 }
 
-#attack-tiers {
-    margin-top: 1em;
-}
-
 #attack-tiers .shadow-icon {
-    width: 16px;
+    height: 1.2em;
+    width: auto;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0.2em;
 }
 
-#attack-tiers td { 
-    text-align: left;
-    padding: 2px .5em;
-}
-
-#attack-tiers .type-text {
-    margin-right: 0.5em;
-}
-
-#attack-tiers,
-#effectiveness {
-    width: 85%;
-    margin-left: 15%;
-}
-
-#attack-tiers a,
-#effectiveness a { cursor: pointer; }
-
-#effectiveness table td, #effectiveness table th {
-    padding: 2px 0.5em;
-    text-align: left;
-}
-
-#attack-tiers table tr:nth-child(1) td:nth-child(1),
-#effectiveness table tr:nth-child(1) td:nth-child(1) {
-    width: 15%;
+#attack-tiers .tier-label {
+    font-size: 2em;
     text-align: center;
-    border: 1px solid var(--col-off);
+    text-shadow: 0px 2px 2px black;
+    border-radius: 0.25em;
+    flex-basis: 1lh;
+    writing-mode: lr;
+    transform: none;
+}
+#attack-tiers .tier-text {
+    position: relative;
+    z-index: 5;
+}
+.img-outline {
+    filter: drop-shadow(0px 1px 2px #111) drop-shadow(0px -1px 2px #111);
+}
+.img-outline img {
+    height: 100%;
 }
 
-#attack-tiers table tr:nth-child(1) td:nth-child(2),
-#effectiveness table tr:nth-child(1) td:nth-child(2) {
-    border-top: 1px solid var(--col-off);
+#attack-tiers, #effectiveness {
+    width: 100%;
+    margin: 40px auto;
 }
 
-#attack-tiers table tr:nth-child(1) td:nth-child(2),
-#attack-tiers table tr:not(:nth-child(1)) td:nth-child(1),
-#effectiveness table tr:nth-child(1) td:nth-child(2),
-#effectiveness table tr:not(:nth-child(1)) td:nth-child(1) {
-    width: 7.5%;
+#attack-tiers a.type-text, #effectiveness a.type-text { 
+    cursor: pointer; 
+}
+
+#effectiveness .type-text {
     text-align: center;
-    background-color: var(--col-so-off);
+    vertical-align: middle;
+}
+
+.dex-layout-table {
+    width: 100%; 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 150px);
+    justify-content: center;
+}
+
+.dex-layout-tablecell {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 10px;
+}
+
+.dex-layout-table > .dex-layout-tablecell:not(:last-child) {
     border-right: 1px solid var(--col-off);
-    border-left: 1px solid var(--col-off);
 }
 
-#attack-tiers table tr:nth-last-child(1) td:nth-child(1),
-#effectiveness table tr:nth-child(5) td:nth-child(1) {
-    border-bottom: 1px solid var(--col-off);
-}
-
-#effectiveness table td:nth-child(5) {
-    width: 15%;
+.dex-layout-header {
     text-align: center;
+    white-space: nowrap;
+}
+
+.dex-layout-content {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 4px;
+    justify-content: center;
+}
+
+.dex-layout-content > * {
+    flex: 0 0 35%;
 }
 
 #counters { display: none; }
@@ -885,4 +897,12 @@ ul.footnotes {
 }
 .filter-noshadow {
     filter: invert(37%) sepia(9%) saturate(2773%) hue-rotate(231deg) brightness(100%) contrast(91%);
+}
+
+.shield-icon {
+    display: inline-block;
+    width: 25px;
+    margin: 0 -2px;
+    vertical-align: top;
+    filter: brightness(0.5);
 }

@@ -102,4 +102,8 @@
         background-color: #000000;
         border: 2px solid #555555;
     }
+
+    .shield-icon {
+        filter: brightness(1.0);
+    }
 }
