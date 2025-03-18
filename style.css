@@ -47,6 +47,10 @@ button:focus {
     outline: 1px solid var(--col-off);
 }
 
+.mobile {
+    display: none;
+}
+
 .table-bg th { background-color: var(--col-so-off); }
 .table-bg tr:nth-child(even) { background-color: var(--col-alt-bg); }
 
@@ -691,6 +695,7 @@ span.poke-form-name, .poke-number {
 .move-table {
     width: 100%;
     /*table-layout: fixed;*/
+    border-spacing: 2px;
 }
 
 .move-table .sortable {
@@ -699,10 +704,15 @@ span.poke-form-name, .poke-number {
     user-select: none;
 }
 
-.move-table td {
+.move-table td, .move-table th {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.move-table th {
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 .th-triangle {
@@ -734,6 +744,14 @@ span.poke-form-name, .poke-number {
 }
 #move-data-table td.selected {
     color: var(--col-main);
+}
+
+#move-data-table .bar-txt {
+    visibility: hidden;
+}
+#move-data-table .bar-bg {
+    background-color: transparent;
+    border: 0px;
 }
 
 #strongest, #pokedex, #move-data { display: none; }

@@ -432,7 +432,7 @@
             </div>
             </div>
             <p class="center" id="movesets-title"></p>
-            <table class="table-bg move-table" id=pokedex-move-table>
+            <table class="table-bg move-table table-rounded" id=pokedex-move-table>
                 <thead>
                     <tr class=table-header>
                         <th style="position: relative">
@@ -604,9 +604,15 @@
             <thead>
                 <tr class=table-header>
                     <th id=move-name><a class=sortable onclick="MoveSort('name')">Move</a></th>
-                    <th id=move-power><a class=sortable onclick="MoveSort('power')">Power</a></th>
-                    <th id=move-energy><a class=sortable onclick="MoveSort('energy')">Energy</a></th>
-                    <th id=move-duration><a class=sortable onclick="MoveSort('duration')">Duration</a></th>
+                    <th id=move-power><a class=sortable onclick="MoveSort('power')">
+                        <span class="desktop">Power</span><span class="mobile">PWR</span>
+                    </a></th>
+                    <th id=move-energy><a class=sortable onclick="MoveSort('energy')">
+                        <span class="desktop">Energy</span><span class="mobile">ENG</span>
+                    </a></th>
+                    <th id=move-duration><a class=sortable onclick="MoveSort('duration')">
+                        <span class="desktop">Duration</span><span class="mobile">DUR</span>
+                    </a></th>
                     <th id=move-pps><a class="tooltip tooltip-top sortable" onclick="MoveSort('pps')">P/S
                         <span class="tooltiptext">
                             <div class="tooltip-title">Power per Second (DPS)</div>

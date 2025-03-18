@@ -7,6 +7,14 @@ body {
     font-size: 18px;
 }
 
+.desktop {
+    display: none;
+}
+
+.mobile {
+    display: initial;
+}
+
 /* pokemon name */
 #strongest-table tr > *:nth-child(3) { 
     width: auto !important;
@@ -95,6 +103,19 @@ body {
     #counters-tr > *:nth-child(n+6) {
         display: none;
     }
+
+    #move-data-table tr > *:last-child {
+        display: none;
+    }
+
+    #move-data-table tr > *:nth-child(n+2) {
+        width: auto;
+    }
+    
+    #move-data-table {
+        font-size: 14px;
+        table-layout: auto;
+    }
 }
 
 /* % rating */
@@ -182,7 +203,10 @@ body {
 }
 
 @media screen and (max-width:600px) { 
-    #strongest-table, #strongest-links, #page-nav, #pokedex, 
+    #strongest-table, 
+    #page-nav, 
+    #pokedex, #pokedex-page, 
+    .type-links,
     #pokedex-move-table thead tr > *:nth-child(1):after {
         font-size: 14px;
     }
@@ -211,6 +235,12 @@ body {
     }
 
     #previous-containers > *:nth-child(1), #next-containers > *:nth-child(2) {
+        display: none;
+    }
+
+    #move-data-table tr > *:nth-child(5),
+    #move-data-table tr > *:nth-child(6),
+    #move-data-table tr > th:nth-child(7) {
         display: none;
     }
 }

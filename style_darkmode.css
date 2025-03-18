@@ -48,10 +48,10 @@
         border-radius: 20px 20px 0 0;
     }
 
-    #pokedex-move-table th:first-child {
+    .table-rounded th:first-child {
         border-radius: 20px 0 0 0;
     }
-    #pokedex-move-table th:last-child {
+    .table-rounded th:last-child {
         border-radius: 0 20px 0 0;
     }
 
