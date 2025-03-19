@@ -17,7 +17,7 @@
     /* dark colors */
     --col-dark-bg: SlateGrey;
     --col-dark-main: Snow;
-    --col-shadow: DarkMagenta;
+    --col-shadow: #cc00cc;
     /* general */
     --border-radius: 2px;
 }

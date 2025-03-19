@@ -262,6 +262,11 @@ span.poke-form-name, .poke-number {
     color: var(--col-shadow);
 }
 
+#pokedex-move-table .shadow-text {
+    font-size: 0.8em;
+    text-shadow: 1px 1px black;
+}
+
 /*
  * Specific
  */
