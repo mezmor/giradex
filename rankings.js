@@ -57,29 +57,14 @@ function LoadStrongest(type = "Any") {
     else 
         $("#chk-suboptimal, #chk-mixed").prop("disabled", false);
 
-    // sets links
-    let strongest_link_any = $("#strongest-links > ul:first() > li:nth-child(1)");
-    let strongest_link_each = $("#strongest-links > ul:first() > li:nth-child(2)");
-    strongest_link_any.removeClass("selected");
-    strongest_link_each.removeClass("selected");
+    // sets selected link
+    $("#strongest-links li").removeClass("selected");
     if (type == "Any")
-        strongest_link_any.addClass("selected");
+        $("#any-type-strongest-link").addClass("selected");
     else if (type == "Each")
-        strongest_link_each.addClass("selected");
-    let links_types = $("#strongest-links-types");
-    links_types.empty();
-
-    let ndx = 0;
-    for (const t of POKEMON_TYPES) {
-        links_types.append("<li><a class='type-text bg-" + t
-                + ((t == type) ? " selected" : "")
-                + "' onclick='LoadStrongestAndUpdateURL(\"" + t
-                + "\")'>" + t + "</a></li>");
-        if ((ndx+1) % 6 == 0) { //every 6th type
-            links_types.append("<li class='line-break'><li>");
-        }
-        ndx++;
-    }
+        $("#each-type-strongest-link").addClass("selected");
+    else 
+        $("#strongest-links-types li:has(a.bg-"+type+")").addClass("selected");
 
     // Handle logic for "versus"
     const versus_chk = $("#strongest input[value='versus']:checkbox");

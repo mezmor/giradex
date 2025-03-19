@@ -21,12 +21,20 @@ body {
     padding-right: 10px;
 }
 
+.type-links {
+    width: 75%;
+}
+
 @media screen and (max-width:800px) { 
     /* fast and charge move */
     #strongest-table tr > *:nth-child(4), #strongest-table tr > *:nth-child(5)  { 
         margin: 3px 0;
         display: flex; 
         width: auto;
+    }
+
+    .type-links {
+        width: 100%;
     }
 
     /* rename moveset column */
@@ -246,7 +254,7 @@ body {
 }
 
 @media screen and (max-width:400px) { 
-    #strongest-table, #strongest-links {
+    #strongest-table {
         font-size: 12px;
     }
     
@@ -256,5 +264,16 @@ body {
 
     .tier-label {
         font-size: 0;
+    }
+
+    .type-links {
+        font-size: 1rem;
+    }
+
+    .type-links ul {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    #any-type-move-link {
+        grid-column-end: span 3;
     }
 }

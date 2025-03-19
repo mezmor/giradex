@@ -486,12 +486,30 @@
     <!-- strongest pokemon section -->
     <div id=strongest>
         <!--<p class="center small-text off no-bottom-m">select what type's strongest Pokémon you want to see</p>-->
-        <div id=strongest-links class="small-text unselectable type-links">
-            <ul>
-                <li><a class="type-text bg-any-type" onclick="LoadStrongestAndUpdateURL('Any')">All types</a></li>
-                <li><a class="type-text bg-any-type" onclick="LoadStrongestAndUpdateURL('Each')">Each type</a></li>
+        <div id=strongest-links class="unselectable type-links">
+            <ul id="strongest-links-types">
+                <li id="any-type-strongest-link"><a class="type-text" onclick="LoadStrongestAndUpdateURL('Any')">All types</a></li>
+                <li id="each-type-strongest-link"><a class="type-text" onclick="LoadStrongestAndUpdateURL('Each')">Each type</a></li>
+
+                <li><a class="type-text bg-Normal" onclick="LoadStrongestAndUpdateURL('Normal')">Normal</a></li>
+                <li><a class="type-text bg-Fire" onclick="LoadStrongestAndUpdateURL('Fire')">Fire</a></li>
+                <li><a class="type-text bg-Water" onclick="LoadStrongestAndUpdateURL('Water')">Water</a></li>
+                <li><a class="type-text bg-Grass" onclick="LoadStrongestAndUpdateURL('Grass')">Grass</a></li>
+                <li><a class="type-text bg-Electric" onclick="LoadStrongestAndUpdateURL('Electric')">Electric</a></li>
+                <li><a class="type-text bg-Ice" onclick="LoadStrongestAndUpdateURL('Ice')">Ice</a></li>
+                <li><a class="type-text bg-Fighting" onclick="LoadStrongestAndUpdateURL('Fighting')">Fighting</a></li>
+                <li><a class="type-text bg-Poison" onclick="LoadStrongestAndUpdateURL('Poison')">Poison</a></li>
+                <li><a class="type-text bg-Ground" onclick="LoadStrongestAndUpdateURL('Ground')">Ground</a></li>
+                <li><a class="type-text bg-Flying" onclick="LoadStrongestAndUpdateURL('Flying')">Flying</a></li>
+                <li><a class="type-text bg-Psychic" onclick="LoadStrongestAndUpdateURL('Psychic')">Psychic</a></li>
+                <li><a class="type-text bg-Bug" onclick="LoadStrongestAndUpdateURL('Bug')">Bug</a></li>
+                <li><a class="type-text bg-Rock" onclick="LoadStrongestAndUpdateURL('Rock')">Rock</a></li>
+                <li><a class="type-text bg-Ghost" onclick="LoadStrongestAndUpdateURL('Ghost')">Ghost</a></li>
+                <li><a class="type-text bg-Dragon" onclick="LoadStrongestAndUpdateURL('Dragon')">Dragon</a></li>
+                <li><a class="type-text bg-Dark" onclick="LoadStrongestAndUpdateURL('Dark')">Dark</a></li>
+                <li><a class="type-text bg-Steel" onclick="LoadStrongestAndUpdateURL('Steel')">Steel</a></li>
+                <li><a class="type-text bg-Fairy" onclick="LoadStrongestAndUpdateURL('Fairy')">Fairy</a></li>
             </ul>
-            <ul id=strongest-links-types></ul>
         </div>
         <br>
         <div id=strongest-header class="table-header-options">
@@ -579,11 +597,29 @@
 
     <!-- Move List -->
     <div id=move-data>
-        <div id=move-type-links class="small-text unselectable type-links">
-            <ul>
-                <li><a class="type-text bg-any-type" onclick="LoadMovesAndUpdateURL('Any')">All types</a></li>
+        <div id=move-type-links class="unselectable type-links">
+            <ul id=move-type-links-bytype>
+                <li id="any-type-move-link"><a class="type-text" onclick="LoadMovesAndUpdateURL('Any')">All types</a></li>
+
+                <li><a class="type-text bg-Normal" onclick="LoadMovesAndUpdateURL('Normal')">Normal</a></li>
+                <li><a class="type-text bg-Fire" onclick="LoadMovesAndUpdateURL('Fire')">Fire</a></li>
+                <li><a class="type-text bg-Water" onclick="LoadMovesAndUpdateURL('Water')">Water</a></li>
+                <li><a class="type-text bg-Grass" onclick="LoadMovesAndUpdateURL('Grass')">Grass</a></li>
+                <li><a class="type-text bg-Electric" onclick="LoadMovesAndUpdateURL('Electric')">Electric</a></li>
+                <li><a class="type-text bg-Ice" onclick="LoadMovesAndUpdateURL('Ice')">Ice</a></li>
+                <li><a class="type-text bg-Fighting" onclick="LoadMovesAndUpdateURL('Fighting')">Fighting</a></li>
+                <li><a class="type-text bg-Poison" onclick="LoadMovesAndUpdateURL('Poison')">Poison</a></li>
+                <li><a class="type-text bg-Ground" onclick="LoadMovesAndUpdateURL('Ground')">Ground</a></li>
+                <li><a class="type-text bg-Flying" onclick="LoadMovesAndUpdateURL('Flying')">Flying</a></li>
+                <li><a class="type-text bg-Psychic" onclick="LoadMovesAndUpdateURL('Psychic')">Psychic</a></li>
+                <li><a class="type-text bg-Bug" onclick="LoadMovesAndUpdateURL('Bug')">Bug</a></li>
+                <li><a class="type-text bg-Rock" onclick="LoadMovesAndUpdateURL('Rock')">Rock</a></li>
+                <li><a class="type-text bg-Ghost" onclick="LoadMovesAndUpdateURL('Ghost')">Ghost</a></li>
+                <li><a class="type-text bg-Dragon" onclick="LoadMovesAndUpdateURL('Dragon')">Dragon</a></li>
+                <li><a class="type-text bg-Dark" onclick="LoadMovesAndUpdateURL('Dark')">Dark</a></li>
+                <li><a class="type-text bg-Steel" onclick="LoadMovesAndUpdateURL('Steel')">Steel</a></li>
+                <li><a class="type-text bg-Fairy" onclick="LoadMovesAndUpdateURL('Fairy')">Fairy</a></li>
             </ul>
-            <ul id=move-type-links-bytype></ul>
         </div>
         <br>
         <div id=move-data-header class="table-header-options">

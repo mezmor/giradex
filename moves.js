@@ -48,25 +48,12 @@ function LoadMoves(type = "Any") {
     if ($("#move-data").css("display") == "none")
         $("#move-data").css("display", "initial");
 
-    // sets links
-    let type_link_any = $("#move-type-links > ul:first() > li:nth-child(1)");
-    type_link_any.removeClass("selected");
-    if (cur_sort.type == "Any")
-        type_link_any.addClass("selected");
-    let links_types = $("#move-type-links-bytype");
-    links_types.empty();
-
-    let ndx = 0;
-    for (const t of POKEMON_TYPES) {
-        links_types.append("<li><a class='type-text bg-" + t
-                + ((t == cur_sort.type) ? " selected" : "")
-                + "' onclick='LoadMovesAndUpdateURL(\"" + t
-                + "\")'>" + t + "</a></li>");
-        if ((ndx+1) % 6 == 0) { //every 6th type
-            links_types.append("<li class='line-break'><li>");
-        }
-        ndx++;
-    }
+    // sets selected link
+    $("#move-type-links li").removeClass("selected");
+    if (type == "Any")
+        $("#any-type-move-link").addClass("selected");
+    else 
+        $("#move-type-links li:has(a.bg-"+type+")").addClass("selected");
 
     // Handle logic for "versus"
     const move_kind_chk = $("#chk-move-kind");
