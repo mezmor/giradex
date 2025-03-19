@@ -301,7 +301,7 @@ body {
 }
 
 @media screen and (max-width:400px) { 
-    #strongest-table {
+    #strongest-table, #strongest-filters {
         font-size: 12px;
     }
     
