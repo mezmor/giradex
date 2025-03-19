@@ -25,6 +25,14 @@ body {
     width: 75%;
 }
 
+#type-matrix {
+    font-size: 0.8em;
+}
+
+#type-matrix-table {
+    font-size: 12px;
+}
+
 @media screen and (max-width:800px) { 
     /* fast and charge move */
     #strongest-table tr > *:nth-child(4), #strongest-table tr > *:nth-child(5)  { 
@@ -250,6 +258,28 @@ body {
     #move-data-table tr > *:nth-child(6),
     #move-data-table tr > th:nth-child(7) {
         display: none;
+    }
+
+    .table-with-leftheader {
+        overflow-x: scroll;
+    }
+
+    #type-matrix-table tr > *:nth-child(1) {
+        position: absolute;
+        left: 0;
+        z-index: 10;
+        background-color: var(--col-so-off);
+        min-width: 60px;
+    }
+
+    #type-matrix {
+        position: relative;
+    }
+
+    #type-matrix .table-leftheader {
+        min-width: 60px;
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 

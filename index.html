@@ -515,7 +515,7 @@
         </div>
         <br>
         <div id=strongest-header class="table-header-options">
-            <div width=100% class="center table-title">
+            <div class="center table-title">
                 <span>Strongest Pokemon </span>
                 <input type='checkbox' class='toggling' value='versus' id='chk-versus' unchecked>
                 <label class='togglebutton' for='chk-versus'>
@@ -625,7 +625,7 @@
         </div>
         <br>
         <div id=move-data-header class="table-header-options">
-            <div width=100% class="center table-title">
+            <div class="center table-title">
                 <input type='checkbox' class='toggling' value='charged' id='chk-move-kind' unchecked>
                 <label class='togglebutton' for='chk-move-kind'>
                     <div class='action'>
@@ -691,17 +691,115 @@
     <!-- Type Effectiveness Matrix -->
     <div id=type-matrix class="page">
         <div id=type-matrix-header class="table-header-options">
-            <div width=100% class="center table-title">
+            <div class="table-legend">
+                <div class="tooltip">
+                    <span class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></span>
+                    Super Effective
+                    <span class="tooltiptext">Damage Multiplier x1.6</span>
+                </div>
+                <div class="tooltip">
+                    <span class="resist"><img src="imgs/resistance.svg" class="shield-icon"></span>
+                    Resisted
+                    <span class="tooltiptext">Damage Multiplier x0.625</span>
+                </div>
+                <div class="tooltip">
+                    <span class="immune"><img src="imgs/immunity.svg" class="tripleshield-icon"></span>
+                    Immune
+                    <span class="tooltiptext">Damage Multiplier x0.391</span>
+                </div>
+            </div>
+            <div class="center table-title">
                 <span>Defending Type</span>
             </div>
         </div>
-        <table class="table-bg move-table" id=type-matrix-table>
-            <thead>
-                <tr class=table-header>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="table-with-leftheader">
+            <div class="table-leftheader">
+                <div class="center table-title vertical">
+                    <span>Attacking Type</span>
+                </div>
+            </div>
+            <table class="table-bg move-table" id=type-matrix-table>
+                <thead>
+                    <tr class="table-header">
+                        <th></th>
+                        <th class="vertical"><a class="type-text bg-Normal" onclick="LoadStrongestAndUpdateURL('Normal', true)">Normal</a></th>
+                        <th class="vertical"><a class="type-text bg-Fire" onclick="LoadStrongestAndUpdateURL('Fire', true)">Fire</a></th>
+                        <th class="vertical"><a class="type-text bg-Water" onclick="LoadStrongestAndUpdateURL('Water', true)">Water</a></th>
+                        <th class="vertical"><a class="type-text bg-Grass" onclick="LoadStrongestAndUpdateURL('Grass', true)">Grass</a></th>
+                        <th class="vertical"><a class="type-text bg-Electric" onclick="LoadStrongestAndUpdateURL('Electric', true)">Electric</a></th>
+                        <th class="vertical"><a class="type-text bg-Ice" onclick="LoadStrongestAndUpdateURL('Ice', true)">Ice</a></th>
+                        <th class="vertical"><a class="type-text bg-Fighting" onclick="LoadStrongestAndUpdateURL('Fighting', true)">Fighting</a></th>
+                        <th class="vertical"><a class="type-text bg-Poison" onclick="LoadStrongestAndUpdateURL('Poison', true)">Poison</a></th>
+                        <th class="vertical"><a class="type-text bg-Ground" onclick="LoadStrongestAndUpdateURL('Ground', true)">Ground</a></th>
+                        <th class="vertical"><a class="type-text bg-Flying" onclick="LoadStrongestAndUpdateURL('Flying', true)">Flying</a></th>
+                        <th class="vertical"><a class="type-text bg-Psychic" onclick="LoadStrongestAndUpdateURL('Psychic', true)">Psychic</a></th>
+                        <th class="vertical"><a class="type-text bg-Bug" onclick="LoadStrongestAndUpdateURL('Bug', true)">Bug</a></th>
+                        <th class="vertical"><a class="type-text bg-Rock" onclick="LoadStrongestAndUpdateURL('Rock', true)">Rock</a></th>
+                        <th class="vertical"><a class="type-text bg-Ghost" onclick="LoadStrongestAndUpdateURL('Ghost', true)">Ghost</a></th>
+                        <th class="vertical"><a class="type-text bg-Dragon" onclick="LoadStrongestAndUpdateURL('Dragon', true)">Dragon</a></th>
+                        <th class="vertical"><a class="type-text bg-Dark" onclick="LoadStrongestAndUpdateURL('Dark', true)">Dark</a></th>
+                        <th class="vertical"><a class="type-text bg-Steel" onclick="LoadStrongestAndUpdateURL('Steel', true)">Steel</a></th>
+                        <th class="vertical"><a class="type-text bg-Fairy" onclick="LoadStrongestAndUpdateURL('Fairy', true)">Fairy</a></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><a class="type-text bg-Normal" onclick="LoadStrongestAndUpdateURL('Normal', false)">Normal</a></td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/immunity.svg" class="tripleshield-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Fire" onclick="LoadStrongestAndUpdateURL('Fire', false)">Fire</a></td>
+                        <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Water" onclick="LoadStrongestAndUpdateURL('Water', false)">Water</a></td>
+                        <td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Grass" onclick="LoadStrongestAndUpdateURL('Grass', false)">Grass</a></td>
+                        <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Electric" onclick="LoadStrongestAndUpdateURL('Electric', false)">Electric</a></td>
+                        <td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="immune"><img src="imgs/immunity.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Ice" onclick="LoadStrongestAndUpdateURL('Ice', false)">Ice</a></td>
+                        <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Fighting" onclick="LoadStrongestAndUpdateURL('Fighting', false)">Fighting</a></td>
+                        <td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="immune"><img src="imgs/immunity.svg" class="tripleshield-icon"></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Poison" onclick="LoadStrongestAndUpdateURL('Poison', false)">Poison</a></td>
+                        <td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="immune"><img src="imgs/immunity.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Ground" onclick="LoadStrongestAndUpdateURL('Ground', false)">Ground</a></td>
+                        <td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="immune"><img src="imgs/immunity.svg" class="tripleshield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Flying" onclick="LoadStrongestAndUpdateURL('Flying', false)">Flying</a></td>
+                        <td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Psychic" onclick="LoadStrongestAndUpdateURL('Psychic', false)">Psychic</a></td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="immune"><img src="imgs/immunity.svg" class="tripleshield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Bug" onclick="LoadStrongestAndUpdateURL('Bug', false)">Bug</a></td>
+                        <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Rock" onclick="LoadStrongestAndUpdateURL('Rock', false)">Rock</a></td>
+                        <td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Ghost" onclick="LoadStrongestAndUpdateURL('Ghost', false)">Ghost</a></td>
+                        <td class="immune"><img src="imgs/immunity.svg" class="tripleshield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Dragon" onclick="LoadStrongestAndUpdateURL('Dragon', false)">Dragon</a></td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/immunity.svg" class="tripleshield-icon"></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Dark" onclick="LoadStrongestAndUpdateURL('Dark', false)">Dark</a></td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Steel" onclick="LoadStrongestAndUpdateURL('Steel', false)">Steel</a></td>
+                        <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td>
+                    </tr>
+                    <tr><td><a class="type-text bg-Fairy" onclick="LoadStrongestAndUpdateURL('Fairy', false)">Fairy</a></td>
+                        <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/supereffective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- technical information legend and sources, and footer -->

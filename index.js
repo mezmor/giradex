@@ -78,7 +78,7 @@ function BindAll() {
     });
     // Link to Move Data Lists
     $("#typechart-link").click(function() {
-        LoadTypeChart();
+        LoadTypeChartAndUpdateURL();
         return false;
     });
     
@@ -183,12 +183,21 @@ function CheckURLAndAct() {
 
         return;
     }
+
+    // if url has 'moves' param...
+    if (params.has("typechart")) {
+        LoadTypeChartAndUpdateURL();
+
+        return;
+    }
 }
 
 /**
  * Opens the Type Effectiveness Matrix and closes any other pages
  */
-function LoadTypeChart() {
+function LoadTypeChartAndUpdateURL() {
+    window.history.pushState({}, "", "?typechart");
+
     LoadPage("type-matrix");
 }
 

@@ -55,6 +55,10 @@
         border-radius: 0 20px 0 0;
     }
 
+    .table-leftheader {
+        border-bottom-left-radius: 20px;
+    }
+
     #poke-search-box {
         font-size: 1.5em;
     }
@@ -102,5 +106,17 @@
     {
         background-color: #000000;
         border: 2px solid #555555;
+    }
+
+    #type-matrix tbody > tr > *:nth-child(n+3) {
+        border-left: 1px solid var(--col-bar-bg);
+    }
+
+    .resist, .immune, .supereffective {
+        filter: drop-shadow(1px 1px 3px black);
+    }
+
+    .tripleshield-icon {
+        filter: brightness(0) saturate(100%) invert(60%) sepia(27%) saturate(4751%) hue-rotate(232deg) brightness(97%) contrast(95%);
     }
 }
