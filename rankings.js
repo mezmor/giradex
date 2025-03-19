@@ -40,16 +40,7 @@ function LoadStrongest(type = "Any") {
         return;
 
     // displays what should be displayed 
-    if ($("#pokedex").css("display") != "none")
-        $("#pokedex").css("display", "none");
-    if ($("#pokedex-page").css("display") != "none")
-        $("#pokedex-page").css("display", "none");
-    if ($("#strongest").css("display") == "none")
-        $("#strongest").css("display", "initial");
-    if ($("#legend").css("display") == "none")
-        $("#legend").css("display", "initial");
-    if ($("#move-data").css("display") != "none")
-        $("#move-data").css("display", "none");
+    LoadPage("strongest");
 
     // Only enable suboptimal filters if we're searching a specific type (not "Each")
     if (type == null)

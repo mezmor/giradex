@@ -75,18 +75,7 @@ function LoadPokedex(pokedex_mon) {
     }
 
     // displays what should be displayed
-    if ($("#strongest").css("display") != "none")
-        $("#strongest").css("display", "none");
-    if ($("#pokedex").css("display") == "none")
-        $("#pokedex").css("display", "block");
-    if ($("#pokedex-page").css("display") == "none")
-        $("#pokedex-page").css("display", "initial");
-    if ($("#counters").css("display") != "none")
-        $("#counters").css("display", "none");
-    if ($("#counters-popup").css("display") != "none")
-        $("#counters-popup").css("display", "none");
-    if ($("#move-data").css("display") != "none")
-        $("#move-data").css("display", "none");
+    LoadPage("pokedex-page");
 
     LoadPokedexData(pokedex_mon);
 }
@@ -134,8 +123,8 @@ function LoadPokedexData(pokedex_mon) {
     if (!released) {
         $("#not-released").css("display", "initial");
         $("#released").css("display", "none");
-        if ($("#legend").css("display") != "none")
-            $("#legend").css("display", "none");
+        if ($("#footer").css("display") != "none")
+            $("#footer").css("display", "none");
         return;
     }
 
@@ -143,8 +132,8 @@ function LoadPokedexData(pokedex_mon) {
 
     $("#not-released").css("display", "none");
     $("#released").css("display", "initial");
-    if ($("#legend").css("display") == "none")
-        $("#legend").css("display", "initial");
+    if ($("#footer").css("display") == "none")
+        $("#footer").css("display", "initial");
 
     const stats = GetPokemonStats(pkm_obj, pokedex_mon.level, pokedex_mon.ivs);
     let max_stats = null;

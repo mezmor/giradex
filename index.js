@@ -76,6 +76,11 @@ function BindAll() {
         LoadMovesAndUpdateURL("Any");
         return false;
     });
+    // Link to Move Data Lists
+    $("#typechart-link").click(function() {
+        LoadTypeChart();
+        return false;
+    });
     
     // Passthrough clicks for touchscreens
     $(document).click(function(event) { OnDocumentClick(event); });
@@ -178,6 +183,28 @@ function CheckURLAndAct() {
 
         return;
     }
+}
+
+/**
+ * Opens the Type Effectiveness Matrix and closes any other pages
+ */
+function LoadTypeChart() {
+    LoadPage("type-matrix");
+}
+
+/**
+ * Shows appropriate part of SPA, hiding all other parts
+ */
+function LoadPage(pageName) {
+    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix'];
+
+    pages.forEach(page=>{
+        $("#"+page).css("display", (page==pageName ? "initial" : "none"));
+    });
+
+    // If we're loading any page, we're not on the landing/homepage
+    // So show the footer
+    $("#footer").css("display", (!!pageName ? "initial" : "none"));
 }
 
 /**

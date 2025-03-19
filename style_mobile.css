@@ -177,7 +177,7 @@ body {
     flex-basis: 100%;
     margin: 0;
 }
-#legend .row {
+#footer .row {
     flex-direction: column;
     font-size: 80%;
 }

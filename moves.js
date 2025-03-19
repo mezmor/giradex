@@ -37,17 +37,8 @@ function LoadMoves(type = "Any") {
     cur_sort.type = type;
 
     // displays what should be displayed 
-    if ($("#pokedex").css("display") != "none")
-        $("#pokedex").css("display", "none");
-    if ($("#pokedex-page").css("display") != "none")
-        $("#pokedex-page").css("display", "none");
-    if ($("#strongest").css("display") != "none")
-        $("#strongest").css("display", "none");
-    if ($("#legend").css("display") == "none")
-        $("#legend").css("display", "initial");
-    if ($("#move-data").css("display") == "none")
-        $("#move-data").css("display", "initial");
-
+    LoadPage("move-data");
+    
     // sets selected link
     $("#move-type-links li").removeClass("selected");
     if (type == "Any")
