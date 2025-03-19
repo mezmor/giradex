@@ -197,6 +197,13 @@ function CheckURLAndAct() {
  */
 function LoadTypeChartAndUpdateURL() {
     window.history.pushState({}, "", "?typechart");
+    
+    // sets the page title
+    document.title = "Type Chart - DialgaDex";
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Each attacking type's effectiveness against raid bosses in Pokemon Go.");
 
     LoadPage("type-matrix");
 }

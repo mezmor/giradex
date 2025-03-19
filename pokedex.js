@@ -14,6 +14,11 @@ function LoadPokedex(pokedex_mon) {
     document.title = "#" + pokedex_mon.pokemon_id + " " + pokemon_name
             + " - DialgaDex";
 
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Best movesets, base stats, and raid counters for " + pokemon_name + 
+        " in Pokemon Go.");
+
     // sets level input value
     $("#input-lvl").val(pokedex_mon.level);
 

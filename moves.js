@@ -55,6 +55,13 @@ function LoadMoves(type = "Any") {
     document.title = title + " - DialgaDex"; // page title
     $("#move-type-title").text(cur_sort.type);
 
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "All the hidden move data attributes for " + 
+        (type == "Any" ? "" : type + " ") + cur_sort.move_kind + 
+        " moves in Pokemon Go. " + 
+        "Includes metrics which evaluate how effective each move is.");
+
     BuildMoveUserMap();
     cur_sort.move_data = GetMoveData(cur_sort.type, cur_sort.move_kind);
     SetMoveTable(cur_sort);

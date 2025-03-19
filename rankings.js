@@ -72,6 +72,13 @@ function LoadStrongest(type = "Any") {
     document.title = title + " - DialgaDex"; // page title
     $("#strongest-type-title").text(type);
 
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Best " + (type == "Any" || type == "Each" || versus_chk.is(":checked") ? "" : type + "-type ") + 
+        "raid counters " + 
+        (type != "Any" && type != "Each" && versus_chk.is(":checked") ? "against " + type + "-type bosses ": "") + 
+        "in Pokemon Go, using the new eDPS metric.");
+
     // removes previous table rows
     $("#strongest-table tbody tr").remove();
 
