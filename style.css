@@ -411,6 +411,7 @@ span.poke-form-name, .poke-number {
 
 #page-nav {
     position: relative;
+    padding-bottom: 2em;
 }
 
 #nav-links-c {

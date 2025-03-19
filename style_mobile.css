@@ -81,6 +81,11 @@ body {
         color: var(--col-shadow);
     }
 
+    #pokedex-move-table .shadow-text {
+        font-size: 0.8em;
+        text-shadow: 1px 1px black;
+    }
+
     #pokedex-move-table tbody td:nth-child(2n+4)::before {
         content: "(";
     }
@@ -212,15 +217,27 @@ body {
 }
 #poke-search {
     width: 90vw;
+    padding-top: 1em;
 }
 
 #pokedex {
     height: auto;
 }
 
+#nav-links-c {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+
+    position: static;
+
+    width: 90vw;
+    margin: 0 auto;
+}
+
 @media screen and (max-width:600px) { 
     #strongest-table, 
-    #page-nav, 
+    #poke-search,
     #pokedex, #pokedex-page, 
     .type-links,
     #pokedex-move-table thead tr > *:nth-child(1):after {
@@ -267,7 +284,7 @@ body {
     #type-matrix-table tr > *:nth-child(1) {
         position: absolute;
         left: 0;
-        z-index: 10;
+        z-index: 1;
         background-color: var(--col-so-off);
         min-width: 60px;
     }
