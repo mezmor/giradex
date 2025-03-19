@@ -313,6 +313,7 @@ body {
         font-size: 0;
     }
 
+    /*
     .type-links {
         font-size: 1rem;
     }
@@ -323,4 +324,5 @@ body {
     #any-type-move-link {
         grid-column-end: span 3;
     }
+    */
 }
