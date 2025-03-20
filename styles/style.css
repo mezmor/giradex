@@ -890,6 +890,11 @@ th.vertical a.type-text {
     text-shadow: -1px 1px 2px black;
     box-shadow: -1px -1px gray;
 }
+
+#type-matrix-table {
+    background-color: var(--col-so-off);
+}
+
 #type-matrix-table tr > td:nth-child(1) { 
     height: 1.5em; 
     line-height: 1.5em;
