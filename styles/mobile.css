@@ -7,6 +7,10 @@ body {
     font-size: 18px;
 }
 
+#site {
+    overflow-x: clip;
+}
+
 .desktop {
     display: none;
 }
@@ -131,6 +135,10 @@ body {
     #move-data-table {
         font-size: 14px;
         table-layout: auto;
+    }
+
+    #strongest-filters {
+        margin-top: 0.5em;
     }
 }
 
