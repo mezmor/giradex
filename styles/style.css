@@ -712,7 +712,7 @@ span.poke-form-name, .poke-number {
 
 .move-table td, .move-table th {
     white-space: nowrap;
-    overflow: hidden;
+    /*overflow: hidden;*/
     text-overflow: ellipsis;
 }
 
