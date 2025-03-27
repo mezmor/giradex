@@ -226,6 +226,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
         shadow_icon.on('click', function(e) { 
             poke_obj.shadow = !can_be_shadow;
             poke_obj.shadow_released = !can_be_shadow;
+            ClearTypeTiers();
         })
         pokemon_name_p.append(shadow_icon);
     }

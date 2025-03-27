@@ -1105,11 +1105,13 @@ function ShowMoveInput(caller, moveType) {
             if (!current_pkm_obj.elite_fm) 
                 current_pkm_obj.elite_fm = [];
             current_pkm_obj.elite_fm.push(newMove);
+            ClearTypeTiers();
         }
         else if (moveType == "charged" || (moveType == "any" && jb_cm.map(e => e.name).includes(newMove))) {
             if (!current_pkm_obj.elite_cm) 
                 current_pkm_obj.elite_cm = [];
             current_pkm_obj.elite_cm.push(newMove);
+            ClearTypeTiers();
         }
 
         $(moveSearch.wrapper).remove();
