@@ -1273,3 +1273,29 @@ function GetPokemonIconCoords(pokemon_id, form) {
     const row = Math.floor(offsetID / NUM_COLS);
     return {x: col * -W, y: row * -H};
 }
+
+/**
+ * Maps the "Normal" form for a regional variant into its origin region
+ * and renames -ian forms to match the region name
+ */
+function GetRegionalFormName(pkm_id, form_name) {
+    switch (form_name) {
+        case "Normal":
+            if (pkm_id <= 151) return "Kanto";
+            if (pkm_id <= 251) return "Johto";
+            if (pkm_id <= 386) return "Hoenn";
+            if (pkm_id <= 493) return "Sinnoh";
+            if (pkm_id <= 649) return "Unova";
+            if (pkm_id <= 721) return "Kalos";
+            if (pkm_id <= 809) return "Alola";
+            if (pkm_id <= 898) return "Galar";
+            if (pkm_id <= 905) return "Hisui";
+            return "Paldea";
+        case "Hisuian":
+            return "Hisui";
+        case "Galarian":
+            return "Galar";
+        default: // Alola, Paldea
+            return form_name
+    }
+}

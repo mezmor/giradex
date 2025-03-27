@@ -320,3 +320,193 @@ function GetEnemyParams(enemy_pkm_obj) {
         stats: GetRaidStats(enemy_pkm_obj)
     };
 }
+
+/**
+ * Take a list of pokemon (e.g. from rankings) and translate it into a reasonable, 
+ * semi-optimized search string
+ */
+function GetSearchString(pkm_arr) {
+    function GetUnique(arr) { 
+        return Array.from((new Set(arr)).values()); 
+    }
+    function UnionAllSets(sets_arr) {
+        return sets_arr.reduce((accumulator, this_set)=>accumulator.union(this_set), new Set());
+    }
+    function IntersectAllSets(sets_arr) {
+        return sets_arr.reduce((accumulator, this_set)=>accumulator.intersection(this_set), sets_arr[0]);
+    }
+
+    let str = "";
+    
+    // Allow all applicable mons by id
+    str = str + GetUnique(pkm_arr.map(e=>e.id)).join(",");
+
+    // Shadow forms
+    if (pkm_arr.some(e=>e.shadow)) {
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>!e.shadow).map(e=>e.id)).join(",") + ",shadow";
+    }
+
+    // Mega forms
+    if (pkm_arr.some(e=>e.form=="Mega"||e.form=="MegaY")) {
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY").map(e=>e.id)).join(",") + ",mega1-";
+    }
+
+    // Pure forms
+    str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&!e.shadow).map(e=>e.id)).join(",") + ",shadow,mega1-";
+
+    // Alternate (non-Mega) forms
+    const has_alt_forms = GetUnique(pkm_arr.filter(e=>GetPokemonForms(e.id).filter(e=>e!="Mega"&&e!="MegaY").length > 1).map(e=>e.id));
+    for (let pkm_id of has_alt_forms) {
+        const all_possible_forms = new Set(GetPokemonForms(pkm_id).filter(e=>e!="Mega"&&e!="MegaY"));
+        const filtered_in_forms = new Set(pkm_arr.filter(e=>e.id==pkm_id).map(e=>e.form).filter(e=>e!="Mega"&&e!="MegaY"));
+
+        // Check if we need to try filtering down more specifically than by id
+        if (filtered_in_forms.size < all_possible_forms.size) {
+            // Only regional filtering is needed
+            /* Remove regional-based filtering until Niantic fixes the broken keywords
+                if (all_possible_forms.difference(new Set(["Normal","Hisuian","Galarian","Alola","Paldea"])).size == 0) {
+                    str = str + "&!" + pkm_id + "," + Array.from(filtered_in_forms.keys()).map(e=>GetRegionalFormName(pkm_id, e)).join(",");
+                }
+            */ 
+
+            // Try type-based filtering
+            const all_type_combos = Array.from(all_possible_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
+            const filtered_in_type_combos = Array.from(filtered_in_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
+
+            const all_shared_types = IntersectAllSets(all_type_combos); // Types that are common to every form
+            if (!all_shared_types.isDisjointFrom(all_type_combos[0])) // If all forms have identical typing, we can't use this filtering
+                continue;
+
+            const shared_types_among_filtered_in = IntersectAllSets(filtered_in_type_combos); // Types that are common to every form we want
+            const filtered_in_unshared_types = shared_types_among_filtered_in.difference(all_shared_types); // Ignore types that every possible form has anyway (because that doesn't filter anything)
+            for (const t of filtered_in_unshared_types) {
+                str = str + "&!" + pkm_id + "," + t; // Either a different Pokemon, or you have the required type(s)
+            }
+
+            const filtered_out_forms = all_possible_forms.difference(filtered_in_forms); // Forms that we don't want
+            const filtered_out_type_combos = Array.from(filtered_out_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
+            const filtered_out_type_combos_still_included = filtered_out_type_combos.filter(s=>!s.isDisjointFrom(filtered_in_unshared_types)); // Types held by forms we want to filter out
+            if (filtered_out_type_combos_still_included.size == 0)
+                continue;
+
+            const filtered_in_types = UnionAllSets(filtered_in_type_combos);
+            const filtered_out_types = UnionAllSets(filtered_out_type_combos_still_included).difference(filtered_in_types); // Types held by forms we want to filter out, and not by forms we want to keep in
+            for (const t of filtered_out_types) {
+                str = str + "&!" + pkm_id + ",!" + t;
+            }
+        }
+    }
+
+    // FM matches
+    /*
+    const fms = GetUnique(pkm_arr.map(e=>e.fm));
+    for (let fm of fms) {
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.fm!=fm).map(e=>e.id)).join(",") + ",@" + fm;
+    }
+    // CM matches
+    let cms = GetUnique(pkm_arr.map(e=>e.cm));
+    for (let cm of cms) {
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.cm!=cm).map(e=>e.id)).join(",") + ",@" + (cm == "Psychic" ? "Psychi" : cm);
+    }*/
+    /*
+    // Suboptimal movesets exist
+    if ((GetUnique(pkm_arr.map(e=>GetUniqueIdentifier(e, true)))).length < pkm_arr.length) {
+        for (let pkm of pkm_arr) {
+
+        }
+    }
+    */
+    /*
+    for (let pkm_id of GetUnique(pkm_arr.map(e=>e.id))) {
+        let all_pkm_matches = pkm_arr.filter(e=>pkm_id==e.id);
+        str = str + "&!" + pkm_id + "," + GetUnique(all_pkm_matches.map(e=>"@"+e.fm)).join(",");
+        str = str + "&!" + pkm_id + "," + GetUnique(all_pkm_matches.map(e=>"@"+e.cm)).join(",");
+    }
+    */
+    return str;
+}
+
+/**
+ * Take a search string and return all movesets and pokemon that match
+ * Uses CNF like Pokemon Go search function
+ * 
+ * Supports {id}, @{move}, {type}, "shadow" keyword, ! negation
+ * Treats any keyword beginning with "mega" as filtering to mega forms
+ *     (in game this could be something like "mega1-" or "megaevolve" to find
+ *     candidates that can become the desired mega form)
+ */
+function ApplySearchString(str) {
+    let arr = [];
+    
+    // Build up all possible mons and movesets
+    for (let pkm of jb_pkm) {
+        if (!pkm.fm || !pkm.cm) continue;
+
+        const moves = GetPokemonMoves(pkm);
+        const fms = moves[0].concat(moves[2]);
+        const cms = moves[1].concat(moves[3]);
+
+        for (let fm of fms) {
+            for (let cm of cms) {
+                arr.push({
+                    id: pkm.id,
+                    name: pkm.name,
+                    form: pkm.form,
+                    shadow: false,
+                    fm: fm,
+                    cm: cm,
+                    types: pkm.types
+                });
+
+                // List Shadow as a separate mon
+                if (pkm.shadow && pkm.shadow_released) {
+                    arr.push({
+                        id: pkm.id,
+                        name: "Shadow " + pkm.name,
+                        form: pkm.form,
+                        shadow: true,
+                        fm: fm,
+                        cm: cm,
+                        types: pkm.types
+                    });
+                }
+            }
+        }
+    }
+
+    // Break into AND'd clauses and progressively filter down by each
+    for (let clause of str.split(/[&|]/)) {
+        arr = arr.filter(p => {
+            let clause_val = false;
+
+            // Break into OR'd tokens and return true as soon as we pass any of them
+            for (let tok of clause.split(/[,;:]/)) {
+                let invert = false;
+                if (tok[0]=="!") {
+                    invert = true; // negation, to be XOR'd with the token's filter criteria
+                    tok = tok.slice(1);
+                }
+
+                if (tok=="shadow") // shadow
+                    clause_val = clause_val || (p.shadow ^ invert);
+                if (tok.slice(0,4)=="mega") // mega/primal
+                    clause_val = clause_val || ((p.form=="Mega"||p.form=="MegaY") ^ invert);
+                if (!isNaN(tok)) // id
+                    clause_val = clause_val || ((p.id==tok) ^ invert);
+                if (tok[0]=="@") { // has attack
+                    let move_name = tok.slice(1);
+                    clause_val = clause_val || ((p.fm==move_name||p.cm==move_name) ^ invert);
+                }
+                if (POKEMON_TYPES.has(tok)) { // type
+                    clause_val = clause_val || (p.types.includes(tok) ^ invert);
+                }
+
+                if (clause_val) return clause_val;
+            }
+
+            return false;
+        });
+    }
+
+    return arr;
+}
