@@ -556,7 +556,7 @@
                             <p>(Requires Special event or Elite TMs)</p></span>
                         <input type=checkbox value=elite checked>
                         <span class="slider"></span>
-                        <span class="labeltext">Elite moves</span>
+                        <span class="labeltext">Elite moves*</span>
                     </label>
                     <label class="switch tooltip">
                         <span class="tooltiptext">Allow multiple movesets per Pokemon</span>
@@ -576,7 +576,7 @@
                         <span class="tooltiptext">Allow fast and charged moves with different types</span>
                         <input type=checkbox value=mixed id=chk-mixed checked>
                         <span class="slider"></span>
-                        <span class="labeltext">Mixed movesets<sup>&dagger;</sup></span>
+                        <span class="labeltext">Mixed movesets</span>
                     </label>
                 </div>
             </div>
@@ -585,12 +585,11 @@
             <tbody></tbody>
             <tfoot><tr class="table-footer">
                 <td colspan="100%"><ul class="footnotes">
-                    <li id=footnote-elite>* Elite fast or charged move</li>
-                    <li id=footnote-mixed-moveset><sup>†</sup> Mixed moveset rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.</li>
+                    <!--<li id=footnote-elite>* Elite fast or charged move</li>-->
+                    <li id=footnote-typed-ranking>Typed rankings are calculated using super-effective damage for the chosen type, and neutral damage for all other types.</li>
                     <li id=footnote-versus>"Versus" rankings are calculated using appropriate effectiveness multiplier for attacking damage.
                         <!--<br />Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.-->
                     </li>
-                    <li id=footnote-party-power>Party power rankings are in beta and require further validation to ensure the calculation is accurate.</li>
                 </ul></td>
             </tr></tfoot>
         </table>

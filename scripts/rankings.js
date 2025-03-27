@@ -119,10 +119,9 @@ function LoadStrongest(type = "Any") {
     }
 
     // Display relevant footnotes
-    $("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
-    $("#footnote-mixed-moveset").css('display', search_params.mixed ? 'block' : 'none');
+    //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
+    $("#footnote-typed-ranking").css('display', search_params.type != "Any" ? 'block' : 'none');
     $("#footnote-versus").css('display', search_params.versus ? 'block' : 'none');
-    $("#footnote-party-power").css('display', settings_party_size > 1 ? 'block' : 'none');
 }
 
 
