@@ -804,7 +804,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
  */
 function BuildTypeTiers(name, attackTiers) {
     const types = Object.entries(attackTiers)
-        .filter(e=>e[1].pure!="F"||e[1].shadow!="F")
+        .filter(e=>e[1].pure!="F"||(e[1].shadow&&e[1].shadow!="F"))
         .map(e=>e[0])
         .sort((a, b) => 
             TierToInt(attackTiers[b].pure)-TierToInt(attackTiers[a].pure) ||
@@ -825,8 +825,9 @@ function BuildTypeTiers(name, attackTiers) {
         tier_cell.append(`<div class='dex-layout-header'><a class='type-text bg-${type}' onClick='LoadStrongestAndUpdateURL("${type}", false)'>${type}</a></div>`);
 
         const tier_results = $("<div class='dex-layout-content'></div>");
-        tier_results.append(BuildTypeTierLabel(attackTier.pure));
-        if (attackTier.shadow) 
+        if (attackTier.pure != "F")
+            tier_results.append(BuildTypeTierLabel(attackTier.pure));
+        if (attackTier.shadow && attackTier.shadow != "F") 
             tier_results.prepend(BuildTypeTierLabel(attackTier.shadow, true));
         tier_cell.append(tier_results);
         tier_container.append(tier_cell);
