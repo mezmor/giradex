@@ -134,17 +134,16 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
     if (!finished_loading)
         return false;
 
-    LoadStrongest(type);
+    if (versus !== null)
+        $("#chk-versus").prop("checked", !!versus);
 
     let url = "?strongest&t=" + type;
-    if (versus === null) {
-        if ($("#chk-versus").prop("checked")) 
-            url += '&v';
-    }
-    else
-        $("#chk-versus").prop("checked", versus);
+    if ($("#chk-versus").prop("checked")) 
+        url += '&v';
 
     window.history.pushState({}, "", url);
+    
+    LoadStrongest(type);
 }
 
 /**
