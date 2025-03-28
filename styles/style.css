@@ -579,14 +579,15 @@ span.poke-form-name, .poke-number {
 .dex-layout-table {
     width: 100%; 
     display: grid;
-    grid-template-columns: repeat(auto-fit, 150px);
+    grid-template-columns: repeat(auto-fit, 180px);
     justify-content: center;
 }
 
 .dex-layout-tablecell {
     display: flex;
     flex-flow: column nowrap;
-    gap: 10px;
+    gap: 15px;
+    padding: 15px;
 }
 
 .dex-layout-table > .dex-layout-tablecell:not(:last-child) {
@@ -606,7 +607,7 @@ span.poke-form-name, .poke-number {
 }
 
 .dex-layout-content > * {
-    flex: 0 0 35%;
+    flex: 0 0 40%;
 }
 
 .dex-layout-header img {

@@ -119,4 +119,34 @@
     .tripleshield-icon {
         filter: brightness(0) saturate(100%) invert(60%) sepia(27%) saturate(4751%) hue-rotate(232deg) brightness(97%) contrast(95%);
     }
+
+    .dex-layout-table > .dex-layout-tablecell {
+        background-color: var(--col-so-off);
+    }
+    .dex-layout-table > .dex-layout-tablecell:nth-child(odd) {
+        background-color: var(--col-alt-bg);
+    }
+
+    .dex-layout-table > .dex-layout-tablecell:first-child {
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+    }
+    .dex-layout-table > .dex-layout-tablecell:last-child {
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+    
+    @media screen and (max-width:900px) { 
+        .dex-layout-table > .dex-layout-tablecell:first-child {
+            border-radius: 0;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+        .dex-layout-table > .dex-layout-tablecell:last-child {
+            border-radius: 0;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+    }
 }
