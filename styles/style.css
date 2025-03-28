@@ -609,6 +609,13 @@ span.poke-form-name, .poke-number {
     flex: 0 0 35%;
 }
 
+.dex-layout-header img {
+    display: inline-block;
+    width: 25px;
+    margin: 0 -2px;
+    vertical-align: top;
+}
+
 #counters { display: none; }
 
 #counters-outline {
