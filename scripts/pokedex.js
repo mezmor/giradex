@@ -14,6 +14,11 @@ function LoadPokedex(pokedex_mon) {
     document.title = "#" + pokedex_mon.pokemon_id + " " + pokemon_name
             + " - DialgaDex";
 
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Best movesets, base stats, and raid counters for " + pokemon_name + 
+        " in Pokemon Go.");
+
     // sets level input value
     $("#input-lvl").val(pokedex_mon.level);
 
@@ -33,6 +38,8 @@ function LoadPokedex(pokedex_mon) {
 
     const forms = GetPokemonForms(pokedex_mon.pokemon_id);
     const def_form = forms[0];
+    
+    window.scrollTo(0,0);
 
     // sets main pokemon container
     $("#main-container").append(GetPokemonContainer(pokedex_mon.pokemon_id,
@@ -73,16 +80,7 @@ function LoadPokedex(pokedex_mon) {
     }
 
     // displays what should be displayed
-    if ($("#strongest").css("display") != "none")
-        $("#strongest").css("display", "none");
-    if ($("#pokedex").css("display") == "none")
-        $("#pokedex").css("display", "block");
-    if ($("#pokedex-page").css("display") == "none")
-        $("#pokedex-page").css("display", "initial");
-    if ($("#counters").css("display") != "none")
-        $("#counters").css("display", "none");
-    if ($("#counters-popup").css("display") != "none")
-        $("#counters-popup").css("display", "none");
+    LoadPage("pokedex-page");
 
     LoadPokedexData(pokedex_mon);
 }
@@ -130,8 +128,8 @@ function LoadPokedexData(pokedex_mon) {
     if (!released) {
         $("#not-released").css("display", "initial");
         $("#released").css("display", "none");
-        if ($("#legend").css("display") != "none")
-            $("#legend").css("display", "none");
+        if ($("#footer").css("display") != "none")
+            $("#footer").css("display", "none");
         return;
     }
 
@@ -139,8 +137,8 @@ function LoadPokedexData(pokedex_mon) {
 
     $("#not-released").css("display", "none");
     $("#released").css("display", "initial");
-    if ($("#legend").css("display") == "none")
-        $("#legend").css("display", "initial");
+    if ($("#footer").css("display") == "none")
+        $("#footer").css("display", "initial");
 
     const stats = GetPokemonStats(pkm_obj, pokedex_mon.level, pokedex_mon.ivs);
     let max_stats = null;
@@ -719,13 +717,15 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             // creates one row
 
             const tr = $("<tr></tr>");
-            const td_fm = $("<td><span class='type-text bg-"
+            const td_fm = $("<td><a class='type-text bg-"
                 + ((fm == "Hidden Power") ? "any-type" : fm_type)
-                + "'>" + fm + ((fm_is_elite) ? "*" : "")
-                + "</span></td>");
-            let td_cm = $("<td><span class='type-text bg-" + cm_type
-                + "'>" + cm.replaceAll(" Plus", "+") + ((cm_is_elite) ? "*" : "")
-                + "</span></td>");
+                + "' onclick=LoadMovesAndUpdateURL('" + fm_type + "','Fast')>"
+                + fm + ((fm_is_elite) ? "*" : "")
+                + "</a></td>");
+            let td_cm = $("<td><a class='type-text bg-" + cm_type
+                + "' onclick=LoadMovesAndUpdateURL('" + cm_type + "','Charged')>"
+                + cm.replaceAll(" Plus", "+") + ((cm_is_elite) ? "*" : "")
+                + "</a></td>");
             let td_dps = $("<td>" + dps.toFixed(3) + "</td>");
             let td_dps_sh = $("<td>"
                 + ((can_be_shadow) ? dps_sh.toFixed(3) : "-")
@@ -1107,12 +1107,14 @@ function ShowMoveInput(caller, moveType) {
                 current_pkm_obj.elite_fm = [];
             current_pkm_obj.elite_fm.push(newMove);
             ClearTypeTiers();
+            BuildMoveUserMap(true);
         }
         else if (moveType == "charged" || (moveType == "any" && jb_cm.map(e => e.name).includes(newMove))) {
             if (!current_pkm_obj.elite_cm) 
                 current_pkm_obj.elite_cm = [];
             current_pkm_obj.elite_cm.push(newMove);
             ClearTypeTiers();
+            BuildMoveUserMap(true);
         }
 
         $(moveSearch.wrapper).remove();

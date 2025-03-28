@@ -64,10 +64,21 @@ function BindAll() {
     BindSettings();
     BindPokeDex();
     BindRankings();
+    BindMoveData();
 
     // Link to Rankings Lists
-    $("#strongest-link").click(function() {
+    $("#rankings-link").click(function() {
         LoadStrongestAndUpdateURL("Any", false);
+        return false;
+    });
+    // Link to Move Data Lists
+    $("#moves-link").click(function() {
+        LoadMovesAndUpdateURL("Any");
+        return false;
+    });
+    // Link to Move Data Lists
+    $("#typechart-link").click(function() {
+        LoadTypeChartAndUpdateURL();
         return false;
     });
     
@@ -144,6 +155,72 @@ function CheckURLAndAct() {
 
         return;
     }
+
+    // if url has 'moves' param...
+    if (params.has("moves")) {
+
+        // preserve move-kind param
+        $("#chk-move-kind").prop("checked", params.get("moves").toLowerCase() == "charged");
+
+        // if url has 't' param...
+        if (params.has("t")) {
+
+            // sets type to 't' value with first char as upper and rest as lower
+            let type = params.get("t");
+            type = type.charAt(0).toUpperCase()
+                + type.slice(1).toLowerCase();
+            
+            if (type == "Any")
+                LoadMoves("Any");
+            else if (POKEMON_TYPES.has(type))
+                LoadMoves(type);
+
+            return;
+        }
+
+        // loads strongest (default)
+        LoadMoves();
+
+        return;
+    }
+
+    // if url has 'moves' param...
+    if (params.has("typechart")) {
+        LoadTypeChartAndUpdateURL();
+
+        return;
+    }
+}
+
+/**
+ * Opens the Type Effectiveness Matrix and closes any other pages
+ */
+function LoadTypeChartAndUpdateURL() {
+    window.history.pushState({}, "", "?typechart");
+    
+    // sets the page title
+    document.title = "Type Chart - DialgaDex";
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Each attacking type's effectiveness against raid bosses in Pokemon Go.");
+
+    LoadPage("type-matrix");
+}
+
+/**
+ * Shows appropriate part of SPA, hiding all other parts
+ */
+function LoadPage(pageName) {
+    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix'];
+
+    pages.forEach(page=>{
+        $("#"+page).css("display", (page==pageName ? "initial" : "none"));
+    });
+
+    // If we're loading any page, we're not on the landing/homepage
+    // So show the footer
+    $("#footer").css("display", (!!pageName ? "initial" : "none"));
 }
 
 /**

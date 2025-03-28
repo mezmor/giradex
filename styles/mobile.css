@@ -7,10 +7,34 @@ body {
     font-size: 18px;
 }
 
+#site {
+    overflow-x: clip;
+}
+
+.desktop {
+    display: none;
+}
+
+.mobile {
+    display: initial;
+}
+
 /* pokemon name */
 #strongest-table tr > *:nth-child(3) { 
     width: auto !important;
     padding-right: 10px;
+}
+
+.type-links {
+    width: 75%;
+}
+
+#type-matrix {
+    font-size: 0.8em;
+}
+
+#type-matrix-table {
+    font-size: 12px;
 }
 
 @media screen and (max-width:800px) { 
@@ -19,6 +43,10 @@ body {
         margin: 3px 0;
         display: flex; 
         width: auto;
+    }
+
+    .type-links {
+        width: 100%;
     }
 
     /* rename moveset column */
@@ -133,6 +161,21 @@ body {
 
     .dex-layout-content > * {
         flex: 0 1 0;
+    #move-data-table tr > *:last-child {
+        display: none;
+    }
+
+    #move-data-table tr > *:nth-child(n+2) {
+        width: auto;
+    }
+    
+    #move-data-table {
+        font-size: 14px;
+        table-layout: auto;
+    }
+
+    #strongest-filters {
+        margin-top: 0.5em;
     }
 }
 
@@ -187,7 +230,7 @@ body {
     flex-basis: 100%;
     margin: 0;
 }
-#legend .row {
+#footer .row {
     flex-direction: column;
     font-size: 80%;
 }
@@ -214,15 +257,29 @@ body {
 }
 #poke-search {
     width: 90vw;
+    padding-top: 1em;
 }
 
 #pokedex {
     height: auto;
 }
 
+#nav-links-c {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+
+    position: static;
+
+    width: 90vw;
+    margin: 0 auto;
+}
 
 @media screen and (max-width:600px) { 
-    #strongest-table, #strongest-links, #page-nav, #pokedex, #pokedex-page, 
+    #strongest-table, 
+    #poke-search,
+    #pokedex, #pokedex-page, 
+    .type-links,
     #pokedex-move-table thead tr > *:nth-child(1):after {
         font-size: 14px;
     }
@@ -253,10 +310,38 @@ body {
     #previous-containers > *:nth-child(1), #next-containers > *:nth-child(2) {
         display: none;
     }
+
+    #move-data-table tr > *:nth-child(5),
+    #move-data-table tr > *:nth-child(6),
+    #move-data-table tr > th:nth-child(7) {
+        display: none;
+    }
+
+    .table-with-leftheader {
+        overflow-x: scroll;
+    }
+
+    #type-matrix-table tr > *:nth-child(1) {
+        position: absolute;
+        left: 0;
+        z-index: 1;
+        background-color: var(--col-so-off);
+        min-width: 60px;
+    }
+
+    #type-matrix {
+        position: relative;
+    }
+
+    #type-matrix .table-leftheader {
+        min-width: 60px;
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
 
 @media screen and (max-width:400px) { 
-    #strongest-table, #strongest-links {
+    #strongest-table, #strongest-filters {
         font-size: 12px;
     }
     
@@ -267,4 +352,17 @@ body {
     .tier-label {
         font-size: 0;
     }
+
+    /*
+    .type-links {
+        font-size: 1rem;
+    }
+
+    .type-links ul {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    #any-type-move-link {
+        grid-column-end: span 3;
+    }
+    */
 }

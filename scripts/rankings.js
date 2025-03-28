@@ -39,14 +39,7 @@ function LoadStrongest(type = "Any") {
         return;
 
     // displays what should be displayed 
-    if ($("#pokedex").css("display") != "none")
-        $("#pokedex").css("display", "none");
-    if ($("#pokedex-page").css("display") != "none")
-        $("#pokedex-page").css("display", "none");
-    if ($("#strongest").css("display") == "none")
-        $("#strongest").css("display", "initial");
-    if ($("#legend").css("display") == "none")
-        $("#legend").css("display", "initial");
+    LoadPage("strongest");
 
     // Only enable suboptimal filters if we're searching a specific type (not "Each")
     if (type == null)
@@ -54,29 +47,14 @@ function LoadStrongest(type = "Any") {
     else 
         $("#chk-suboptimal, #chk-mixed").prop("disabled", false);
 
-    // sets links
-    let strongest_link_any = $("#strongest-links > ul:first() > li:nth-child(1)");
-    let strongest_link_each = $("#strongest-links > ul:first() > li:nth-child(2)");
-    strongest_link_any.removeClass("strongest-link-selected");
-    strongest_link_each.removeClass("strongest-link-selected");
+    // sets selected link
+    $("#strongest-links li").removeClass("selected");
     if (type == "Any")
-        strongest_link_any.addClass("strongest-link-selected");
+        $("#any-type-strongest-link").addClass("selected");
     else if (type == "Each")
-        strongest_link_each.addClass("strongest-link-selected");
-    let links_types = $("#strongest-links-types");
-    links_types.empty();
-
-    let ndx = 0;
-    for (const t of POKEMON_TYPES) {
-        links_types.append("<li><a class='type-text bg-" + t
-                + ((t == type) ? " strongest-link-selected" : "")
-                + "' onclick='LoadStrongestAndUpdateURL(\"" + t
-                + "\")'>" + t + "</a></li>");
-        if ((ndx+1) % 6 == 0) { //every 6th type
-            links_types.append("<li class='line-break'><li>");
-        }
-        ndx++;
-    }
+        $("#each-type-strongest-link").addClass("selected");
+    else 
+        $("#strongest-links-types li:has(a.bg-"+type+")").addClass("selected");
 
     // Handle logic for "versus"
     const versus_chk = $("#strongest input[value='versus']:checkbox");
@@ -92,6 +70,13 @@ function LoadStrongest(type = "Any") {
     let title = "Strongest Pokémon of " + type + " type";
     document.title = title + " - DialgaDex"; // page title
     $("#strongest-type-title").text(type);
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Best " + (type == "Any" || type == "Each" || versus_chk.is(":checked") ? "" : type + "-type ") + 
+        "raid counters " + 
+        (type != "Any" && type != "Each" && versus_chk.is(":checked") ? "against " + type + "-type bosses ": "") + 
+        "in Pokemon Go, using the new eDPS metric.");
 
     // removes previous table rows
     $("#strongest-table tbody tr").remove();
@@ -118,10 +103,9 @@ function LoadStrongest(type = "Any") {
     }
 
     // Display relevant footnotes
-    $("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
-    $("#footnote-mixed-moveset").css('display', search_params.mixed ? 'block' : 'none');
+    //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
+    $("#footnote-typed-ranking").css('display', search_params.type != "Any" ? 'block' : 'none');
     $("#footnote-versus").css('display', search_params.versus ? 'block' : 'none');
-    $("#footnote-party-power").css('display', settings_party_size > 1 ? 'block' : 'none');
 }
 
 
@@ -133,17 +117,16 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
     if (!finished_loading)
         return false;
 
-    LoadStrongest(type);
+    if (versus !== null)
+        $("#chk-versus").prop("checked", !!versus);
 
     let url = "?strongest&t=" + type;
-    if (versus === null) {
-        if ($("#chk-versus").prop("checked")) 
-            url += '&v';
-    }
-    else
-        $("#chk-versus").prop("checked", versus);
+    if ($("#chk-versus").prop("checked")) 
+        url += '&v';
 
     window.history.pushState({}, "", url);
+    
+    LoadStrongest(type);
 }
 
 /**
@@ -502,12 +485,14 @@ function SetRankingTable(str_pokemons, num_rows = null,
                     : "")
                 + "</a></td>";
             const td_fm =
-                "<td><span class='type-text bg-"
-                + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "'>"
-                + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
+                "<td><a class='type-text bg-"
+                + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
+                + "onclick=LoadMovesAndUpdateURL('" + p.fm_type + "','Fast')>"
+                + p.fm + ((p.fm_is_elite) ? "*" : "") + "</a></td>";
             const td_cm =
-                "<td><span class='type-text bg-" + p.cm_type + "'>"
-                + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
+                "<td><a class='type-text bg-" + p.cm_type + "' "
+                + "onclick=LoadMovesAndUpdateURL('" + p.cm_type + "','Charged')>"
+                + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</a></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
             const td_pct = ((show_pct) ? "<td>" 

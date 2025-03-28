@@ -1,8 +1,6 @@
-/* pokedex/style.css */
-
 @font-face {
     font-family: "Pokemon";
-    src: url("fonts/pokemon_x_y.ttf");
+    src: url("/fonts/pokemon_x_y.ttf");
 }
 
 /*
@@ -47,8 +45,20 @@ button:focus {
     outline: 1px solid var(--col-off);
 }
 
+.mobile {
+    display: none;
+}
+
+.page, #footer {
+    display: none;
+}
+
 .table-bg th { background-color: var(--col-so-off); }
 .table-bg tr:nth-child(even) { background-color: var(--col-alt-bg); }
+
+.table-bg a {
+    cursor: pointer;
+}
 
 #strongest-table td.td-poke-name { 
     font-weight: bold; 
@@ -250,6 +260,11 @@ span.poke-form-name, .poke-number {
     color: var(--col-shadow);
 }
 
+#pokedex-move-table .shadow-text {
+    font-size: 0.8em;
+    text-shadow: 1px 1px black;
+}
+
 /*
  * Specific
  */
@@ -397,22 +412,15 @@ span.poke-form-name, .poke-number {
     margin: 0 5%;
 }
 
-#strongest-button-c {
+#page-nav {
     position: relative;
-    width: 0;
-    height: 0;
-    margin: 0 auto;
-    transform: translateX(+100px);
+    padding-bottom: 2em;
 }
 
-#strongest-button {
+#nav-links-c {
     position: absolute;
-    width: 300px;
-    margin: 0;
-}
-
-#strongest-title {
-    font-weight: bold;
+    right: 10px;
+    text-align: right;
 }
 
 #pokedex {
@@ -462,8 +470,6 @@ span.poke-form-name, .poke-number {
     margin: 30px 15px 0px 15px;
     scroll-margin: 0;
 }
-
-#pokedex-page { display: none; }
 
 #not-released { display: none; }
 
@@ -728,68 +734,150 @@ span.poke-form-name, .poke-number {
     background-color: var(--col-so-off);
 }
 
-#pokedex-move-table {
+.move-table {
     width: 100%;
     /*table-layout: fixed;*/
+    border-spacing: 2px;
 }
 
-#pokedex-move-table .sortable {
+.move-table .sortable {
     cursor: pointer;
     text-decoration: underline;
+    user-select: none;
 }
 
-#pokedex-move-table td {
+.move-table td, .move-table th {
     white-space: nowrap;
-    overflow: hidden;
+    /*overflow: hidden;*/
     text-overflow: ellipsis;
+}
+
+.move-table th {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.th-triangle {
+    text-decoration: none;
+    display: inline-block;
 }
 
 #pokedex-move-table tr > *:nth-child(1) { width: 18%; }
 #pokedex-move-table tr > *:nth-child(2) { width: 18%; }
 
-#strongest { display: none; }
-
-#strongest a {
-    cursor: pointer;
-    /*text-decoration: underline;*/
+#move-data-table {
+    table-layout: fixed;
 }
 
-#strongest-header {
+#move-data-table tr > * { /* Pad all */
+    height: 37px;
+    color: var(--col-md-off);
+}
+#move-data-table tr > *:nth-child(1) { /* Move Name */
+    width: auto; 
+}
+#move-data-table tr > *:nth-child(n+2) { /* Move Data */
+    width: 90px; 
+    text-align: left;
+}
+#move-data-table tr > *:last-child { /* Users */
+    width: 140px; 
+    text-align: left;
+}
+#move-data-table td.selected {
+    color: var(--col-main);
+}
+
+#move-data-table .bar-txt {
+    visibility: hidden;
+}
+#move-data-table .bar-bg {
+    background-color: transparent;
+    border: 0px;
+}
+
+.table-header-options {
     background-color: var(--col-so-off);
     margin: 0;
     padding: 0.25em 0 1em 0;
 }
 
-#strongest-links {
-    margin: 0 auto;
-    padding-top: 0.25em;
+.table-title {
+    font-weight: bold;
 }
 
-#strongest-links ul {
+.table-legend {
     display: flex;
-    flex-wrap: wrap;
+    flex-flow: row nowrap;
     justify-content: center;
+    margin: 0.5em 0;
+    gap: 15px;
+}
+.table-legend > * {
+    display: flex;
+    gap: 5px;
+}
+
+.table-with-leftheader {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.table-leftheader {
+    margin: 0;
+    padding: 0 1em 0 0.25em;
+
+    background-color: var(--col-so-off);
+}
+
+#type-matrix .table-header-options {
+    padding: 0.25em 0 0.25em 0;
+}
+#type-matrix .table-header-options .table-title {
+    padding-top: 0.5em;
+}
+#type-matrix .table-leftheader  {
+    padding: 0 0.5em 0 0.5em;
+}
+
+.type-links {
+    margin: 0 auto;
+    width: 50%;
+}
+
+.type-links a {
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+.type-links ul {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.4em;
+    justify-content: center;
+    justify-items: stretch;
+
     margin: 0 auto;
     padding: 0;
     list-style-type: none;
     overflow: hidden;
 }
 
-#strongest-links li {
-    margin: 0.25em;
-    margin-top: 0;
+#any-type-strongest-link, #each-type-strongest-link {
+    grid-column-end: span 3;
+    font-size: 1.15em;
+    background-color: var(--col-bar-fg);
 }
 
-#strongest-links li.line-break {
-    margin: 0;
-    width: 100%;
+#any-type-move-link {
+    grid-column-end: span 6;
+    font-size: 1.15em;
+    background-color: var(--col-bar-fg);
 }
 
-#strongest-links a {
-    text-decoration: none;
-}
-
-.strongest-link-selected {
+.selected {
     font-weight: bold;
 }
 
@@ -816,7 +904,52 @@ span.poke-form-name, .poke-number {
 
 #strongest-table tr > *:nth-child(7):last-child { width: 25%; }
 
-#legend { display: none; }
+.vertical {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+}
+
+#type-matrix img {
+    height: 1lh;
+}
+
+#type-matrix-table tr > th {
+    height: 7ch;
+    line-height: 1.5em;
+}
+
+th.vertical a.type-text {
+    padding: 0.5em 0.25em;
+    display: block;
+    text-align: left;
+    font-weight: normal;
+    text-shadow: -1px 1px 2px black;
+    box-shadow: -1px -1px gray;
+}
+
+#type-matrix-table {
+    background-color: var(--col-so-off);
+}
+
+#type-matrix-table tr > td:nth-child(1) { 
+    height: 1.5em; 
+    line-height: 1.5em;
+    width: 7ch;
+    background-color: var(--col-so-off);
+}
+#type-matrix-table tr > td:nth-child(1) a.type-text { 
+    display: block;
+    padding: 0.25em 0.5em;
+    text-align: right;
+}
+
+#type-matrix .table-leftheader {
+    padding-top: 10ch;
+}
+
+#type-matrix tbody > tr > *:nth-child(n+3) {
+    border-left: 1px solid var(--col-so-off);
+}
 
 sup { vertical-align: top; }
 
@@ -830,12 +963,14 @@ sup.xl {
     margin: 5px;
     border: 1px solid var(--col-dark-bg);
     box-sizing: content-box;
+    text-align: left;
 }
 
 .bar-fg {
     background-color: var(--col-light);
     text-align: left;
     box-sizing: content-box;
+    display: inline-block;
 }
 
 .bar-txt {
@@ -900,9 +1035,12 @@ ul.footnotes {
 }
 
 .shield-icon {
-    display: inline-block;
-    width: 25px;
-    margin: 0 -2px;
-    vertical-align: top;
-    filter: brightness(0.5);
+    filter: brightness(0.8);
+}
+.tripleshield-icon {
+    filter: brightness(0) saturate(100%) invert(25%) sepia(100%) saturate(2737%) hue-rotate(271deg) brightness(84%) contrast(122%);
+}
+
+.sword-icon {
+    filter: brightness(0) saturate(100%) invert(37%) sepia(76%) saturate(3643%) hue-rotate(200deg) brightness(96%) contrast(90%);
 }

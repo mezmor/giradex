@@ -1,6 +1,7 @@
 #poke-search {
     width: 50%;
     margin: 0 auto;
+    padding-top: 2em;
 }
 
 #poke-search-box {
@@ -18,7 +19,7 @@
     background: rgba(255,255,255,0.95);
     margin-top: 0;
     text-align: left;
-    z-index: 1;
+    z-index: 5;
 }
 
 #move-search {

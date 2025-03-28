@@ -1,5 +1,3 @@
-/* style_general.css */
-
 /*
  * Variables
  */
@@ -9,6 +7,7 @@
     --col-bg: White;
     --col-main: Black;
     --col-off: Grey;
+    --col-md-off: #505050;
     --col-so-off: #ddd;
     --col-light: SteelBlue;
     --col-alt-bg: WhiteSmoke;
@@ -16,7 +15,7 @@
     /* dark colors */
     --col-dark-bg: SlateGrey;
     --col-dark-main: Snow;
-    --col-shadow: DarkMagenta;
+    --col-shadow: #cc00cc;
     /* general */
     --border-radius: 2px;
 }
@@ -310,7 +309,7 @@ abbr[title] {
 
 .side-box a { color: var(--col-main); }
 
-#footer {
+#contacts {
     margin: 100px 0;
 }
 

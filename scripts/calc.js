@@ -255,6 +255,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
     const types = pkm_obj.types;
     const effectiveness = GetTypesEffectivenessAgainstTypes(types);
     const stats = GetPokemonStats(pkm_obj, level);
+    stats.hp = Math.floor(stats.hp);
     const atk = (shadow) ? (stats.atk * 6 / 5) : stats.atk;
     const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
     const hp = stats.hp;

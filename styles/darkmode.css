@@ -1,6 +1,7 @@
 .darkmode {
     --col-bg: #0b0b28;
     --col-main: White;
+    --col-md-off: #dcdcdc;
     --col-so-off: #343434;
     --col-alt-bg: #222;
     --col-bar-bg: #606060;
@@ -43,19 +44,23 @@
         --color-green: var(--col-bar-fg);
     }
 
-    #strongest-header {
+    .table-header-options {
         border-radius: 20px 20px 0 0;
     }
 
-    .table-bg th:first-child {
+    .table-rounded th:first-child {
         border-radius: 20px 0 0 0;
     }
-    .table-bg th:last-child {
+    .table-rounded th:last-child {
         border-radius: 0 20px 0 0;
     }
 
+    .table-leftheader {
+        border-bottom-left-radius: 20px;
+    }
+
     #poke-search-box {
-        font-size: 1.5em;
+        line-height: 1.75em;
     }
 
     span.strongest-name {
@@ -103,7 +108,15 @@
         border: 2px solid #555555;
     }
 
-    .shield-icon {
-        filter: brightness(1.0);
+    #type-matrix tbody > tr > *:nth-child(n+3) {
+        border-left: 1px solid var(--col-bar-bg);
+    }
+
+    .resist, .immune, .supereffective {
+        filter: drop-shadow(1px 1px 3px black);
+    }
+
+    .tripleshield-icon {
+        filter: brightness(0) saturate(100%) invert(60%) sepia(27%) saturate(4751%) hue-rotate(232deg) brightness(97%) contrast(95%);
     }
 }
