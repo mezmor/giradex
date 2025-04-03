@@ -520,6 +520,8 @@ function GetPokemonForms(pokemon_id) {
             return [ "Normal", "Hisuian" ];
         case 194: // Wooper
             return ["Normal", "Paldea"];
+        case 128: // Tauros
+            return ["Normal", "Paldea_combat", "Paldea_aqua", "Paldea_blaze"];
         case 201: // Unown
             return ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
                 "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y",
@@ -728,6 +730,12 @@ function GetFormText(pokemon_id, form) {
             return "Alolan Form";
         case "Paldea":
             return "Paldean Form";
+        case "Paldea_combat":
+            return "Paldean Combat Breed";
+        case "Paldea_aqua":
+            return "Paldean Aqua Breed";
+        case "Paldea_blaze":
+            return "Paldean Blaze Breed";
         case "Exclamation_point":
             return "!";
         case "Question_mark":
@@ -1243,7 +1251,14 @@ function GetPokemonIconCoords(pokemon_id, form) {
         if (form == "Normal") offsetID = pokemon_id;
         else offsetID = calyrexOffset + calyrexLookup.indexOf(form);
     }
-    // Tauros
+    
+    else if (pokemon_id == 128) { // Tauros
+        const taurosOffset = 1256;
+        const taurosLookup = ['Paldea_combat','Paldea_blaze','Paldea_aqua'];
+
+        if (form == "Normal") offsetID = pokemon_id;
+        else offsetID = taurosOffset + taurosLookup.indexOf(form);
+    }
     else if (pokemon_id == 194 && form == "Paldea") offsetID = 1259 // Wooper
     else if (pokemon_id == 964 && form == "Hero") offsetID = 1261 // Palafin
     else if (pokemon_id == 925 && form == "Family_of_four") offsetID = 1262 // Maushold
