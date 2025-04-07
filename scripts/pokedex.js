@@ -315,7 +315,7 @@ function LoadPokedexEffectiveness(pkm_obj) {
             effectiveness_256.push(attacker_type);
     }
 
-    $("#effectiveness-title").html("Type effectiveness against <b>" + pkm_obj.name + "</b>");
+    //$("#effectiveness-title").html("Type effectiveness against <b>" + pkm_obj.name + "</b>");
 
     let effectiveness_0244_html = "";
     for (let type of effectiveness_0244) {
@@ -598,7 +598,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
 function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
 
     // sets movesets title
-    $("#movesets-title").html("<b>" + pkm_obj.name + "'s movesets</b>");
+    //$("#movesets-title").html("<b>" + pkm_obj.name + "'s movesets</b>");
 
     // whether can be shadow
     const can_be_shadow = pkm_obj.shadow;
@@ -811,35 +811,41 @@ function BuildTypeTiers(name, attackTiers) {
             TierToInt(attackTiers[b].shadow)-TierToInt(attackTiers[a].shadow)
         )
 
-    const tier_container = $("#attack-tier-results");
-    tier_container.empty();
-
     if (types.length > 0) {
-        $("#attack-tiers-title").html(`<b>${name}'s</b> tier ranking by attack type`);
+        $("#attack-tiers").css("display", "");
+        //$("#attack-tiers-title").html(`<b>${name}'s</b> tier ranking by attack type`);
+
+        $("#attack-tier-results .dex-layout-content").empty();
+        $("#attack-tier-results-shadow .dex-layout-content").empty();
+        $("#attack-tier-shadow-header").css("display", "none");
+        $("#attack-tier-results-shadow").css("display", "none");
+        $("#attack-tier-results").css("flex-basis", "100%");
+        $("#attack-tier-results").addClass("rounded-bottom");
+
+        for (let type of types) {
+            const attackTier = attackTiers[type];
+
+            if (attackTier.pure != "F")
+                $("#dex-tier-"+(attackTier.pure == "MRay" ? "S" : attackTier.pure[0])).append(BuildTypeTierLabel(type));
+            if (attackTier.shadow && attackTier.shadow != "F") {
+                $("#dex-tier-"+(attackTier.shadow == "MRay" ? "S" : attackTier.shadow[0])+"-shadow").append(BuildTypeTierLabel(type));
+                $("#attack-tier-shadow-header").css("display", "");
+                $("#attack-tier-results-shadow").css("display", "");
+                $("#attack-tier-results").css("flex-basis", "50%");
+                $("#attack-tier-results").removeClass("rounded-bottom");
+            }
+        }
     }
-
-    for (let type of types) {
-        const attackTier = attackTiers[type];
-
-        const tier_cell = $("<div class='dex-layout-tablecell'></div>");
-        tier_cell.append(`<div class='dex-layout-header'><a class='type-text bg-${type}' onClick='LoadStrongestAndUpdateURL("${type}", false)'>${type}</a></div>`);
-
-        const tier_results = $("<div class='dex-layout-content'></div>");
-        if (attackTier.pure != "F")
-            tier_results.append(BuildTypeTierLabel(attackTier.pure));
-        if (attackTier.shadow && attackTier.shadow != "F") 
-            tier_results.prepend(BuildTypeTierLabel(attackTier.shadow, true));
-        tier_cell.append(tier_results);
-        tier_container.append(tier_cell);
+    else {
+        $("#attack-tiers").css("display", "none");
     }
 }
 
 /**
- * Builds the tier icon (with shadow designation) for a type-tier
+ * Builds the tier icon for a type-tier
  */
-function BuildTypeTierLabel(tier, shadow = false) {
-    const shadowIcon = shadow ? '<span class="img-outline shadow-icon"><img src="imgs/flame.svg" class="filter-shadow"></span>' : '';
-    return $(`<span style="position: relative;" class='tier-label tier-${tier}'><span class='tier-text'>${tier}</span>${shadowIcon}</span>`);
+function BuildTypeTierLabel(type) {
+    return $(`<a class='type-text bg-${type}' onclick='LoadStrongestAndUpdateURL("${type}", false)'>${type}</a>`);
 }
 
 /**

@@ -37,43 +37,65 @@ body {
     font-size: 12px;
 }
 
-#effectiveness .dex-layout-table {
+.dex-layout-table {
     display: flex;
     flex-flow: column-reverse nowrap;
 }
 
 .dex-layout-tablecell {
     flex-flow: row nowrap;
-    padding: 15px 0;
+    gap: 1em;
     align-items: center;
-}
-
-.dex-layout-table > .dex-layout-tablecell:not(:last-child) {
-    border-right: none;
-}
-
-#effectiveness .dex-layout-table > .dex-layout-tablecell:not(:last-child) {
-    border-top: 1px solid var(--col-off);
+    height: 2.5rem;
 }
 
 .dex-layout-header {
     text-align: right;
-    padding-left: 5%;
+    justify-content: right;
+    padding: 0;
+    height: 2.5rem;
+    width: 10vw;
+    white-space: nowrap;
 }
 
-#attack-tiers .dex-layout-header, #attack-tiers .dex-layout-content {
-    flex-basis: 50%;
+#attack-tiers .dex-layout-header {
+    text-align: left;
+    justify-content: center;
 }
 
 .dex-layout-content {
-    flex-basis: 80%;
+    /*flex-basis: 80%;*/
+    flex: 1 1 0;
     flex-flow: row wrap;
     gap: 4px;
     justify-content: start;
+    padding: 0;
+}
+
+#attack-tier-results-shadow .dex-layout-content {
+    padding-left: 1em;
 }
 
 .dex-layout-content > * {
     flex: 0 1 0;
+}
+
+#attack-tiers .card-body {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+#attack-tier-results {
+    flex: 0 0 50%;
+}
+
+#attack-tier-shadow-header {
+    writing-mode: vertical-lr;
+    transform: scale(-1);
+}
+
+#attack-tier-results-shadow {
+    flex: 1 1 40%;
 }
 
 @media screen and (max-width:800px) { 
@@ -325,10 +347,14 @@ body {
 
     #type-matrix-table tr > *:nth-child(1) {
         position: absolute;
-        left: 0;
+        left: 1px;
         z-index: 1;
-        background-color: var(--col-so-off);
-        min-width: 60px;
+        background-color: var(--col-header);
+        min-width: 58px;
+    }
+
+    #type-matrix-table tbody tr > *:nth-child(1) {
+        padding: 0;
     }
 
     #type-matrix {
@@ -339,6 +365,14 @@ body {
         min-width: 60px;
         padding-left: 0;
         padding-right: 0;
+    }
+
+    #type-matrix .corner-writing {
+        display: flex;
+    }
+
+    #type-matrix .table-title {
+        display: none;
     }
 }
 

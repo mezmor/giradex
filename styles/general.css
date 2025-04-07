@@ -7,8 +7,10 @@
     --col-bg: White;
     --col-main: Black;
     --col-off: Grey;
+    --col-outline: Grey;
     --col-md-off: #505050;
     --col-so-off: #ddd;
+    --col-header: #ddd;
     --col-light: SteelBlue;
     --col-alt-bg: WhiteSmoke;
     --col-contrast: Gold;
@@ -16,6 +18,7 @@
     --col-dark-bg: SlateGrey;
     --col-dark-main: Snow;
     --col-shadow: #cc00cc;
+    --col-shadow-bg: #800080;
     /* general */
     --border-radius: 2px;
 }
