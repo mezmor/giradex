@@ -10,8 +10,8 @@
     padding-right: 0;
     font-size: 100%;
     text-align: center;
-    border: 0;
-    border-bottom: 1px solid var(--col-off);
+    border: 1px solid var(--col-outline);
+    border-radius: var(--border-radius)
 }
 
 #suggestions {
@@ -73,7 +73,7 @@
     padding: 0;
     z-index: 1000;
     outline: none;
-    border: 1px solid var(--col-off);
+    border: 1px solid var(--col-outline);
 }
 
 .autoComplete_wrapper > table > tr, .autoComplete_wrapper > ul > li {

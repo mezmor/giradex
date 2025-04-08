@@ -236,11 +236,6 @@ function LoadPokedexBaseStats(stats) {
     $("#base-stat-atk").html(atk_html);
     $("#base-stat-def").html(def_html);
     $("#base-stat-hp").html(hp_html);
-
-    if (is_apple) {
-        $(".ascii-bar").addClass("monospace");
-        $(".ascii-bar").css("font-size", "15px");
-    }
 }
 
 
