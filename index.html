@@ -58,7 +58,7 @@
                         <div class=settings-list>
                             <div class=settings-subtitle>Metric Settings</div>
                             <span>PvE metric</span>
-                                <div class=setting-value>
+                                <div class="setting-value">
                                     <span id=metric-dps class="settings-opt tooltip unselectable">DPS
                                         <span class="tooltiptext">
                                             <div class="tooltip-title">Damage Per Second</div>
@@ -81,9 +81,12 @@
                                             </p></span></span>
                                 </div>
                             <span>Pokemon Level</span>
-                                <div class="setting-value">
-                                    <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
-                                    <span id=lvl-50 class="settings-opt unselectable">50</span>
+                                <div class="col">
+                                    <div class="setting-value">
+                                        <span id=lvl-30 class="settings-opt unselectable">30</span>
+                                        <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
+                                        <span id=lvl-50 class="settings-opt unselectable">50</span>
+                                    </div>
                                     <span id=lvl-xl-budget class="settings-opt unselectable tooltip">Budget50
                                         <span class="tooltiptext">
                                             <div class="tooltip-title">Level 50 for Budget Pokemon</div>
@@ -112,9 +115,12 @@
                                     <p>Size of battle team for computing eDPS</p>
                                     <p><i>Computes eDPS as if N identical copies of the Pokemon were in a battle team, and relobbying only occurred after each Nth death</i></p></span>
                             </span>
-                                <div class=setting-value>
-                                    <span id=rt-6 class="settings-opt settings-opt-sel unselectable">6</span>
-                                    <span id=rt-1 class="settings-opt unselectable">1</span>
+                                <div class="col">
+                                    <div class="setting-value">
+                                        <span id=rt-6 class="settings-opt settings-opt-sel unselectable">6</span>
+                                        <span id=rt-1 class="settings-opt unselectable">1</span>
+                                        <span>&#8199;</span><span>&#8199;</span>
+                                    </div>
                                     <span id=rt-m1 class="settings-opt unselectable tooltip">Mega1
                                         <span class="tooltiptext">
                                         <p>Use a 6-mon team for everything but Megas, which fight solo</p></span></span>
@@ -492,70 +498,71 @@
                 <div class="drawer absolute-right v-middle">
                     <img class="drawer-icon" src="imgs/settings.svg" style="padding-right: 0.5em;"/>
                     <div id=strongest-filters class="drawer-popup drawer-align-right">
-                        <div class="settings-subtitle">Species Filters</div>
-                        <div class="filters-box">
-                            <label class="switch tooltip tooltip-left">
-                                <span class="tooltiptext">Include Pokemon found in the Game Master but not yet available in game</span>
-                                <input type=checkbox value=unreleased unchecked>
-                                <span class="slider"></span>
-                                <span class="labeltext">Unreleased</span>
-                            </label>
-                            <label class="switch">
-                                <input type=checkbox value=mega checked>
-                                <span class="slider"></span>
-                                <span class="labeltext">Mega/Primal</span>
-                            </label>
-                            <label class="switch">
-                                <input type=checkbox value=shadow checked>
-                                <span class="slider"></span>
-                                <span class="labeltext">Shadow</span>
-                            </label>
-                            <label class="switch">
-                                <input type=checkbox value=legendary checked>
-                                <span class="slider"></span>
-                                <span class="labeltext">Legendary<span class="desktop">/Mythical/Ultrabeast</span></span>
-                            </label>
-                        </div>
-                        <div class="settings-subtitle">Move Filters</div>
-                        <div class="filters-box">
-                            <label class="switch tooltip tooltip-left">
+                        <div class="settings-list">
+                            <div class="settings-subtitle">Species Filters</div>
+                                <span class="tooltip tooltip-left">Unreleased
+                                    <span class="tooltiptext">Include Pokemon found in the Game Master but not yet available in game</span>
+                                </span>
+                                    <label class="switch">
+                                        <input type=checkbox value=unreleased unchecked>
+                                        <span class="slider"></span>
+                                    </label>
+                                <span>Mega/Primal</span>
+                                    <label class="switch">
+                                        <input type=checkbox value=mega checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                <span>Shadow</span>
+                                    <label class="switch">
+                                        <input type=checkbox value=shadow checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                <span class="tooltip tooltip-left">Legendary
+                                    <span class="tooltiptext">Also includes Mythical Pokemon and Ultrabeasts</span>
+                                </span>
+                                    <label class="switch">
+                                        <input type=checkbox value=legendary checked>
+                                        <span class="slider"></span>
+                                    </label>
+                            <div class="settings-subtitle">Move Filters</div>
+                            <span class="tooltip tooltip-left">Elite Moves*
                                 <span class="tooltiptext"><p>Allow moves with limited availability</p>
                                     <p>(Requires Special event or Elite TMs)</p></span>
-                                <input type=checkbox value=elite checked>
-                                <span class="slider"></span>
-                                <span class="labeltext">Elite Moves*</span>
-                            </label>
-                            <label class="switch tooltip tooltip-left">
+                            </span>
+                                <label class="switch">
+                                    <input type=checkbox value=elite checked>
+                                    <span class="slider"></span>
+                                </label>
+                            <span class="labeltext tooltip tooltip-left">Mixed Types
                                 <span class="tooltiptext">Allow fast and charged moves with different types</span>
-                                <input type=checkbox value=mixed id=chk-mixed checked>
-                                <span class="slider"></span>
-                                <span class="labeltext">Mixed Movesets</span>
-                            </label>
-                            <label class="switch tooltip tooltip-left">
+                            </span>
+                                <label class="switch">
+                                    <input type=checkbox value=mixed id=chk-mixed checked>
+                                    <span class="slider"></span>
+                                </label>
+                            <span class="tooltip tooltip-left">Suboptimal Moves
                                 <span class="tooltiptext">Allow multiple movesets per Pokemon</span>
-                                <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
-                                <span class="slider"></span>
-                                <span class="labeltext">Suboptimal Movesets</span>
-                            </label>
-                        </div>
-                        <div class="settings-subtitle">Display Settings</div>
-                        <div class="filters-box">
-                            <label class="switch tooltip tooltip-left">
+                            </span>
+                                <label class="switch tooltip tooltip-left">
+                                    <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
+                                    <span class="slider"></span>
+                                </label>
+                            <div class="settings-subtitle">Display Settings</div>
+                            <span class="tooltip tooltip-left">Group Species
                                 <span class="tooltiptext"><div style="display: inline-grid; grid-template-columns: auto auto auto; column-gap: 5px;">
                                     <span>Checked</span><span>→</span><span>Compare suboptimal movesets to that Pokemon's best moveset</span>
                                     <span>Unchecked</span><span>→</span><span>Compare all movesets to each other</span></div></span>
-                                <input type=checkbox value=grouped id=chk-grouped checked disabled>
-                                <span class="slider" ></span>
-                                <span class="labeltext">Group Species</span>
-                            </label>
-                        </div>
-                        <div class="settings-list">
+                            </span>
+                                <label class="switch tooltip tooltip-left">
+                                    <input type=checkbox value=grouped id=chk-grouped checked disabled>
+                                    <span class="slider" ></span>
+                                </label>
                             <span>Row Count</span>
-                                <div class=setting-value><input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10"></div>
-                            <span class="tooltip tooltip-left">Baseline
+                                <input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10">
+                            <span class="tooltip tooltip-left desktop">Baseline
                                 <span class="tooltiptext">Sets the "100%" reference Pokemon</span>
                             </span>
-                                <div class=setting-value id=settings-compare>
+                                <div class="col desktop" id=settings-compare>
                                     <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip">Budget
                                         <span class="tooltiptext">
                                             <p>Compare to the top "cheap" Pokemon</p>
@@ -584,11 +591,11 @@
                                         <span class="tooltiptext">Compare to the absolute best Pokemon</span>
                                     </span>
                                 </div>
-                            <span class="tooltip tooltip-left">Tiers
+                            <span class="tooltip tooltip-left desktop">Tiers
                                 <span class="tooltiptext"><p>Determines how tiers are computed.</p>
                                     <p>Depends on comparison Pokemon.</p></span>
                                 </span>
-                                <div class=settings-value id=settings-tiermethod>
+                                <div class="col desktop" id=settings-tiermethod>
                                     <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip">Jenks
                                         <span class="tooltiptext">Algorithmic tiers based on minimum variance</span></span>
                                     <!--<span id=tier-broad class="settings-opt unselectable tooltip">Broad

@@ -59,6 +59,7 @@ function BindSettings() {
     $("#rt-m1").click(function() { SetTeamSize(6, 1); });
 
     // Pokemon Lvl
+    $("#lvl-30").click(function() { SetDefaultLevel([30], false); });
     $("#lvl-40").click(function() { SetDefaultLevel([40], false); });
     $("#lvl-50").click(function() { SetDefaultLevel([50], false); });
     $("#lvl-xl-budget").click(function() { SetDefaultLevel([40], true); });
@@ -265,6 +266,7 @@ function SetDefaultLevel(level, xl_budget = false) {
     settings_xl_budget = xl_budget;
 
     // sets settings options selected class
+    $("#lvl-30").removeClass("settings-opt-sel");
     $("#lvl-40").removeClass("settings-opt-sel");
     $("#lvl-50").removeClass("settings-opt-sel");
     $("#lvl-xl-budget").removeClass("settings-opt-sel");
@@ -274,6 +276,8 @@ function SetDefaultLevel(level, xl_budget = false) {
         $("#lvl-xl-budget").addClass("settings-opt-sel");
     else if (level.length > 1 && level[0] == 40 && level[1] == 50)
         $("#lvl-both").addClass("settings-opt-sel");
+    else if (level[0] == 30)
+        $("#lvl-30").addClass("settings-opt-sel");
     else if (level[0] == 40)
         $("#lvl-40").addClass("settings-opt-sel");
     else if (level[0] == 50)

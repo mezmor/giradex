@@ -34,6 +34,7 @@
     
     --border-radius: 2px;
     --site-width: 900px;
+    --site-margin: 10px;
     --header-height: 3rem
 }
 
@@ -266,6 +267,12 @@ ul.menu > li:hover {
         right: 0;
         transform: none;
     }
+}
+
+.card .drawer-popup {
+    box-sizing: border-box;
+    box-shadow: none;
+    border-right: none;
 }
 
 /* 
@@ -982,8 +989,6 @@ th.vertical a.type-text {
 }
 
 .setting-value {
-    flex: 0 0 50%;
-
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
@@ -1296,7 +1301,14 @@ input.settings-num {
     justify-content: center;
 }
 
-.row { display: flex; }
+.col {
+    display: flex; 
+    flex-flow: column nowrap;
+}
+.row { 
+    display: flex; 
+    flex-flow: row nowrap;
+}
 
 .selected { font-weight: bold; }
 .vertical {
