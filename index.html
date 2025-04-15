@@ -129,63 +129,6 @@
                                     <span id=opt-darkmode class="settings-opt settings-opt-sel unselectable">Dark</span>
                                     <span id=opt-lightmode class="settings-opt unselectable">Light</span>
                                 </div>
-                <div class=invisible>
-                            <div class=settings-subtitle>Display</div>
-                            <div id=settings-showstrongest class=setting-line>
-                                <span class="tooltip">Show strongest
-                                    <span class="tooltiptext">Number of rows to display in "Strongest" Tables</span>
-                                </span>
-                                <div class=setting-value><input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10"></div>
-                            </div>
-                            <div id=settings-compare class="">
-                                <span class="tooltip">Compare To →
-                                <span class="tooltiptext">Sets the "100%" reference Pokemon</span></span>
-                                <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip">Budget
-                                    <span class="tooltiptext">
-                                        <p>Compare to the top "cheap" Pokemon</p>
-                                        <ul>
-                                            <li>No Megas</li>
-                                            <li>No Shadows</li>
-                                            <li>No Legendaries</li>
-                                        </ul></span></span>
-                                <span id=cmp-espace class="settings-opt unselectable tooltip">ESpace
-                                    <span class="tooltiptext">
-                                        <p>Compare to the top "available-ish" Pokemon</p>
-                                        <ul>
-                                            <li>No Megas</li>
-                                            <li>No Shadow Legendaries</li>
-                                            <li>No Research Mythics</li>
-                                            <li>No Fusions</li>
-                                            <li>No Dragon Ascent</li>
-                                        </ul>
-                                        <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
-                                        <p><i>Used in infographics by <a href="https://reddit.com/u/bulbavisual">/u/bulbavisual</a></i></p>
-                                    </span></span>
-                                <span id=cmp-top class="settings-opt unselectable tooltip">Best
-                                    <span class="tooltiptext">Compare to the absolute best Pokemon</span></span>
-                            </div>
-                            <div id=settings-tiermethod><span class="tooltip">Tiers →
-                                <span class="tooltiptext"><p>Determines how tiers are computed.</p>
-                                    <p>Depends on comparison Pokemon.</p></span></span>
-                                <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip">Jenks
-                                    <span class="tooltiptext">Algorithmic tiers based on minimum variance</span></span>
-                                <!--<span id=tier-broad class="settings-opt unselectable tooltip">Broad
-                                    <span class="tooltiptext">Broad tiers based on hardcoded breakpoints</span></span>-->
-                                <span id=tier-espace class="settings-opt unselectable tooltip">ESpace
-                                    <span class="tooltiptext">
-                                        <p>Tiers with hardcoded breakpoints at every 10%</p>
-                                        <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
-                                    </span></span>
-                                <span id=tier-abs class="settings-opt unselectable tooltip">Absolute
-                                    <span class="tooltiptext">
-                                        <p>Absolute tiers based on only the displayed rating</p>
-                                        <ul>
-                                            <li>Ignores context (comparison Pokemon, type)</li>
-                                            <li>Tuned to overall "Any" rankings</li>
-                                            <li>Best for comparing across different types</li>
-                                        </ul></span></span>
-                            </div>
-                </div>
                         </div>
                     </div>
                 </div>
@@ -546,60 +489,127 @@
                     <span id="strongest-type-title"></span>
                     <span> type</span>
                 </div>
-                <div id=strongest-filters class="small-text filters-wrap">
-                    <div class="filters-box" id=pokemon-filters>
-                        <label class="switch">
-                            <input type=checkbox value=unreleased unchecked>
-                            <span class="slider"></span>
-                            <span class="labeltext tooltip">Unreleased
-                                <span class="tooltiptext">Include Pokemon found in the Game Master but not yet available in game</span></span>
-                        </label>
-                        <label class="switch">
-                            <input type=checkbox value=mega checked>
-                            <span class="slider"></span>
-                            <span class="labeltext">Mega or Primal</span>
-                        </label>
-                        <label class="switch">
-                            <input type=checkbox value=shadow checked>
-                            <span class="slider"></span>
-                            <span class="labeltext">Shadow</span>
-                        </label>
-                        <label class="switch">
-                            <input type=checkbox value=legendary checked>
-                            <span class="slider"></span>
-                            <span class="labeltext">Legendary<span class="desktop">, Mythical and Ultrabeast</span></span>
-                        </label>
+                <div class="drawer absolute-right v-middle">
+                    <img class="drawer-icon" src="imgs/settings.svg" style="padding-right: 0.5em;"/>
+                    <div id=strongest-filters class="drawer-popup drawer-align-right">
+                        <div class="settings-subtitle">Species Filters</div>
+                        <div class="filters-box">
+                            <label class="switch tooltip tooltip-left">
+                                <span class="tooltiptext">Include Pokemon found in the Game Master but not yet available in game</span>
+                                <input type=checkbox value=unreleased unchecked>
+                                <span class="slider"></span>
+                                <span class="labeltext">Unreleased</span>
+                            </label>
+                            <label class="switch">
+                                <input type=checkbox value=mega checked>
+                                <span class="slider"></span>
+                                <span class="labeltext">Mega/Primal</span>
+                            </label>
+                            <label class="switch">
+                                <input type=checkbox value=shadow checked>
+                                <span class="slider"></span>
+                                <span class="labeltext">Shadow</span>
+                            </label>
+                            <label class="switch">
+                                <input type=checkbox value=legendary checked>
+                                <span class="slider"></span>
+                                <span class="labeltext">Legendary<span class="desktop">/Mythical/Ultrabeast</span></span>
+                            </label>
+                        </div>
+                        <div class="settings-subtitle">Move Filters</div>
+                        <div class="filters-box">
+                            <label class="switch tooltip tooltip-left">
+                                <span class="tooltiptext"><p>Allow moves with limited availability</p>
+                                    <p>(Requires Special event or Elite TMs)</p></span>
+                                <input type=checkbox value=elite checked>
+                                <span class="slider"></span>
+                                <span class="labeltext">Elite Moves*</span>
+                            </label>
+                            <label class="switch tooltip tooltip-left">
+                                <span class="tooltiptext">Allow fast and charged moves with different types</span>
+                                <input type=checkbox value=mixed id=chk-mixed checked>
+                                <span class="slider"></span>
+                                <span class="labeltext">Mixed Movesets</span>
+                            </label>
+                            <label class="switch tooltip tooltip-left">
+                                <span class="tooltiptext">Allow multiple movesets per Pokemon</span>
+                                <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
+                                <span class="slider"></span>
+                                <span class="labeltext">Suboptimal Movesets</span>
+                            </label>
+                        </div>
+                        <div class="settings-subtitle">Display Settings</div>
+                        <div class="filters-box">
+                            <label class="switch tooltip tooltip-left">
+                                <span class="tooltiptext"><div style="display: inline-grid; grid-template-columns: auto auto auto; column-gap: 5px;">
+                                    <span>Checked</span><span>→</span><span>Compare suboptimal movesets to that Pokemon's best moveset</span>
+                                    <span>Unchecked</span><span>→</span><span>Compare all movesets to each other</span></div></span>
+                                <input type=checkbox value=grouped id=chk-grouped checked disabled>
+                                <span class="slider" ></span>
+                                <span class="labeltext">Group Species</span>
+                            </label>
+                        </div>
+                        <div class="settings-list">
+                            <span>Row Count</span>
+                                <div class=setting-value><input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10"></div>
+                            <span class="tooltip tooltip-left">Baseline
+                                <span class="tooltiptext">Sets the "100%" reference Pokemon</span>
+                            </span>
+                                <div class=setting-value id=settings-compare>
+                                    <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip">Budget
+                                        <span class="tooltiptext">
+                                            <p>Compare to the top "cheap" Pokemon</p>
+                                            <ul>
+                                                <li>No Megas</li>
+                                                <li>No Shadows</li>
+                                                <li>No Legendaries</li>
+                                            </ul>
+                                        </span>
+                                    </span>
+                                    <span id=cmp-espace class="settings-opt unselectable tooltip">ESpace
+                                        <span class="tooltiptext">
+                                            <p>Compare to the top "available-ish" Pokemon</p>
+                                            <ul>
+                                                <li>No Megas</li>
+                                                <li>No Shadow Legendaries</li>
+                                                <li>No Research Mythics</li>
+                                                <li>No Fusions</li>
+                                                <li>No Dragon Ascent</li>
+                                            </ul>
+                                            <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                                            <p><i>Used in infographics by <a href="https://reddit.com/u/bulbavisual">/u/bulbavisual</a></i></p>
+                                        </span>
+                                    </span>
+                                    <span id=cmp-top class="settings-opt unselectable tooltip">Best
+                                        <span class="tooltiptext">Compare to the absolute best Pokemon</span>
+                                    </span>
+                                </div>
+                            <span class="tooltip tooltip-left">Tiers
+                                <span class="tooltiptext"><p>Determines how tiers are computed.</p>
+                                    <p>Depends on comparison Pokemon.</p></span>
+                                </span>
+                                <div class=settings-value id=settings-tiermethod>
+                                    <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip">Jenks
+                                        <span class="tooltiptext">Algorithmic tiers based on minimum variance</span></span>
+                                    <!--<span id=tier-broad class="settings-opt unselectable tooltip">Broad
+                                        <span class="tooltiptext">Broad tiers based on hardcoded breakpoints</span></span>-->
+                                    <span id=tier-espace class="settings-opt unselectable tooltip">ESpace
+                                        <span class="tooltiptext">
+                                            <p>Tiers with hardcoded breakpoints at every 10%</p>
+                                            <p><i>Defined by <a href="https://reddit.com/u/Elastic_Space">/u/Elastic_Space</a></i></p>
+                                        </span></span>
+                                    <span id=tier-abs class="settings-opt unselectable tooltip">Absolute
+                                        <span class="tooltiptext">
+                                            <p>Absolute tiers based on only the displayed rating</p>
+                                            <ul>
+                                                <li>Ignores context (comparison Pokemon, type)</li>
+                                                <li>Tuned to overall "Any" rankings</li>
+                                                <li>Best for comparing across different types</li>
+                                            </ul></span></span>
+                                </div>
+                        </div>
                     </div>
-                    <div class="filters-box" id=move-filters>
-                        <label class="switch tooltip">
-                            <span class="tooltiptext"><p>Allow moves with limited availability</p>
-                                <p>(Requires Special event or Elite TMs)</p></span>
-                            <input type=checkbox value=elite checked>
-                            <span class="slider"></span>
-                            <span class="labeltext">Elite moves*</span>
-                        </label>
-                        <label class="switch tooltip">
-                            <span class="tooltiptext">Allow multiple movesets per Pokemon</span>
-                            <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
-                            <span class="slider"></span>
-                            <span class="labeltext">Suboptimal moves</span>
-                        </label>
-                        <label class="switch opt-indent tooltip">
-                            <span class="tooltiptext"><div style="display: inline-grid; grid-template-columns: auto auto auto; column-gap: 5px;">
-                                <span>Checked</span><span>→</span><span>Compare suboptimal movesets to that Pokemon's best moveset</span>
-                                <span>Unchecked</span><span>→</span><span>Compare all movesets to each other</span></div></span>
-                            <input type=checkbox value=grouped id=chk-grouped checked disabled>
-                            <span class="slider" ></span>
-                            <span class="labeltext">Display grouped</span>
-                        </label>
-                        <label class="switch tooltip">
-                            <span class="tooltiptext">Allow fast and charged moves with different types</span>
-                            <input type=checkbox value=mixed id=chk-mixed checked>
-                            <span class="slider"></span>
-                            <span class="labeltext">Mixed movesets</span>
-                        </label>
-                    </div>
-                </div>
+                </div> 
             </div>
             <div class="card-body">
                 <table class="table-bg" id=strongest-table>

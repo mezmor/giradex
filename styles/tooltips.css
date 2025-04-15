@@ -40,13 +40,13 @@
 }
 
 .tooltip-left .tooltiptext {
-  inset: auto 125% auto auto;
+  inset: auto 110% auto auto;
   top: 50%;
   transform: translateY(-50%);
 }
 
 .tooltip-right .tooltiptext {
-  inset: auto auto auto 125%;
+  inset: auto auto auto 110%;
   top: 50%;
   transform: translateY(-50%);
 }

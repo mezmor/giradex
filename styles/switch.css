@@ -24,11 +24,13 @@ Some modifications made to suit this application
     --color-disabled-border: #a0a0a0;
     --label-spacing: 6px;
     --disable-border-width: 1px;
+
+    cursor: pointer;
 }
 
-#settings .switch {
-    --button-width: 2em;
-    --button-height: 1em;
+.drawer-popup .switch {
+    --button-width: 2.5em;
+    --button-height: 1.2em;
     --toggle-diameter: calc(var(--button-height) - 2px);
     vertical-align: middle;
 }

@@ -252,9 +252,14 @@ ul.menu > li:hover {
     filter: brightness(0) saturate(100%) invert(37%) sepia(76%) saturate(3643%) hue-rotate(200deg) brightness(96%) contrast(90%);
 }
 
+.drawer-popup.drawer-align-right {
+    left: auto;
+    right: 0;
+    transform: none;
+}
 
 @media screen and (max-width:1100px) { 
-    .drawer-popup {
+    header .drawer-popup {
         position: fixed;
         top: var(--header-height);
         left: auto;
@@ -274,6 +279,7 @@ ul.menu > li:hover {
 }
 
 .card-header {
+    position: relative;
     background-color: var(--col-header);
     border-bottom: 1px solid var(--col-outline);
 }
@@ -997,7 +1003,7 @@ input.settings-num {
 }
 
 .opt-indent {
-    align-self: flex-end;
+    padding-left: 1.25em;
 }
 
 .filters-box {
@@ -1006,6 +1012,8 @@ input.settings-num {
     justify-content: flex-start;
     flex-direction: column;
     text-wrap: nowrap;
+    gap: 0.25em;
+    padding: 0.25em 0 0 0;
 }
 
 .filters-wrap {
@@ -1307,4 +1315,11 @@ input.settings-num {
     height: 1em;
     top: 50%;
     transform: translateY(-50%);
+}
+.absolute-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    z-index: 1;
 }
