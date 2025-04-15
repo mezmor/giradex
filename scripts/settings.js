@@ -18,6 +18,7 @@ let settings_party_size = 1;
 let settings_relobbytime = 10;
 let settings_team_size_normal = 6;
 let settings_team_size_mega = 6;
+let settings_theme = "darkmode";
 
 // inaccessible
 let settings_metric_exp = 0.225;
@@ -28,21 +29,10 @@ let settings_newdps = true;
  */
 function BindSettings() {
     // Expand/Shrink Settings
-    $("#settings-hide").click(SwapSettingsStatus);
 
     // Dark Mode
-    $("#darkmode-toggle").click(function() { 
-        if ($("body").hasClass("darkmode")) {
-            $("body").removeClass("darkmode");
-            $("#toggle-sun").css("display", "none");
-            $("#toggle-moon").css("display", "inline");
-        }
-        else {
-            $("body").addClass("darkmode");
-            $("#toggle-sun").css("display", "inline");
-            $("#toggle-moon").css("display", "none");
-        }
-    });
+    $("#opt-darkmode").click(function() { SetTheme("darkmode"); });
+    $("#opt-lightmode").click(function() { SetTheme("lightmode"); });
 
     // Expand/Shrink Dev Note
     $("#note-icon").click(function() { ToggleNote(); });
@@ -75,11 +65,6 @@ function BindSettings() {
     //$("#lvl-both").click(function() { SetDefaultLevel([40, 50], false); });
 
     // Metric Calc options
-    //$("#chk-rescale").change(function() { CheckURLAndAct(); });
-    $("#chk-pve-turns").change(function() { 
-        settings_pve_turns = this.checked;
-        CheckURLAndAct(); 
-    });
     $("#chk-newdps").change(function() { 
         settings_newdps = this.checked;
         estimated_y_numerator = (settings_newdps ? 1970 : 900);
@@ -108,16 +93,14 @@ function BindSettings() {
 /**
  * Swaps whether the settings list is being displayed or not.
  */
-function SwapSettingsStatus() {
+function ToggleDrawer(drawer_icon, drawer_elem) {
 
-    const list = $("#settings-container");
-
-    if (list.css("display") == "none") {
-        list.css("display", "initial");
-        $(this).text("[hide]");
+    if (drawer_elem.css("display") == "none") {
+        drawer_elem.css("display", "initial");
+        drawer_icon.addClass("active");
     } else {
-        list.css("display", "none");
-        $(this).text("[show]");
+        drawer_elem.css("display", "none");
+        drawer_icon.removeClassClass("active");
     }
 }
 
@@ -395,4 +378,17 @@ function SetTierMethod(method = "jenks") {
     
     // reload page
     CheckURLAndAct();
+}
+
+/**
+ * Sets the css stylesheet
+ */
+function SetTheme(theme = "darkmode") {
+    $("body").removeClass();
+    $("body").addClass(theme);
+    settings_theme = theme;
+
+    $("#opt-darkmode").removeClass("settings-opt-sel");
+    $("#opt-lightmode").removeClass("settings-opt-sel");
+    $("#opt-"+theme).addClass("settings-opt-sel");
 }

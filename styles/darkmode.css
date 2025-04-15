@@ -15,6 +15,8 @@
     --col-widget-back: #2f2f2f;
     --col-widget-back-hover: #444;
 
+    --col-drawer-bg: rgba(27,27,27,0.75);
+
     --col-row-bg: #2f2f2f;
     --col-alt-bg: #222;
     --card-radius: 1rem;
@@ -172,7 +174,7 @@
      * Autocomplete, Togglebutton
      */
     #suggestions {
-        background-color: rgba(20,20,20,0.8);
+        background-color: var(--col-drawer-bg);
     }
 
     .selected-suggestion {
@@ -184,7 +186,8 @@
     }
 
     #poke-search-box {
-        line-height: 1.75em;
+        line-height: 1.6em;
+        border-radius: var(--card-radius);
     }
 
     /* 

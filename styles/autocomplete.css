@@ -1,25 +1,29 @@
 #poke-search {
-    width: 50%;
-    margin: 0 auto;
-    padding-top: 2em;
+    position: relative;
+    min-width: 10rem;
 }
 
 #poke-search-box {
-    width: 100%;
-    padding-left: 0;
+    width: 8rem;
+    padding-left: 2em;
     padding-right: 0;
     font-size: 100%;
-    text-align: center;
+    text-align: left;
     border: 1px solid var(--col-outline);
     border-radius: var(--border-radius)
 }
 
 #suggestions {
-    width: 100%;
-    background: rgba(255,255,255,0.95);
+    width: 20rem;
     margin-top: 0;
     text-align: left;
     z-index: 5;
+    
+    background-color: var(--col-drawer-bg);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--col-outline);
+    border-radius: var(--border-radius);
+    box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.5);
 }
 
 #move-search {
@@ -63,13 +67,17 @@
 
 .autoComplete_wrapper {
     position: relative;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
 }
 
 .autoComplete_wrapper > table, .autoComplete_wrapper > ul {
     position: absolute;
     top: 100%;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
     padding: 0;
     z-index: 1000;
     outline: none;

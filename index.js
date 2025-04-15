@@ -221,6 +221,12 @@ function LoadPage(pageName) {
     // If we're loading any page, we're not on the landing/homepage
     // So show the footer
     $("#footer").css("display", (!!pageName ? "initial" : "none"));
+
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+    });
 }
 
 /**
@@ -344,5 +350,6 @@ function InitializePokemonSearch() {
     });
     pokemonSearch.input.addEventListener("selection", function(e) {
         LoadPokedexAndUpdateURL(GetPokeDexMon(e.detail.selection.value.id, e.detail.selection.value.form));
+        document.activeElement.blur();
     });
 }

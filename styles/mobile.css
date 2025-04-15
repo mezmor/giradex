@@ -1,3 +1,7 @@
+:root {
+    --header-height: 4rem;
+}
+
 .site-size {
     width: 100%;
 }
@@ -240,15 +244,14 @@ body {
         text-overflow: ellipsis;
     }
 }
-
+/*
 #settings {
     position: fixed;
     transform: none;
     width: 90vw;
     left: 5vw;
     top: 1vw;
-}
-#settings-c { z-index: 12; }
+}*/
 
 .column-l, .column-r {
     flex-basis: 100%;
@@ -276,10 +279,6 @@ body {
     margin-right: auto;
     text-align: left;
 }
-#poke-search {
-    width: 90vw;
-    padding-top: 1em;
-}
 
 #pokedex {
     height: auto;
@@ -298,7 +297,6 @@ body {
 
 @media screen and (max-width:600px) { 
     #strongest-table, 
-    #poke-search,
     #pokedex, #pokedex-page, 
     .type-links,
     #pokedex-move-table thead tr > *:nth-child(1):after {
@@ -371,6 +369,73 @@ body {
     #type-matrix .table-title {
         display: none;
     }
+
+    .header-area {
+        gap: 0;
+    }
+    .drawer-icon {
+        margin-left: 0;
+    }
+    #poke-search {
+        margin: 0 0.5em;
+    }
+
+    header h2 {
+        font-size: 1.25em;
+    }
+
+    header .drawer-popup, #suggestions {
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        transform: none;
+
+        width: auto;
+        height: auto;
+        font-size: 1.25em;
+        border-left: none;
+        border-right: none;
+    }
+}
+
+@media screen and (max-width:500px) { 
+    #poke-search {
+        min-width: 0;
+    }
+    #poke-search-box {
+        color: transparent;
+        width: 1.5em;
+        padding: 0;
+        border: none;
+        background-color: transparent;
+    }
+    #poke-search .inlaid-icon {
+        left: 0;
+        font-size: 1.5em;
+        z-index: -1;
+    }
+
+    #poke-search-box:focus {
+        color: var(--col-text);
+        width: 100%;
+        font-size: 1.5em;
+        box-sizing: border-box;
+        padding: 0 0 0 2em;
+        border: 1px solid var(--col-outline);
+        background-color: var(--col-widget-back);
+    }
+
+    #poke-search:focus-within {
+        position: fixed;
+        left: 3rem;
+        right: 4.5em;
+    }
+    #poke-search:focus-within .inlaid-icon {
+        left: 0.5em;
+        font-size: 1.5em;
+        z-index: 2;
+    }
 }
 
 @media screen and (max-width:400px) { 
@@ -384,6 +449,10 @@ body {
 
     .tier-label {
         font-size: 0;
+    }
+
+    .settings-list {
+        font-size: 0.8em;
     }
 
     /*
