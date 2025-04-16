@@ -203,7 +203,7 @@ function LoadTypeChartAndUpdateURL() {
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Each attacking type's effectiveness against raid bosses in Pokemon Go.");
+        "Each attacking type's effectiveness against raid bosses in Pokémon Go.");
 
     LoadPage("type-matrix");
 }

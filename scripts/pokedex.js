@@ -1,5 +1,5 @@
 /**
- * Loads a pokemon page.
+ * Loads a Pokémon page.
  */
 function LoadPokedex(pokedex_mon) {
 
@@ -17,7 +17,7 @@ function LoadPokedex(pokedex_mon) {
     // sets description
     $('meta[name=description]').attr('content', 
         "Best movesets, base stats, and raid counters for " + pokemon_name + 
-        " in Pokemon Go.");
+        " in Pokémon Go.");
 
     // sets level input value
     $("#input-lvl").val(pokedex_mon.level);

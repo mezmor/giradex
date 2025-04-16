@@ -5,7 +5,7 @@
     <meta charset=UTF-8>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
     <title>DialgaDex</title>
-    <meta name="description" content="Ranking lists, moveset data, calculation tools, and everything else you need to tackle raids in Pokemon Go." />
+    <meta name="description" content="Ranking lists, moveset data, calculation tools, and everything else you need to tackle raids in Pokémon Go." />
     
     <link rel="icon" type="image/png" href="/res/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/res/favicon.svg" />
@@ -80,7 +80,7 @@
                                                 achieved when accounting for the time lost relobbying.
                                             </p></span></span>
                                 </div>
-                            <span>Pokemon Level</span>
+                            <span>Pokémon Level</span>
                                 <div class="col">
                                     <div class="setting-value">
                                         <span id=lvl-30 class="settings-opt unselectable">30</span>
@@ -89,7 +89,7 @@
                                     </div>
                                     <span id=lvl-xl-budget class="settings-opt unselectable tooltip">Budget50
                                         <span class="tooltiptext">
-                                            <div class="tooltip-title">Level 50 for Budget Pokemon</div>
+                                            <div class="tooltip-title">Level 50 for Budget Pokémon</div>
                                             <ul>
                                                 <li>Use stats at Level 40 for Legendaries</li>
                                                 <li>Use stats at Level 50 for non-Legendaries</li>
@@ -113,7 +113,7 @@
                             <span class="tooltip tooltip-left">Raid Team Size
                                 <span class="tooltiptext">
                                     <p>Size of battle team for computing eDPS</p>
-                                    <p><i>Computes eDPS as if N identical copies of the Pokemon were in a battle team, and relobbying only occurred after each Nth death</i></p></span>
+                                    <p><i>Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death</i></p></span>
                             </span>
                                 <div class="col">
                                     <div class="setting-value">
@@ -362,7 +362,7 @@
                             <input type=checkbox value=unreleased unchecked>
                             <span class="slider"></span>
                             <span class="labeltext tooltip">Unreleased
-                                <span class="tooltiptext">Include Pokemon found in the Game Master but not yet available in game</span></span>
+                                <span class="tooltiptext">Include Pokémon found in the Game Master but not yet available in game</span></span>
                         </label>
                         <label class="switch">
                             <input type=checkbox value=mega checked>
@@ -484,7 +484,7 @@
         <div class="card">
             <div id=strongest-header class="card-header">
                 <div class="card-title">
-                    <span>Strongest Pokemon </span>
+                    <span>Strongest Pokémon </span>
                     <input type='checkbox' class='toggling' value='versus' id='chk-versus' unchecked>
                     <label class='togglebutton' for='chk-versus'>
                         <div class='action'>
@@ -501,7 +501,7 @@
                         <div class="settings-list">
                             <div class="settings-subtitle">Species Filters</div>
                                 <span class="tooltip tooltip-left">Unreleased
-                                    <span class="tooltiptext">Include Pokemon found in the Game Master but not yet available in game</span>
+                                    <span class="tooltiptext">Include Pokémon found in the Game Master but not yet available in game</span>
                                 </span>
                                     <label class="switch">
                                         <input type=checkbox value=unreleased unchecked>
@@ -518,7 +518,7 @@
                                         <span class="slider"></span>
                                     </label>
                                 <span class="tooltip tooltip-left">Legendary
-                                    <span class="tooltiptext">Also includes Mythical Pokemon and Ultrabeasts</span>
+                                    <span class="tooltiptext">Also includes Mythical Pokémon and Ultrabeasts</span>
                                 </span>
                                     <label class="switch">
                                         <input type=checkbox value=legendary checked>
@@ -541,7 +541,7 @@
                                     <span class="slider"></span>
                                 </label>
                             <span class="tooltip tooltip-left">Suboptimal Moves
-                                <span class="tooltiptext">Allow multiple movesets per Pokemon</span>
+                                <span class="tooltiptext">Allow multiple movesets per Pokémon</span>
                             </span>
                                 <label class="switch tooltip tooltip-left">
                                     <input type=checkbox value=suboptimal id=chk-suboptimal unchecked>
@@ -550,7 +550,7 @@
                             <div class="settings-subtitle">Display Settings</div>
                             <span class="tooltip tooltip-left">Group Species
                                 <span class="tooltiptext"><div style="display: inline-grid; grid-template-columns: auto auto auto; column-gap: 5px;">
-                                    <span>Checked</span><span>→</span><span>Compare suboptimal movesets to that Pokemon's best moveset</span>
+                                    <span>Checked</span><span>→</span><span>Compare suboptimal movesets to that Pokémon's best moveset</span>
                                     <span>Unchecked</span><span>→</span><span>Compare all movesets to each other</span></div></span>
                             </span>
                                 <label class="switch tooltip tooltip-left">
@@ -560,12 +560,12 @@
                             <span>Row Count</span>
                                 <input type="number" id=strongest-count class="settings-num" value="20" min="20" max="100" step="10">
                             <span class="tooltip tooltip-left desktop">Baseline
-                                <span class="tooltiptext">Sets the "100%" reference Pokemon</span>
+                                <span class="tooltiptext">Sets the "100%" reference Pokémon</span>
                             </span>
                                 <div class="col desktop" id=settings-compare>
                                     <span id=cmp-budget class="settings-opt settings-opt-sel unselectable tooltip">Budget
                                         <span class="tooltiptext">
-                                            <p>Compare to the top "cheap" Pokemon</p>
+                                            <p>Compare to the top "cheap" Pokémon</p>
                                             <ul>
                                                 <li>No Megas</li>
                                                 <li>No Shadows</li>
@@ -575,7 +575,7 @@
                                     </span>
                                     <span id=cmp-espace class="settings-opt unselectable tooltip">ESpace
                                         <span class="tooltiptext">
-                                            <p>Compare to the top "available-ish" Pokemon</p>
+                                            <p>Compare to the top "available-ish" Pokémon</p>
                                             <ul>
                                                 <li>No Megas</li>
                                                 <li>No Shadow Legendaries</li>
@@ -588,12 +588,12 @@
                                         </span>
                                     </span>
                                     <span id=cmp-top class="settings-opt unselectable tooltip">Best
-                                        <span class="tooltiptext">Compare to the absolute best Pokemon</span>
+                                        <span class="tooltiptext">Compare to the absolute best Pokémon</span>
                                     </span>
                                 </div>
                             <span class="tooltip tooltip-left desktop">Tiers
                                 <span class="tooltiptext"><p>Determines how tiers are computed.</p>
-                                    <p>Depends on comparison Pokemon.</p></span>
+                                    <p>Depends on comparison Pokémon.</p></span>
                                 </span>
                                 <div class="col desktop" id=settings-tiermethod>
                                     <span id=tier-jenks class="settings-opt settings-opt-sel unselectable tooltip">Jenks
@@ -609,7 +609,7 @@
                                         <span class="tooltiptext">
                                             <p>Absolute tiers based on only the displayed rating</p>
                                             <ul>
-                                                <li>Ignores context (comparison Pokemon, type)</li>
+                                                <li>Ignores context (comparison Pokémon, type)</li>
                                                 <li>Tuned to overall "Any" rankings</li>
                                                 <li>Best for comparing across different types</li>
                                             </ul></span></span>

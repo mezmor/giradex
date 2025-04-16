@@ -59,7 +59,7 @@ function LoadMoves(type = "Any") {
     $('meta[name=description]').attr('content', 
         "All the hidden move data attributes for " + 
         (type == "Any" ? "" : type + " ") + cur_sort.move_kind + 
-        " moves in Pokemon Go. " + 
+        " moves in Pokémon Go. " + 
         "Includes metrics which evaluate how effective each move is.");
 
     BuildMoveUserMap();

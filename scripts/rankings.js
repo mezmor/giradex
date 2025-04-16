@@ -76,7 +76,7 @@ function LoadStrongest(type = "Any") {
         "Best " + (type == "Any" || type == "Each" || versus_chk.is(":checked") ? "" : type + "-type ") + 
         "raid counters " + 
         (type != "Any" && type != "Each" && versus_chk.is(":checked") ? "against " + type + "-type bosses ": "") + 
-        "in Pokemon Go, using the new eDPS metric.");
+        "in Pokémon Go, using the new eDPS metric.");
 
     // removes previous table rows
     $("#strongest-table tbody tr").remove();
