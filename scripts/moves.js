@@ -54,7 +54,7 @@ function LoadMoves(type = "Any") {
     let title = (cur_sort.type == "Any" ? "" : cur_sort.type + "-type ") + 
         cur_sort.move_kind + " Moves";
     document.title = title + " - DialgaDex"; // page title
-    $("#move-type-title").text(cur_sort.type);
+    $("#move-type-title").text(cur_sort.type == "Any" ? "" : cur_sort.type + "-type");
 
     // sets description
     $('meta[name=description]').attr('content', 

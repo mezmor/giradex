@@ -74,7 +74,18 @@ function LoadStrongest(type = "Any") {
     if (versus)
         title = title + " against " + type + "-type Bosses";
     document.title = title + " - DialgaDex"; // page title
-    $("#strongest-type-title").text(type);
+
+    $("#strongest-type-title").text("");
+    $("#strongest-title-suffix").text("");
+    if (type == "Any") {
+        $("#strongest-type-title").text("Overall");
+    }
+    else if (type == "Each") {
+        $("#strongest-title-suffix").text("of Each Type");
+    }
+    else {
+        $("#strongest-type-title").text(type + "-type");
+    }
 
     // sets description
     $('meta[name=description]').attr('content', 
