@@ -10,6 +10,8 @@
     --col-outline: hsl(220, 20%, 35%);
     --col-text: White;
     --col-text-midkey: #dcdcdc;
+    --col-sitename: #fff;
+    --col-sitename-contrast: #4296f4;
 
     --col-widget: #1c497d;
     --col-widget-back: #2f2f2f;
@@ -31,11 +33,6 @@
      */
     header {
         background-image: linear-gradient(0deg, var(--col-header) 30%, var(--col-header-highlight) 80%);
-    }
-
-    input { 
-        color: inherit;
-        background-color: var(--col-widget-back);
     }
 
     /* 
@@ -60,9 +57,6 @@
     /* 
     * (Strongest) Table Formatting
     */
-    .table-bg tr:not(.table-header):nth-of-type(odd) { background-color: var(--col-row-bg); }
-    .table-bg tr:not(.table-header):nth-of-type(even) { background-color: var(--col-alt-bg); }
-
     .table-rounded th:first-child {
         border-radius: var(--card-radius) 0 0 0;
     }
@@ -114,13 +108,6 @@
     /*
      * PokeDex Layouts
      */
-    .dex-layout-table > .dex-layout-tablecell {
-        background-color: var(--col-row-bg);
-    }
-    .dex-layout-table > .dex-layout-tablecell:nth-child(odd) {
-        background-color: var(--col-alt-bg);
-    }
-
     .dex-layout-table.rounded-bottom > .dex-layout-tablecell:first-child {
         border-bottom-left-radius: var(--card-radius);
     }
@@ -170,13 +157,14 @@
     }
     .bg-Dark { background-color: rgb(56, 44, 36); }
 
+    .tier-label {
+        /*opacity: 0.8;*/
+        filter: brightness(0.86);
+    }
+
     /* 
      * Autocomplete, Togglebutton
      */
-    #suggestions {
-        background-color: var(--col-drawer-bg);
-    }
-
     .selected-suggestion {
         background-color: rgba(255,255,255,0.1);
     }
@@ -186,7 +174,6 @@
     }
 
     #poke-search-box {
-        line-height: 1.6em;
         border-radius: var(--card-radius);
     }
 

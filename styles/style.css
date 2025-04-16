@@ -12,21 +12,24 @@
 
  :root {
     /* light colors */
-    --col-bg: White;
-    --col-header: #ccc;
+    --col-bg: #fbfbff;
+    --col-header: #61b6e7;
 
     --col-outline: Grey;
-    --col-text: Black;
+    --col-text: #103;
     --col-text-midkey: #505050;
     --col-text-lowkey: Grey;
     --col-contrast: Gold;
+    --col-sitename: #edf;
+    --col-sitename-contrast: #272790;
 
     --col-widget: #4296f4;
-    --col-widget-back: #ccc;
-    --col-widget-back-hover: #ddd;
+    --col-widget-back: #ddd;
+    --col-widget-back-hover: #fff;
 
     --col-drawer-bg: rgba(250,250,250,0.75);
 
+    --col-row-bg: #fff;
     --col-alt-bg: #e2e2e2;
     
     --col-shadow: #cc00cc;
@@ -42,6 +45,10 @@
     --color-handle: #dfdfdf;
     --color-grey: #aaa;
     --color-blue: var(--col-widget);
+}
+
+label.togglebutton {
+    --col-toggle-bg: var(--col-widget-back);
 }
 
 /*
@@ -133,6 +140,11 @@ input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
 }
 
+input { 
+    color: inherit;
+    background-color: var(--col-widget-back);
+}
+
 sup { vertical-align: top; }
 
 /* 
@@ -173,6 +185,13 @@ ul.footnotes {
 /* 
  * Site Header
  */
+#site-name {
+    color: var(--col-sitename);
+}
+#site-name .contrast {
+    color: var(--col-sitename-contrast);
+}
+
 #header-content {
     display: flex;
     flex-flow: row nowrap;
@@ -321,7 +340,8 @@ ul.menu > li:hover {
 /* 
  * (Strongest) Table Formatting
  */
-.table-bg tr:nth-child(even) { background-color: var(--col-alt-bg); }
+.table-bg tr:not(.table-header):nth-of-type(odd) { background-color: var(--col-row-bg); }
+.table-bg tr:not(.table-header):nth-of-type(even) { background-color: var(--col-alt-bg); }
 
 #strongest-table {
     width: 100%;
@@ -499,8 +519,14 @@ sup.xl {
     justify-content: center;
     align-items: center;
 }
-#previous-containers { justify-content: right; }
-#next-containers { justify-content: left; }
+#previous-containers { 
+    justify-content: right; 
+    opacity: 0.6;
+}
+#next-containers { 
+    justify-content: left; 
+    opacity: 0.6;
+}
 
 #additional-containers {
     margin: 0 auto;
@@ -536,66 +562,66 @@ sup.xl {
 /* 
  * PokeDex Stats
  */
- #base-stats, #stats-form table { width: 100%; }
- #base-stats tr > *:nth-child(1), #stats-form tr > *:nth-child(1) { width: 2.5%; }
- #base-stats tr > *:nth-child(2), #stats-form tr > *:nth-child(2) { width: 6%; }
- #base-stats tr > *:nth-child(3), #stats-form tr > *:nth-child(3) { width: 4%; }
- #base-stats tr > *:nth-child(4), #stats-form tr > *:nth-child(4) { width: 10%; }
- #base-stats tr > *:nth-child(5), #stats-form tr > *:nth-child(5) { width: 2.5%; }
- #base-stats tr > *:nth-child(6), #stats-form tr > *:nth-child(6) { width: 6%; }
- #base-stats tr > *:nth-child(7), #stats-form tr > *:nth-child(7) { width: 4%; }
- #base-stats tr > *:nth-child(8), #stats-form tr > *:nth-child(8) { width: 10%; }
- #base-stats tr > *:nth-child(9), #stats-form tr > *:nth-child(9) { width: 10%; }
- #base-stats tr > *:nth-child(10), #stats-form tr > *:nth-child(10) { width: 10%; }
- #base-stats tr > *:nth-child(11), #stats-form tr > *:nth-child(11) { width: 10%; }
- #base-stats tr > *:nth-child(12), #stats-form tr > *:nth-child(12) { width: 25%; }
- 
- #stats-form > label {
-     padding: 0.25em 0;
-     display: table-cell;
- }
- 
- #stats-form input[type="number"] {
-     width: 3em;
-     border: none;
-     border: 1px solid var(--col-outline);
-     font-size: 12.6px;
- }
- 
- #stats-form input[type="number"]:focus {
-     outline: none;
- }
- 
- #stats-form #input-lvl { width: 4em; }
- 
- #stats-form input[type="submit"] {
-     cursor: pointer;
-     font-family: inherit;
-     background-color: var(--col-widget-back);
-     border: 1px solid var(--col-outline);
-     border-radius: var(--border-radius);
-     font-size: 12.6px;
-     box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.5);
- }
- 
- #stats-form input[type="submit"]:hover {
+#base-stats, #stats-form table { width: 100%; }
+#base-stats tr > *:nth-child(1), #stats-form tr > *:nth-child(1) { width: 2.5%; }
+#base-stats tr > *:nth-child(2), #stats-form tr > *:nth-child(2) { width: 6%; }
+#base-stats tr > *:nth-child(3), #stats-form tr > *:nth-child(3) { width: 4%; }
+#base-stats tr > *:nth-child(4), #stats-form tr > *:nth-child(4) { width: 10%; }
+#base-stats tr > *:nth-child(5), #stats-form tr > *:nth-child(5) { width: 2.5%; }
+#base-stats tr > *:nth-child(6), #stats-form tr > *:nth-child(6) { width: 6%; }
+#base-stats tr > *:nth-child(7), #stats-form tr > *:nth-child(7) { width: 4%; }
+#base-stats tr > *:nth-child(8), #stats-form tr > *:nth-child(8) { width: 10%; }
+#base-stats tr > *:nth-child(9), #stats-form tr > *:nth-child(9) { width: 10%; }
+#base-stats tr > *:nth-child(10), #stats-form tr > *:nth-child(10) { width: 10%; }
+#base-stats tr > *:nth-child(11), #stats-form tr > *:nth-child(11) { width: 10%; }
+#base-stats tr > *:nth-child(12), #stats-form tr > *:nth-child(12) { width: 25%; }
+
+#stats-form > label {
+    padding: 0.25em 0;
+    display: table-cell;
+}
+
+#stats-form input[type="number"] {
+    width: 3em;
+    border: none;
+    border: 1px solid var(--col-outline);
+    font-size: 12.6px;
+}
+
+#stats-form input[type="number"]:focus {
+    outline: none;
+}
+
+#stats-form #input-lvl { width: 4em; }
+
+#stats-form input[type="submit"] {
+    cursor: pointer;
+    font-family: inherit;
+    background-color: var(--col-widget-back);
+    border: 1px solid var(--col-outline);
+    border-radius: var(--border-radius);
+    font-size: 12.6px;
+    box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.5);
+}
+
+#stats-form input[type="submit"]:hover {
     background-color: var(--col-widget-back-hover);
-     box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.5);
- }
- 
- #stats-form input[type="submit"]:focus {
-     outline: 1px solid var(--col-outline);
- }
- 
- #max-cp-div {
-     height: 0;
-     display: block;
- }
- 
- #max-cp {
-     position: relative;
-     font-size: 1.25em;
- }
+    box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.5);
+}
+
+#stats-form input[type="submit"]:focus {
+    outline: 1px solid var(--col-outline);
+}
+
+#max-cp-div {
+    height: 0;
+    display: block;
+}
+
+#max-cp {
+    position: relative;
+    font-size: 1.25em;
+}
 
 /*
  * PokeDex Layouts
@@ -630,6 +656,13 @@ sup.xl {
 .dex-layout-tablecell {
     display: flex;
     flex-flow: column nowrap;
+}
+
+.dex-layout-table > .dex-layout-tablecell {
+    background-color: var(--col-row-bg);
+}
+.dex-layout-table > .dex-layout-tablecell:nth-child(odd) {
+    background-color: var(--col-alt-bg);
 }
 
 .dex-layout-header {
@@ -1227,7 +1260,6 @@ input.settings-num {
 .tier-label {
     text-shadow: 1px 1px 2px black;
     color: white;
-    opacity: 0.8;
 }
 
 .tier-MRay {
@@ -1272,7 +1304,7 @@ input.settings-num {
 }
 
 .shield-icon {
-    filter: brightness(0.8);
+    filter: brightness(0.6);
 }
 .tripleshield-icon {
     filter: brightness(0) saturate(100%) invert(25%) sepia(100%) saturate(2737%) hue-rotate(271deg) brightness(84%) contrast(122%);
