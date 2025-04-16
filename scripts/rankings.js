@@ -65,23 +65,28 @@ function LoadStrongest(type = "Any") {
     else {
         versus_chk.prop("disabled", false);
     }
+    const versus = versus_chk.is(":checked");
 
     // sets titles
-    let title = "Strongest Pokémon of " + type + " type";
+    let title = "Best " + (type == "Any" || type == "Each" || versus ? "" : type + "-type ") + "Attackers";
+    if (type == "Each")
+        title = title + " of Each type";
+    if (versus)
+        title = title + " against " + type + "-type Bosses";
     document.title = title + " - DialgaDex"; // page title
     $("#strongest-type-title").text(type);
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Best " + (type == "Any" || type == "Each" || versus_chk.is(":checked") ? "" : type + "-type ") + 
+        "Best " + (type == "Any" || type == "Each" || versus ? "" : type + "-type ") + 
         "raid counters " + 
-        (type != "Any" && type != "Each" && versus_chk.is(":checked") ? "against " + type + "-type bosses ": "") + 
+        (type != "Any" && type != "Each" && versus ? "against " + type + "-type bosses ": "") + 
         "in Pokémon Go, using the new eDPS metric.");
 
     // removes previous table rows
     $("#strongest-table tbody tr").remove();
 
-    const search_params = GetSearchParms(type, versus_chk.is(":checked"));
+    const search_params = GetSearchParms(type, versus);
 
     if (type == "Each") {
         str_pokemons = SetRankingTable(GetStrongestOfEachType(search_params));

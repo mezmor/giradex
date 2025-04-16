@@ -51,7 +51,8 @@ function LoadMoves(type = "Any") {
     cur_sort.move_kind = move_kind_chk.prop("checked") ? "Charged" : "Fast";
 
     // sets titles
-    let title = cur_sort.move_kind + " Moves of " + cur_sort.type + " type";
+    let title = (cur_sort.type == "Any" ? "" : cur_sort.type + "-type ") + 
+        cur_sort.move_kind + " Moves";
     document.title = title + " - DialgaDex"; // page title
     $("#move-type-title").text(cur_sort.type);
 

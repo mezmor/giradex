@@ -142,7 +142,7 @@
                     <img class="drawer-icon" src="imgs/menu.svg" />
                     <div class="drawer-popup" id="nav-drawer">
                         <ul class="menu">
-                            <li id=rankings-link>Raid Rankings</li>
+                            <li id=rankings-link>Attacker Rankings</li>
                             <li id=moves-link href=#>Move Data</li>
                             <li id=typechart-link href=#>Type Chart</li>
                         </ul>
@@ -483,17 +483,16 @@
         <br>
         <div class="card">
             <div id=strongest-header class="card-header">
-                <div class="card-title">
-                    <span>Strongest Pokémon </span>
+                <div class="card-title" style="padding: 0.5rem 3rem">
+                    <span>Strongest </span>
+                    <span id="strongest-type-title"></span><span>-type </span>
                     <input type='checkbox' class='toggling' value='versus' id='chk-versus' unchecked>
                     <label class='togglebutton' for='chk-versus'>
                         <div class='action'>
-                            <span class='option-1'>of</span>
-                            <span class='option-2'>vs</span>
+                            <span class='option-1'>Attackers</span>
+                            <span class='option-2'>Counters</span>
                         </div>
                     </label>
-                    <span id="strongest-type-title"></span>
-                    <span> type</span>
                 </div>
                 <div class="drawer absolute-right v-middle">
                     <img class="drawer-icon" src="imgs/settings.svg" style="padding-right: 0.5em;"/>
