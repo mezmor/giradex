@@ -123,6 +123,16 @@ button:focus {
     outline: 1px solid var(--col-outline);
 }
 
+input[type="number"] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
 sup { vertical-align: top; }
 
 /* 
@@ -988,11 +998,18 @@ th.vertical a.type-text {
     border-bottom: 1px solid var(--col-outline);
 }
 
+.settings-list > *:nth-child(even of :not(.settings-title, .settings-subtitle)):not(.setting-value) {
+    justify-self: end;
+    text-align: right;
+}
+
 .setting-value {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
     gap: 0.5em;
+
+    justify-self: stretch;
 }
 
 input.settings-num {

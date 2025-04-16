@@ -26,6 +26,7 @@ Some modifications made to suit this application
     --disable-border-width: 1px;
 
     cursor: pointer;
+    text-align: left !important;
 }
 
 .drawer-popup .switch {
