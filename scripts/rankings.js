@@ -428,7 +428,7 @@ function SetRankingTable(str_pokemons, num_rows = null,
     const display_grouped = $("#strongest input[value='grouped']:checkbox").is(":checked") 
         && $("#strongest input[value='suboptimal']:checkbox").is(":checked");
 
-    const best_pct = str_pokemons[0].pct / 100;
+    const best_pct = str_pokemons[0].pct;
 
     if (!num_rows || num_rows > str_pokemons.length)
         num_rows = str_pokemons.length;
@@ -511,12 +511,7 @@ function SetRankingTable(str_pokemons, num_rows = null,
                 + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</a></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
-            const td_pct = ((show_pct) ? "<td>" 
-                + "<div class='bar-bg' style='width: calc(" + (100 / best_pct) + "% - 10px);'>"
-                + "<div class='bar-fg" + ((Math.abs(p.pct - 100) < 0.000001) ? " bar-compare" : "") + "' style='width: " + p.pct + "%;'>"
-                + "<span class='bar-txt'>"
-                + p.pct.toFixed(1) + "%</td>"
-                + "</span></div></div>" : "");
+            const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct) + "</td>" : "");
 
             tr.append(td_tier);
             tr.append(td_rank);
@@ -677,4 +672,15 @@ function GetSearchParms(type, versus) {
     search_params.mixed =
         $("#strongest input[value='mixed']:checkbox").is(":checked");
     return search_params;
+}
+
+/**
+ * Create a "Progress" bar scaled to some absolute best 
+ */
+function GetBarHTML(val, val_txt, full_val, max_val) {
+    return "<div class='bar-bg' style='width: calc(" + (full_val/max_val * 100) + "% - 10px);'>"
+        + "<div class='bar-fg" + ((Math.abs(val - full_val) < 0.000001) ? " bar-compare" : "") + "' style='width: " + (val/full_val * 100) + "%;'>"
+        + "<span class='bar-txt'>"
+        + val_txt
+        + "</span></div></div>";
 }

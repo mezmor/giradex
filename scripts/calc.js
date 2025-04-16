@@ -596,3 +596,34 @@ function GetMetric(dps, tdo, pkm_obj = null, enemy_params = null) {
             return Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
     }
 }
+
+// Calculate attributes of the array according to Gaussian distribution
+function CalcDistribution(arr) {
+    let dist = {};
+
+    arr = arr.filter(e=>!isNaN(e));
+
+    dist.n = arr.length;
+    dist.mean = CalcMean(arr);
+    const all_sses = arr.map(v=>(v-dist.mean)**2);
+    dist.variance = CalcMean(all_sses);
+    dist.std = Math.sqrt(dist.variance);
+    //dist.max = arr.reduce((a,b)=>Math.max(a,b), 0);
+
+    return dist;
+}
+
+// Average all numbers in array
+function CalcMean(arr) {
+    return (arr.reduce((a,b)=>a+b, 0)) / arr.length;
+}
+
+// Find relative location of entry according to the Gaussian distribution
+function CalcZScore(value, dist) {
+    return (value-dist.mean)/dist.std;
+}
+
+// Force num to be inside the specified range
+function Clamp(num, min, max) {
+    return Math.min(Math.max(num, min), max);
+}

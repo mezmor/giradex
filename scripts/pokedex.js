@@ -1,3 +1,5 @@
+let atk_dist, def_dist, hp_dist;
+
 /**
  * Loads a Pokémon page.
  */
@@ -197,41 +199,11 @@ function GetPokeDexMon(pokemon_id, form = "def", level = null, ivs = null) {
  * base stat.
  */
 function LoadPokedexBaseStats(stats) {
+    GetStatDistributions();
 
-    const user_agent = window.navigator.userAgent;
-    const is_apple = user_agent.includes("Macintosh")
-        || user_agent.includes("iPhone") || user_agent.includes("iPad")
-        || user_agent.includes("iPod");
-
-    const atk_ceil = 345; // current top atk pkm: Deoxys - 345
-    const def_ceil = 396; // current top def pkm: Shuckle - 396
-    const hp_ceil = 496; // current top hp pkm: Blissey - 496
-
-    const atk = stats.baseAttack;
-    const def = stats.baseDefense;
-    const hp = stats.baseStamina;
-
-    let atk_html = "atk <abbr class=ascii-bar title=" + atk + ">";
-    let def_html = "def <abbr class=ascii-bar title=" + def + ">";
-    let hp_html = "hp <abbr class=ascii-bar title=" + hp + ">";
-
-    const gray_ch = (is_apple) ? "▒" : "▓";
-
-    for (let i = 1; i <= 5; i++) {
-        atk_html += (i * atk_ceil / 6 < atk)
-            ? "█"  : ((i * atk_ceil / 6 - atk_ceil / 12 < atk)
-                ? gray_ch : "░");
-        def_html += (i * def_ceil / 6 < def)
-            ? "█"  : ((i * def_ceil / 6 - def_ceil / 12 < def)
-                ? gray_ch : "░");
-        hp_html += (i * hp_ceil / 6 < hp)
-            ? "█"  : ((i * hp_ceil / 6 - hp_ceil / 12 < hp)
-                ? gray_ch : "░");
-    }
-
-    atk_html += "</abbr>";
-    def_html += "</abbr>";
-    hp_html += "</abbr>";
+    let atk_html = GetBarHTML(Clamp(CalcZScore(stats.baseAttack, atk_dist), -3, 3) + 3, stats.baseAttack, 6, 6);
+    let def_html = GetBarHTML(Clamp(CalcZScore(stats.baseDefense, def_dist), -3, 3) + 3, stats.baseDefense, 6, 6);
+    let hp_html = GetBarHTML(Clamp(CalcZScore(stats.baseStamina, hp_dist), -3, 3) + 3, stats.baseStamina, 6, 6);
 
     $("#base-stat-atk").html(atk_html);
     $("#base-stat-def").html(def_html);
@@ -1134,3 +1106,16 @@ function ShowMoveInput(caller, moveType) {
     });
 }
 
+/**
+ * Calculate and store the distribution params for each stat
+ */
+function GetStatDistributions() {
+    if (!!atk_dist && !!def_dist && !!hp_dist)
+        return;
+
+    const high_bst = jb_pkm.filter(e=>(e.stats.baseAttack+e.stats.baseDefense+e.stats.baseStamina)>=500);
+
+    atk_dist = CalcDistribution((high_bst.map(e=>e.stats.baseAttack)));
+    def_dist = CalcDistribution((high_bst.map(e=>e.stats.baseDefense)));
+    hp_dist = CalcDistribution((high_bst.map(e=>e.stats.baseStamina)));
+}
