@@ -28,7 +28,16 @@ let settings_newdps = true;
  * Bind event handlers for all settings options
  */
 function BindSettings() {
-    // Expand/Shrink Settings
+    // Refresh list when any options change
+    $("#filter-settings :checkbox").change(function() {
+        if ($("#strongest").is(":visible")) {
+            CheckURLAndAct();
+        }
+        else if ($("#counters").is(":visible")) {
+            ResetPokedexCounters();
+            LoadPokedexCounters();
+        }
+    });
 
     // Dark Mode
     $("#opt-darkmode").click(function() { SetTheme("darkmode"); });
@@ -395,4 +404,70 @@ function SetTheme(theme = "darkmode") {
     $("#opt-darkmode").removeClass("settings-opt-sel");
     $("#opt-lightmode").removeClass("settings-opt-sel");
     $("#opt-"+theme).addClass("settings-opt-sel");
+}
+
+/**
+ * Gets the default search parameters (to be used for generic type-tier-making)
+ */
+function GetDefaultSearchParams() {
+    return {
+        versus: false,
+        unreleased: false,
+        mega: true,
+        shadow: true,
+        legendary: true,
+        elite: true,
+        suboptimal: false,
+        mixed: true
+    };
+}
+
+/**
+ * Gets the default search parameters (to be used for generic type-tier-making)
+ */
+function IsDefaultSearchParams(search_params) {
+    return search_params.type != 'Any' && search_params.type != 'Each' &&
+        search_params.versus===false &&
+        search_params.unreleased===false &&
+        search_params.mega===true &&
+        search_params.shadow===true &&
+        search_params.legendary===true &&
+        search_params.elite===true &&
+        search_params.suboptimal===false &&
+        search_params.mixed===true;
+}
+
+/**
+ * Gets the search parameters
+ * The type can be 'each', 'any' or an actual type.
+ */
+function GetSearchParms(type, versus) {
+    let search_params = {
+        versus,
+        type
+    };
+    search_params.unreleased =
+        $("#filter-settings input[value='unreleased']:checkbox").is(":checked");
+    search_params.mega =
+        $("#filter-settings input[value='mega']:checkbox").is(":checked");
+    search_params.shadow =
+        $("#filter-settings input[value='shadow']:checkbox").is(":checked");
+    search_params.legendary =
+        $("#filter-settings input[value='legendary']:checkbox").is(":checked");
+    search_params.elite =
+        $("#filter-settings input[value='elite']:checkbox").is(":checked");
+    search_params.suboptimal =
+        $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
+    search_params.mixed =
+        $("#filter-settings input[value='mixed']:checkbox").is(":checked");
+    return search_params;
+}
+
+/**
+ * Moves the filters popup drawer between cards.
+ * Ensures the same filters are shared everywhere, without duplicating all the DOM.
+ */
+function MoveFilterPopup(new_parent_id) {
+    // Move filters for display
+    $("#filter-settings").appendTo(new_parent_id);
 }

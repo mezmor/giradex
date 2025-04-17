@@ -149,11 +149,11 @@ function LoadPokedexData(pokedex_mon) {
 
     // sets global variables
     current_pkm_obj = pkm_obj;
-    counters_loaded = false;
 
     UpdateStats(pkm_obj, pokedex_mon);
     LoadPokedexEffectiveness(pkm_obj);
     ResetPokedexCounters();
+    LoadPokedexCounters();
 }
 
 /**
@@ -351,24 +351,16 @@ function LoadPokedexEffectiveness(pkm_obj) {
 /**
  * Resets the pokemon go counters section for the current selected pokemon.
  */
-function ResetPokedexCounters() {
-
-    // sets proper counters title and disclaimer
-    const verb = ($("#counters").css("display") == "none") ? "show" : "hide";
-    $("#counters-button").html(verb + " <b>" + current_pkm_obj.name + "</b>'s counters")
-    $("#counters-disclaimer").html(
-        "calculations take into account the counters effectiveness against "
-        + current_pkm_obj.name
-        + "<br>and the counters resistance to the average of "
-        + current_pkm_obj.name + "'s movesets");
-    
+function ResetPokedexCounters() {    
     // shows cell with loading image in the counters table
-    $("#counters-tr").empty();
-    let td = $("<td></td>");
+    $("#counters-grid").empty();
+    let div = $("<div></div>");
     let img = $("<img class=loading src=imgs/loading.gif></img>");
-    td.append(img);
-    td.css("height", "125px");
-    $("#counters-tr").append(td);
+    div.append(img);
+    div.css("height", "125px");
+    $("#counters-grid").append(div);
+
+    counters_loaded = false;
 }
 
 
@@ -379,27 +371,16 @@ function ResetPokedexCounters() {
  * mon and their resistance to the average of the selected mon's movesets.
  */
 function LoadPokedexCounters() {
-    let search_params = {}
+    // Move filters for display
+    MoveFilterPopup("#counters-filters");
 
-    // gets checkboxes filters
-    search_params.unreleased =
-        $("#counters input[value='unreleased']:checkbox").is(":checked");
-    search_params.mega =
-        $("#counters input[value='mega']:checkbox").is(":checked");
-    search_params.shadow =
-        $("#counters input[value='shadow']:checkbox").is(":checked");
-    search_params.legendary =
-        $("#counters input[value='legendary']:checkbox").is(":checked");
-    search_params.elite =
-        $("#counters input[value='elite']:checkbox").is(":checked");
-
-    search_params.type = "Any";
-    search_params.mixed = true;
-    search_params.suboptimal = true;
+    let search_params = GetSearchParms("Any", false);
 
     // array of counters pokemon and movesets found so far
     let counters = GetStrongestVersus(GetEnemyParams(current_pkm_obj), search_params);
     ProcessAndSetCountersFromArray(counters);
+
+    counters_loaded = true;
 }
 
 
@@ -432,11 +413,11 @@ function ProcessAndSetCountersFromArray(counters,
     const all_counters = Array.from(counters_s.values()).slice(0, max_counters);
 
     // gets strongest rat
-    const top_rat = counters[0].rat;
+    const top_compare = GetComparisonMon(counters);
 
     // sets counters in the page
 
-    $("#counters-tr").empty();
+    $("#counters-grid").empty();
 
     for (let i = 0; i < all_counters.length; i++) { // for each counter...
 
@@ -447,7 +428,7 @@ function ProcessAndSetCountersFromArray(counters,
         for (let j = 0; j < all_counters[i].length && j < max_per_counter; j++) {
             let counter = all_counters[i][j];
 
-            let rat_pct = 100 * counter.rat / top_rat;
+            let rat_pct = 100 * counter.rat / top_compare;
 
             if (j > 0 && rat_pct < extra_moveset_cutoff * 100)
                 continue;
@@ -463,6 +444,10 @@ function ProcessAndSetCountersFromArray(counters,
             const rat_tr = $("<tr class=counters-rat-row></tr>");
             rat_tr.append(rat_pct_td);
             rat_tr.append(rat_info_td);
+
+            if (Math.abs(rat_pct - 100) < 0.000001) {
+                rat_tr.addClass("contrast");
+            }
 
             if (has_touch_screen) {
                 rat_tr.click(function() {
@@ -488,7 +473,7 @@ function ProcessAndSetCountersFromArray(counters,
         let img_src_name = GetPokemonImgSrcName(counter_0.id, counter_0.form);
         let img_src = GIFS_URL + img_src_name + ".gif";
         img.attr("src", img_src);
-        const td = $("<td></td>");
+        const div = $("<div></div>");
 
         const div_align_baseline = $("<div class='align-base'></div>");
         div_align_baseline.append("<div class='fill-space'></div>");
@@ -501,9 +486,9 @@ function ProcessAndSetCountersFromArray(counters,
         div_align_ratings.append(table_ratings);
 
         // sets table cell and appends it to the row
-        td.append(div_align_ratings);
-        td.append(div_align_baseline);
-        $("#counters-tr").append(td);
+        div.append(div_align_ratings);
+        div.append(div_align_baseline);
+        $("#counters-grid").append(div);
     }
 }
 
@@ -529,8 +514,8 @@ function ShowCountersPopup(hover_element, show, counter = null) {
         let pos = $(hover_element).offset();
         let w = $(hover_element).width();
         let h = $(hover_element).height();
-        let x = pos.left + 0.5 * w - 100;
-        let y = pos.top + 1.5 * h;
+        let x = pos.left + 0.5 * w;
+        let y = pos.top + h;
 
         $("#counters-popup").css("left", x);
         $("#counters-popup").css("top", y);
@@ -998,35 +983,6 @@ function UpdatePokemonStatsAndURL() {
                 entry.id == pokedex_mon.pokemon_id && entry.form == pokedex_mon.form);
         UpdateStats(pkm_obj, pokedex_mon);
         UpdatePokedexURL(pokedex_mon);
-    }
-}
-
-/**
- * Callback function for when the 'show counters' or 'hide counters' button is
- * clicked.
- * It either shows or hides the counters, depending on whether they are visible.
- * 
- * It also loads the counters if they haven't been loaded for the current
- * selected pokemon yet.
- */
-function ShowCounters() {
-
-    $("#counters-popup").css("display", "none");
-
-    const html = $("#counters-button").html();
-
-    if ($("#counters").css("display") == "none") {
-        $("#counters").css("display", "initial");
-        $("#counters-button").html(html.replace("show ", "hide "));
-    } else {
-        $("#counters").css("display", "none");
-        $("#counters-button").html(html.replace("hide ", "show "));
-    }
-
-    // if counters haven't been loaded for the current pokemon, loads them
-    if (!counters_loaded) {
-        counters_loaded = true;
-        LoadPokedexCounters();
     }
 }
 

@@ -288,10 +288,17 @@ ul.menu > li:hover {
     filter: brightness(0) saturate(100%) invert(37%) sepia(76%) saturate(3643%) hue-rotate(200deg) brightness(96%) contrast(90%);
 }
 
-.drawer-popup.drawer-align-right {
-    left: auto;
+.card .drawer-popup {
+    position: absolute;
     right: 0;
+    left: auto;
+    border-left: none;
+    border-right: none;
+    width: calc(var(--site-width) - 2 * var(--site-margin) - 2px);
     transform: none;
+    
+    box-sizing: border-box;
+    box-shadow: none;
 }
 
 @media screen and (max-width:1100px) { 
@@ -302,12 +309,6 @@ ul.menu > li:hover {
         right: 0;
         transform: none;
     }
-}
-
-.card .drawer-popup {
-    box-sizing: border-box;
-    box-shadow: none;
-    border-right: none;
 }
 
 /* 
@@ -716,24 +717,29 @@ sup.xl {
 /*
  * PokeDex Counters
  */
-#counters { display: none; }
-
-#counters-outline {
-    border: 1px solid var(--col-outline);
-    border-radius: var(--border-radius);
-    background: var(--col-alt-bg);
+#counters .card-body {
+    background-color: var(--col-alt-bg);
+    padding: 1em 0;
 }
 
 #counters-table {
     margin: auto;
     width: 90%;
-    table-layout: fixed;
+    /*table-layout: fixed;*/
     white-space: nowrap;
 }
 
-#counters td {
+#counters-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-row-gap: 1em;
+
+    max-width: 100%;
+}
+
+#counters-grid > div {
     position: relative;
-    height: 0;
+    min-width: 0;
 }
 
 #counters img {
@@ -767,6 +773,7 @@ sup.xl {
     left: 0;
     width: 100%;
     z-index: 1;
+    font-size: 90%;
 }
 
 .counter-ratings table {
@@ -777,7 +784,9 @@ sup.xl {
 }
 
 .counter-ratings tr.counters-rat-row {
-    background-color: var(--col-widget-back);
+    /*background-color: var(--col-widget-back);*/
+    text-shadow: 0px 0px 5px white;
+    cursor: help;
 }
 
 .counter-ratings tr.rat-selected td {
@@ -802,19 +811,13 @@ sup.xl {
     width: 0;
 }
 
-#counters-filters {    
-    display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    margin: 1em;
-}
-
 #counters-popup {
     display: none;
     position: absolute;
     width: 200px;
     height: min-content;
     padding: 0 0.25em;
+    transform: translateX(-50%);
     border: 1px solid var(--col-outline);
     border-radius: var(--border-radius);
     background-color: var(--col-widget-back);
@@ -831,10 +834,6 @@ sup.xl {
 
 #counters-popup .counter-name {
     font-weight: bold;
-}
-
-#counters-legend {
-    background-color: var(--col-widget-back);
 }
 
 
@@ -1020,6 +1019,7 @@ th.vertical a.type-text {
     grid-template-columns: 1fr 1fr;
     column-gap: 2em;
     row-gap: 0.25em;
+    height: max-content;
 }
 
 .settings-opt {
@@ -1075,22 +1075,20 @@ input.settings-num {
     padding-left: 1.25em;
 }
 
-.filters-box {
+#filter-settings {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    flex-direction: column;
-    text-wrap: nowrap;
-    gap: 0.25em;
-    padding: 0.25em 0 0 0;
+    flex-flow: row nowrap;
+    gap: 2em;
+    padding: 0.25em 1.5em;
+}
+#filter-settings > * {
+    flex: 1 1 0;
 }
 
-.filters-wrap {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    margin: 0 5%;
+#counters #settings-tiermethod-header, #counters #settings-tiermethod, 
+#counters #settings-rowcount-header, #counters #strongest-count,
+#counters #settings-group-header, #counters #settings-group {
+    display: none;
 }
 
 /* 

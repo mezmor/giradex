@@ -21,12 +21,6 @@ function BindRankings() {
         
         window.history.pushState({}, "", "?" + urlParams.toString().replace(/=(?=&|$)/gm, ''));
     });
-
-    // Refresh list when any options change
-    $("#strongest :checkbox").change(function() {
-        //LoadStrongest();
-        CheckURLAndAct();
-    });
 }
 
 /**
@@ -34,9 +28,11 @@ function BindRankings() {
  * The type can be 'each', 'any' or an actual type.
  */
 function LoadStrongest(type = "Any") {
-
     if (!finished_loading)
         return;
+
+    // Move filters for display
+    MoveFilterPopup("#strongest-filters");
 
     // displays what should be displayed 
     LoadPage("strongest");
@@ -105,7 +101,7 @@ function LoadStrongest(type = "Any") {
         str_pokemons = GetStrongestOfOneType(search_params);
         
         /* Disable Rescale
-        const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
+        const rescale = $("#filter-settings input[value='rescale']:checkbox").is(":checked");
         if (rescale && (settings_metric == 'ER'
                         || settings_metric == 'EER'
                         || settings_metric == 'TER'))
@@ -189,8 +185,8 @@ function GetComparisonMon(str_pokemons) {
  * Else build tiers and calculate ratings relative to a baseline.
  */
 function ProcessAndGroup(str_pokemons, type, strongest_count) {
-    const display_grouped = $("#strongest input[value='grouped']:checkbox").is(":checked") 
-        && $("#strongest input[value='suboptimal']:checkbox").is(":checked");
+    const display_grouped = $("#filter-settings input[value='grouped']:checkbox").is(":checked") 
+        && $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
         
     const top_compare = GetComparisonMon(str_pokemons);
 
@@ -339,7 +335,7 @@ function BuildTiers(str_pokemons, top_compare, type) {
             if (type != 'Any') check_rat /= 1.6;
 
             /* Disable rescale
-            const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
+            const rescale = $("#filter-settings input[value='rescale']:checkbox").is(":checked");
             if ((!rescale || (settings_metric == 'DPS' || settings_metric == 'TDO')) 
                 && (search_params.versus || (search_params.type != 'Any' && search_params.mixed))) {
                 check_rat /= 1.6;
@@ -425,8 +421,8 @@ function BuildTiers(str_pokemons, top_compare, type) {
  */
 function SetRankingTable(str_pokemons, num_rows = null, 
     display_numbered = false, highlight_suboptimal = false, show_pct = false) {
-    const display_grouped = $("#strongest input[value='grouped']:checkbox").is(":checked") 
-        && $("#strongest input[value='suboptimal']:checkbox").is(":checked");
+    const display_grouped = $("#filter-settings input[value='grouped']:checkbox").is(":checked") 
+        && $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
 
     const best_pct = str_pokemons[0].pct;
 
@@ -615,63 +611,6 @@ function TierToInt(tierLabel) {
         default: // Some form of "S"
             return 100 + tierLabel.length;
     }
-}
-
-/**
- * Gets the default search parameters (to be used for generic type-tier-making)
- */
-function GetDefaultSearchParams() {
-    return {
-        versus: false,
-        unreleased: false,
-        mega: true,
-        shadow: true,
-        legendary: true,
-        elite: true,
-        suboptimal: false,
-        mixed: true
-    };
-}
-
-/**
- * Gets the default search parameters (to be used for generic type-tier-making)
- */
-function IsDefaultSearchParams(search_params) {
-    return search_params.type != 'Any' && search_params.type != 'Each' &&
-        search_params.versus===false &&
-        search_params.unreleased===false &&
-        search_params.mega===true &&
-        search_params.shadow===true &&
-        search_params.legendary===true &&
-        search_params.elite===true &&
-        search_params.suboptimal===false &&
-        search_params.mixed===true;
-}
-
-/**
- * Gets the search parameters
- * The type can be 'each', 'any' or an actual type.
- */
-function GetSearchParms(type, versus) {
-    let search_params = {
-        versus,
-        type
-    };
-    search_params.unreleased =
-        $("#strongest input[value='unreleased']:checkbox").is(":checked");
-    search_params.mega =
-        $("#strongest input[value='mega']:checkbox").is(":checked");
-    search_params.shadow =
-        $("#strongest input[value='shadow']:checkbox").is(":checked");
-    search_params.legendary =
-        $("#strongest input[value='legendary']:checkbox").is(":checked");
-    search_params.elite =
-        $("#strongest input[value='elite']:checkbox").is(":checked");
-    search_params.suboptimal =
-        $("#strongest input[value='suboptimal']:checkbox").is(":checked");
-    search_params.mixed =
-        $("#strongest input[value='mixed']:checkbox").is(":checked");
-    return search_params;
 }
 
 /**
