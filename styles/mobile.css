@@ -318,10 +318,6 @@ body {
         width: 100%;
     }
 
-    .prgr {
-        width: 66%;
-    }
-
     #previous-containers > *:nth-child(1), #next-containers > *:nth-child(2) {
         display: none;
     }

@@ -511,7 +511,7 @@ function SetRankingTable(str_pokemons, num_rows = null,
                 + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</a></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
-            const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct) + "</td>" : "");
+            const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "bar-compare" : "")) + "</td>" : "");
 
             tr.append(td_tier);
             tr.append(td_rank);
@@ -677,9 +677,9 @@ function GetSearchParms(type, versus) {
 /**
  * Create a "Progress" bar scaled to some absolute best 
  */
-function GetBarHTML(val, val_txt, full_val, max_val) {
+function GetBarHTML(val, val_txt, full_val, max_val, add_classes) {
     return "<div class='bar-bg' style='width: calc(" + (full_val/max_val * 100) + "% - 10px);'>"
-        + "<div class='bar-fg" + ((Math.abs(val - full_val) < 0.000001) ? " bar-compare" : "") + "' style='width: " + (val/full_val * 100) + "%;'>"
+        + "<div class='bar-fg" + (!!add_classes ? " " + add_classes : "") + "' style='width: " + (val/full_val * 100) + "%;'>"
         + "<span class='bar-txt'>"
         + val_txt
         + "</span></div></div>";

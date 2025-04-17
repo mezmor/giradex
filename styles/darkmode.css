@@ -178,18 +178,6 @@
     }
 
     /* 
-     * Bar Visuals
-     */
-    .bar-bg {
-        background-color: transparent;
-        border: 0px;
-    }
-
-    .suboptimal .bar-fg {
-        background-color: #0f3057;
-    }
-
-    /* 
      * Icons and Shadow Effects
      */
     .resist, .immune, .supereffective {

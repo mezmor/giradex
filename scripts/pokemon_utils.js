@@ -49,7 +49,17 @@ function GetRaidStats(pkm_obj, tier = null) {
     return stats; // returns by copy to prevent reassignment of reference
 }
 
+/**
+ * Gets the Pokemon GO CP, based on effective stats.
+ */
+function GetPokemonCP(stats) {
+    let cp = Math.floor(stats.atk * Math.pow(stats.def, 0.5)
+                * Math.pow(stats.hp, 0.5) / 10);
+    if (cp < 10)
+        cp = 10;
 
+    return cp;
+}
 
 /**
  * Gets array of six arrays. The specified Pokemon's 

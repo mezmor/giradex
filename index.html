@@ -172,7 +172,7 @@
                 <div class=pokemon-containers id=main-container></div>
                 <div class=pokemon-containers id=next-containers></div>
             </div>
-            <div class="site-size" id=additional-containers></div>
+            <div id=additional-containers></div>
         </div>
 
         <!-- pokedex stats and moves table -->
@@ -239,59 +239,110 @@
                         </div>
                     </div>
                 </div>
-                <table id=base-stats class="center small-text">
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><abbr title="Base stats of this Pokémon species">Base</abbr></td>
-                        <td>→</td>
-                        <td id=base-stat-atk>atk</td>
-                        <td id=base-stat-def>def</td>
-                        <td id=base-stat-hp>hp</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </table>
                 <form id=stats-form>
-                <table class="center small-text">
-                    <tr>
-                        <td></td>
-                        <td><abbr title="Level of this specific Pokémon">Level</abbr></td>
-                        <td>→</td>
-                        <td><label>
-                            <input id=input-lvl type=number min=1 max=51 step=0.5 value=40>
-                        </label></td>
-                        <td></td>
-                        <td>
-                            <abbr title="Individual Values of this specific Pokémon (added to the base stats)">IVs</abbr>
-                        </td>
-                        <td>→</td>
-                        <td><label>
-                            atk <input id=input-atk type=number min=0 max=15 value=15>
-                        </label></td>
-                        <td><label>
-                            def <input id=input-def type=number min=0 max=15 value=15>
-                        </label></td>
-                        <td><label>
-                            hp <input id=input-hp type=number min=0 max=15 value=15>
-                        </label></td>
-                        <td><label>
-                            <input type=submit value=reload />
-                        </label></td>
-                        <td></td>
-                    </tr>
-                </table>
+                <div class="card" id="stats-calculator">
+                    <div class="card-header">
+                        <div class="card-title">Stats, IVs, and CP</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col5-layout">
+                            <!--header-->
+                            <div></div>
+                            <div class="col-header">Attack</div>
+                            <div class="col-header">Defense</div>
+                            <div class="col-header">HP</div>
+                            <div></div>
+                            <!--base-->
+                            <div class="row-header">
+                                <span class="tooltip tooltip-top">Base Stats
+                                    <span class="tooltiptext">Pokémon stats as found in the Game Master<br/>for this species/form</span>
+                                </span>
+                            </div>
+                            <div id=base-stat-atk></div>
+                            <div id=base-stat-def></div>
+                            <div id=base-stat-hp></div>
+                            <div></div>
+                            <!--true max-->
+                            <div class="row-header">
+                                <span class="tooltip tooltip-top">Lv50 Stats
+                                    <span class="tooltiptext">Real in-game stats for a<br/>Perfect-IV Level 50 Pokémon</span>
+                                </span>
+                            </div>
+                            <div id=max-stat-atk></div>
+                            <div id=max-stat-def></div>
+                            <div id=max-stat-hp></div>
+                            <div id=max-cp></div>
+                            
+                            <div></div>
+                            <div class="mid3 col-header">Stat Calculator</div>
+                            <div></div>
+                            <!--level-->
+                            <div class="row-header">
+                                <span class="tooltip tooltip-top">Level
+                                    <span class="tooltiptext">
+                                        <ul>
+                                            <li>Determines the Multiplier (CPM) used when calculating effective stats</li>
+                                            <li>Can be raised by one half-level per "Power-up"</li>
+                                            <li>Maximum level is 50 (+1 if Best Buddy)</li>
+                                            <li>Never displayed directly in game; represented by a white arc in the Pokémon screen</li>
+                                        </ul>
+                                    </span>
+                                </span>
+                            </div>
+                            <div><input id=input-lvl type=number min=1 max=51 step=0.5 value=40></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <!--ivs-->
+                            <div class="row-header">
+                                <span class="tooltip tooltip-top">IVs
+                                    <span class="tooltiptext">
+                                        <div class="tooltip-title">"Individual Values"</div>
+                                        <p>Additional points in each stat, as displayed in the Appraisal screen</p>
+                                    </span>
+                                </span>
+                            </div>
+                            <div><input id=input-atk type=number min=0 max=15 value=15></div>
+                            <div><input id=input-def type=number min=0 max=15 value=15></div>
+                            <div><input id=input-hp type=number min=0 max=15 value=15></div>
+                            <div></div>
+                            <!--maximum-->
+                            <div class="row-header">
+                                <span class="tooltip tooltip-top">100% Stats
+                                    <span class="tooltiptext">Real in-game stats for a Perfect-IV Pokémon<br/>at the specified Level</span>
+                                </span>
+                            </div>
+                            <div id=hundo-stat-atk></div>
+                            <div id=hundo-stat-def></div>
+                            <div id=hundo-stat-hp></div>
+                            <div id=hundo-cp></div>
+                            <!--effective-->
+                            <div class="row-header" data-suboptimal="">
+                                <span class="tooltip tooltip-top">Effective Stats
+                                    <span class="tooltiptext">Real in-game stats for a Pokémon with the specified Level and IVs</span>
+                                </span>
+                            </div>
+                            <div id=eff-stat-atk data-suboptimal></div>
+                            <div id=eff-stat-def data-suboptimal></div>
+                            <div id=eff-stat-hp data-suboptimal></div>
+                            <div id=eff-cp data-suboptimal></div>
+                            <!--compare-->
+                            <div></div>
+                            <div class="off" style="grid-column: 2 / 6;">
+                                <div id=eff-iv-compare data-suboptimal></div>
+                                <div id=eff-stat-compare data-suboptimal></div>
+                                <div id=rat-pct-vs-max data-suboptimal></div>
+                                <div id=sh-rat-pct-vs-max></div>
+                            </div>
+                            <div class="small-text full-row"><!--spacer--></div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <input type=button value=Reset id=stats-reset />
+                        <input type=submit value=Calculate />
+                    </div>
+                </div>
                 </form>
-                <br>
-                <p class="center no-top-m no-bottom-m">
-                    <span id=max-cp-div><span id=max-cp></span></span>
-                    <span class=prgr><span class=prgr-val></span></span><br>
-                    <span id=cp-text class="small-text off"></span>
-                </p>
-                
                 <div class="card" id=effectiveness>
                     <div class="card-header">
                         <div class="card-title" id="effectiveness-title">Type Matchups</div>

@@ -130,6 +130,12 @@ button:focus {
     outline: 1px solid var(--col-outline);
 }
 
+input {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
 input[type="number"] {
     -webkit-appearance: textfield;
     -moz-appearance: textfield;
@@ -562,66 +568,63 @@ sup.xl {
 /* 
  * PokeDex Stats
  */
-#base-stats, #stats-form table { width: 100%; }
-#base-stats tr > *:nth-child(1), #stats-form tr > *:nth-child(1) { width: 2.5%; }
-#base-stats tr > *:nth-child(2), #stats-form tr > *:nth-child(2) { width: 6%; }
-#base-stats tr > *:nth-child(3), #stats-form tr > *:nth-child(3) { width: 4%; }
-#base-stats tr > *:nth-child(4), #stats-form tr > *:nth-child(4) { width: 10%; }
-#base-stats tr > *:nth-child(5), #stats-form tr > *:nth-child(5) { width: 2.5%; }
-#base-stats tr > *:nth-child(6), #stats-form tr > *:nth-child(6) { width: 6%; }
-#base-stats tr > *:nth-child(7), #stats-form tr > *:nth-child(7) { width: 4%; }
-#base-stats tr > *:nth-child(8), #stats-form tr > *:nth-child(8) { width: 10%; }
-#base-stats tr > *:nth-child(9), #stats-form tr > *:nth-child(9) { width: 10%; }
-#base-stats tr > *:nth-child(10), #stats-form tr > *:nth-child(10) { width: 10%; }
-#base-stats tr > *:nth-child(11), #stats-form tr > *:nth-child(11) { width: 10%; }
-#base-stats tr > *:nth-child(12), #stats-form tr > *:nth-child(12) { width: 25%; }
+#stats-calculator .card-body {
+    background-color: var(--col-alt-bg);
+}
+#stats-calculator .card-footer {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+}
 
-#stats-form > label {
-    padding: 0.25em 0;
-    display: table-cell;
+#stats-calculator .bar-bg {
+    margin: 0;
+}
+#stats-calculator .bar-txt {
+    font-size: 1em;
+}
+
+#stats-calculator .row-header {
+    text-align: right;
+}
+#stats-calculator .col-header {
+    font-weight: bold;
+    margin-top: 1em;
+}
+#stats-calculator .full-row {
+    text-align: center;
 }
 
 #stats-form input[type="number"] {
-    width: 3em;
-    border: none;
+    width: 50%;
+    min-width: 4ch;
     border: 1px solid var(--col-outline);
-    font-size: 12.6px;
+    padding: 0px 2px 0px 4px;
+    box-sizing: border-box;
 }
 
-#stats-form input[type="number"]:focus {
-    outline: none;
-}
-
-#stats-form #input-lvl { width: 4em; }
-
-#stats-form input[type="submit"] {
+#stats-form input[type="submit"], #stats-form input[type="button"] {
     cursor: pointer;
     font-family: inherit;
+    font-size: 1.2em;
+    font-weight: bold;
+    width: 7em;
+    margin: 0.5em 0;
     background-color: var(--col-widget-back);
     border: 1px solid var(--col-outline);
     border-radius: var(--border-radius);
-    font-size: 12.6px;
     box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.5);
 }
-
-#stats-form input[type="submit"]:hover {
+#stats-form input[type="submit"] {
+    background-color: var(--col-widget);
+}
+#stats-form input[type="button"]:hover {
     background-color: var(--col-widget-back-hover);
-    box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.5);
+}
+#stats-form input[type="submit"]:hover {
+    box-shadow: inset 0 0 1em 5px rgba(255, 255, 255, 0.25);
 }
 
-#stats-form input[type="submit"]:focus {
-    outline: 1px solid var(--col-outline);
-}
-
-#max-cp-div {
-    height: 0;
-    display: block;
-}
-
-#max-cp {
-    position: relative;
-    font-size: 1.25em;
-}
 
 /*
  * PokeDex Layouts
@@ -646,7 +649,7 @@ sup.xl {
     vertical-align: middle;
 }
 
-.dex-layout-table {
+.dex-layout-table, .col5-layout {
     width: 100%; 
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -697,6 +700,16 @@ sup.xl {
     background-color: var(--col-header);
     /*border-top: 1px solid var(--col-outline);
     border-bottom: 1px solid var(--col-outline);*/
+}
+
+.col5-layout > * {
+    margin: 5px;
+}
+.col5-layout .full-row {
+    grid-column: span 5;
+}
+.col5-layout .mid3 {
+    grid-column: 2 / 5;
 }
 
 /*
@@ -1180,6 +1193,7 @@ input.settings-num {
     font-size: 0.8em;
     margin: 2px 2px 2px 4px;
     text-shadow: 1px 1px 2px black;
+    white-space: nowrap;
 }
 
 .bar-compare .bar-txt {

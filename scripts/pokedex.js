@@ -1,4 +1,4 @@
-let atk_dist, def_dist, hp_dist;
+let atk_dist, def_dist, hp_dist, cp_dist;
 
 /**
  * Loads a Pokémon page.
@@ -98,7 +98,15 @@ function LoadPokedexAndUpdateURL(pokedex_mon) {
         return false;
 
     LoadPokedex(pokedex_mon);
+    UpdatePokedexURL(pokedex_mon);
 
+    return false;
+}
+
+/**
+ * Updates the url to match the pokemon being loaded
+ */
+function UpdatePokedexURL(pokedex_mon) {
     let url = "?p=" + pokedex_mon.pokemon_id;
 
     if (pokedex_mon.form != "def")
@@ -113,15 +121,12 @@ function LoadPokedexAndUpdateURL(pokedex_mon) {
     }
 
     window.history.pushState({}, "", url);
-
-    return false;
 }
 
 /**
  * Loads one pokemon data for the Pokemon GO section.
  */
 function LoadPokedexData(pokedex_mon) {
-
     let pkm_obj = jb_pkm.find(entry =>
             entry.id == pokedex_mon.pokemon_id && entry.form == pokedex_mon.form);
     let released = true && pkm_obj;
@@ -142,28 +147,19 @@ function LoadPokedexData(pokedex_mon) {
     if ($("#footer").css("display") == "none")
         $("#footer").css("display", "initial");
 
-    const stats = GetPokemonStats(pkm_obj, pokedex_mon.level, pokedex_mon.ivs);
-    let max_stats = null;
-    if (pokedex_mon.ivs.atk != 15 || pokedex_mon.ivs.def != 15 || pokedex_mon.ivs.hp != 15)
-        max_stats = GetPokemonStats(pkm_obj, pokedex_mon.level);
-
     // sets global variables
     current_pkm_obj = pkm_obj;
     counters_loaded = false;
 
-    LoadPokedexBaseStats(stats);
-    LoadPokedexCP(stats);
-    UpdatePokedexCPText(pokedex_mon.level, pokedex_mon.ivs);
+    UpdateStats(pkm_obj, pokedex_mon);
     LoadPokedexEffectiveness(pkm_obj);
     ResetPokedexCounters();
-    LoadPokedexMoveTable(pkm_obj, stats, max_stats);
 }
 
 /**
  * Returns an object representing the Pokemon being requested via URL params
  */
 function GetPokeDexMon(pokemon_id, form = "def", level = null, ivs = null) {
-    
     if (pokemon_id == 0)
         return;
     
@@ -192,57 +188,82 @@ function GetPokeDexMon(pokemon_id, form = "def", level = null, ivs = null) {
 }
 
 /**
+ * Draws stat bars to specified elements
+ */
+function DrawStats(statArr, elemIDs) {
+    elemIDs.forEach((id, index)=> {
+        $(id).html(statArr[index]);
+    });
+}
+
+/**
  * Loads the section containing the base stats of the selected pokemon.
  * 
- * The bar indicator is based on the base stat number, with the ceiling being the
- * base stat value from the pokemon with the strongest value for that particular
- * base stat.
+ * The bar indicator is based on the base stat number, as compared to a Gaussian
+ * distribution for all high-stat mons.
  */
-function LoadPokedexBaseStats(stats) {
+function GetPokedexBaseStatBars(stats) {
     GetStatDistributions();
 
-    let atk_html = GetBarHTML(Clamp(CalcZScore(stats.baseAttack, atk_dist), -3, 3) + 3, stats.baseAttack, 6, 6);
-    let def_html = GetBarHTML(Clamp(CalcZScore(stats.baseDefense, def_dist), -3, 3) + 3, stats.baseDefense, 6, 6);
-    let hp_html = GetBarHTML(Clamp(CalcZScore(stats.baseStamina, hp_dist), -3, 3) + 3, stats.baseStamina, 6, 6);
-
-    $("#base-stat-atk").html(atk_html);
-    $("#base-stat-def").html(def_html);
-    $("#base-stat-hp").html(hp_html);
-}
-
-
-/**
- * Loads the progress bar CP of the selected pokemon with its specific stats.
- */
-function LoadPokedexCP(stats) {
-
-    let cp = Math.floor(stats.atk * Math.pow(stats.def, 0.5)
-                * Math.pow(stats.hp, 0.5) / 10);
-    if (cp < 10)
-        cp = 10;
-
-    let prgr_pct = cp * 100 / 5000;
-    if (prgr_pct > 100)
-        prgr_pct = 100;
-
-    const width = 100 - prgr_pct;
-    $(".prgr-val").css("width", width + "%");
-    $("#max-cp").text("CP ");
-    const bold_num = $("<b>" + cp + "</b>");
-    $("#max-cp").append(bold_num);
+    return [
+        GetBarHTML(Clamp(CalcZScore(stats.baseAttack, atk_dist), -3, 3) + 3, stats.baseAttack, 6, 6),
+        GetBarHTML(Clamp(CalcZScore(stats.baseDefense, def_dist), -3, 3) + 3, stats.baseDefense, 6, 6),
+        GetBarHTML(Clamp(CalcZScore(stats.baseStamina, hp_dist), -3, 3) + 3, stats.baseStamina, 6, 6)
+    ];
 }
 
 /**
- * Updates the text for pokemon max cp to match the level and IVs being used to
- * calculate it.
+ * Loads the section containing the effective stats of the selected pokemon.
  */
-function UpdatePokedexCPText(level, ivs) {
+function GetPokedexStatBars(stats) {
+    GetStatDistributions();
 
-    const pct = Math.round(100 * (ivs.atk + ivs.def + ivs.hp) / 45);
-    $("#cp-text").html("with IVs " + ivs.atk + "/" + ivs.def + "/" + ivs.hp
-            + " (" + pct + "%) at level " + level
-            + "<span id=rat-pct-vs-max></span>"
-            + "<span id=sh-rat-pct-vs-max></span>");
+    const cp = GetPokemonCP(stats);
+    const cp_zscore = Clamp(CalcZScore(cp, cp_dist), -2.8, 3);
+    let cp_tier;
+    if (cp_zscore >= 1)
+        cp_tier = "S".repeat(Math.floor(cp_zscore));
+    else
+        cp_tier = String.fromCharCode("A".charCodeAt(0) - Math.floor(cp_zscore));    
+
+    return [
+        GetBarHTML(Clamp(CalcZScore(stats.atk, atk_dist), -2.8, 3) + 3, stats.atk.toFixed(1), 6, 6),
+        GetBarHTML(Clamp(CalcZScore(stats.def, def_dist), -2.8, 3) + 3, stats.def.toFixed(1), 6, 6),
+        GetBarHTML(Clamp(CalcZScore(stats.hp, hp_dist), -2.8, 3) + 3, stats.hp.toFixed(1), 6, 6),
+        GetBarHTML(cp_zscore + 3, cp + " CP", 6, 6, "tier-" + cp_tier)
+    ];
+}
+
+/**
+ * Recalculates stats and movesets (for the stat calculator)
+ */
+function UpdateStats(pkm_obj, pokedex_mon) {
+    const stats = GetPokemonStats(pkm_obj, pokedex_mon.level, pokedex_mon.ivs);
+    const max_stats = GetPokemonStats(pkm_obj, pokedex_mon.level);
+    const max_stats_50 = GetPokemonStats(pkm_obj, 50);
+
+    DrawStats(GetPokedexBaseStatBars(stats), 
+        ["#base-stat-atk", "#base-stat-def", "#base-stat-hp"]);
+    DrawStats(GetPokedexStatBars(max_stats_50), 
+        ["#max-stat-atk", "#max-stat-def", "#max-stat-hp", "#max-cp"]);
+    DrawStats(GetPokedexStatBars(max_stats), 
+        ["#hundo-stat-atk", "#hundo-stat-def", "#hundo-stat-hp", "#hundo-cp"]);
+    DrawStats(GetPokedexStatBars(stats), 
+        ["#eff-stat-atk", "#eff-stat-def", "#eff-stat-hp", "#eff-cp"]);
+    $("#eff-iv-compare").html(
+        FormatDecimal(100*(pokedex_mon.ivs.atk+pokedex_mon.ivs.def+pokedex_mon.ivs.hp)/45, 3, 2)
+        + "% of Perfect IVs");
+    $("#eff-stat-compare").html(
+        FormatDecimal(100*(stats.atk*stats.def*stats.hp)/(max_stats.atk*max_stats.def*max_stats.hp), 3, 2)
+        + "% of Perfect Stat Product");
+    if (pokedex_mon.ivs.atk!=15||pokedex_mon.ivs.def!=15||pokedex_mon.ivs.hp!=15) {
+        $("[data-suboptimal]").css("display", "revert");
+    }
+    else {
+        $("[data-suboptimal]").css("display", "none");
+    }
+    
+    LoadPokedexMoveTable(pkm_obj, stats, max_stats);
 }
 
 /**
@@ -732,21 +753,20 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
         // against max stats of all movesets and displays it on the CP section
         if (max_stats) {
             let avg_rat_pct_vs_max = 100 * rat_pcts_vs_max / num_movesets;
-            let pct_str = avg_rat_pct_vs_max.toFixed(2) + "%";
+            let pct_str = FormatDecimal(avg_rat_pct_vs_max, 3, 2) + "%";
             if (isNaN(avg_rat_pct_vs_max))
                 pct_str = "??";
-            $("#rat-pct-vs-max").html(" → " + settings_metric + " " + pct_str);
+            $("#rat-pct-vs-max").html(pct_str + " of Perfect " + settings_metric);
         }
 
         // if can be shadow, calculates average rating percentage of shadow stats
         // against max stats of all movesets and displays it on the CP section
         if (can_be_shadow) {
             let avg_rat_sh_pct_vs_max = 100 * rat_sh_pcts_vs_max / num_movesets;
-            let pct_str = avg_rat_sh_pct_vs_max.toFixed(2) + "%";
+            let pct_str = FormatDecimal(avg_rat_sh_pct_vs_max, 3, 2) + "%";
             if (isNaN(avg_rat_sh_pct_vs_max))
                 pct_str = "??";
-            $("#sh-rat-pct-vs-max").html("<br> → Shadow " + settings_metric
-                    + " " + pct_str);
+            $("#sh-rat-pct-vs-max").html(pct_str + " of Perfect " + settings_metric + " when Shadow");
         }
 
         // appends the next fast move chunk, if there is more
@@ -973,7 +993,11 @@ function UpdatePokemonStatsAndURL() {
         ivs.def = parseInt($("#input-def").val());
         ivs.hp = parseInt($("#input-hp").val());
 
-        LoadPokedexAndUpdateURL(GetPokeDexMon(GetPokemonId(pkm), form, level, ivs));
+        const pokedex_mon = GetPokeDexMon(GetPokemonId(pkm), form, level, ivs);
+        const pkm_obj = jb_pkm.find(entry =>
+                entry.id == pokedex_mon.pokemon_id && entry.form == pokedex_mon.form);
+        UpdateStats(pkm_obj, pokedex_mon);
+        UpdatePokedexURL(pokedex_mon);
     }
 }
 
@@ -1012,6 +1036,14 @@ function ShowCounters() {
 function BindPokeDex() {
     // Custom IVs
     $("#stats-form").submit(function(e) {
+        UpdatePokemonStatsAndURL();
+        return false;
+    });
+    $("#stats-reset").click(function(e) {
+        $("#input-lvl").val(settings_default_level[0]);
+        $("#input-atk").val(15);
+        $("#input-def").val(15);
+        $("#input-hp").val(15);
         UpdatePokemonStatsAndURL();
         return false;
     });
@@ -1110,12 +1142,11 @@ function ShowMoveInput(caller, moveType) {
  * Calculate and store the distribution params for each stat
  */
 function GetStatDistributions() {
-    if (!!atk_dist && !!def_dist && !!hp_dist)
+    if (!!atk_dist && !!def_dist && !!hp_dist && !!cp_dist)
         return;
 
-    const high_bst = jb_pkm.filter(e=>(e.stats.baseAttack+e.stats.baseDefense+e.stats.baseStamina)>=500);
-
-    atk_dist = CalcDistribution((high_bst.map(e=>e.stats.baseAttack)));
-    def_dist = CalcDistribution((high_bst.map(e=>e.stats.baseDefense)));
-    hp_dist = CalcDistribution((high_bst.map(e=>e.stats.baseStamina)));
+    atk_dist = CalcDistribution((jb_pkm.map(e=>e.stats.baseAttack)));
+    def_dist = CalcDistribution((jb_pkm.map(e=>e.stats.baseDefense)));
+    hp_dist = CalcDistribution((jb_pkm.map(e=>e.stats.baseStamina)));
+    cp_dist = CalcDistribution((jb_pkm.map(e=>GetPokemonCP(GetPokemonStats(e, 50)))));
 }
