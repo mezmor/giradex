@@ -133,7 +133,7 @@ function LoadPokedexData(pokedex_mon) {
 
     // if this pokemon is not released in pokemon go yet...
     if (!released) {
-        $("#not-released").css("display", "initial");
+        $("#not-released").css("display", "revert");
         $("#released").css("display", "none");
         if ($("#footer").css("display") != "none")
             $("#footer").css("display", "none");
@@ -143,9 +143,9 @@ function LoadPokedexData(pokedex_mon) {
     // if this pokemon is released in pokemon go...
 
     $("#not-released").css("display", "none");
-    $("#released").css("display", "initial");
+    $("#released").css("display", "revert");
     if ($("#footer").css("display") == "none")
-        $("#footer").css("display", "initial");
+        $("#footer").css("display", "revert");
 
     // sets global variables
     current_pkm_obj = pkm_obj;
@@ -257,10 +257,10 @@ function UpdateStats(pkm_obj, pokedex_mon) {
         FormatDecimal(100*(stats.atk*stats.def*stats.hp)/(max_stats.atk*max_stats.def*max_stats.hp), 3, 2)
         + "% of Perfect Stat Product");
     if (pokedex_mon.ivs.atk!=15||pokedex_mon.ivs.def!=15||pokedex_mon.ivs.hp!=15) {
-        $("[data-suboptimal]").css("display", "revert");
+        $("[data-vis-nonhundo]").css("display", "revert");
     }
     else {
-        $("[data-suboptimal]").css("display", "none");
+        $("[data-vis-nonhundo]").css("display", "none");
     }
     
     LoadPokedexMoveTable(pkm_obj, stats, max_stats);

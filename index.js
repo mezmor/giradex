@@ -190,6 +190,9 @@ function CheckURLAndAct() {
 
         return;
     }
+
+    // if no params, redirect to default strongest lists
+    LoadStrongestAndUpdateURL();
 }
 
 /**
@@ -215,12 +218,12 @@ function LoadPage(pageName) {
     let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix'];
 
     pages.forEach(page=>{
-        $("#"+page).css("display", (page==pageName ? "initial" : "none"));
+        $("#"+page).css("display", (page==pageName ? "revert" : "none"));
     });
 
     // If we're loading any page, we're not on the landing/homepage
     // So show the footer
-    $("#footer").css("display", (!!pageName ? "initial" : "none"));
+    $("#footer").css("display", (!!pageName ? "revert" : "none"));
 
     window.scrollTo({
         top: 0,

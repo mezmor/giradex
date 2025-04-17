@@ -20,7 +20,7 @@ body {
 }
 
 .mobile {
-    display: initial;
+    display: revert;
 }
 
 /* pokemon name */
@@ -376,7 +376,7 @@ body {
         font-size: 1.25em;
     }
 
-    .drawer-popup {
+    header .drawer-popup {
         font-size: 1.25em;
     }
     

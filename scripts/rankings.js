@@ -42,7 +42,7 @@ function LoadStrongest(type = "Any") {
     LoadPage("strongest");
 
     // Only enable suboptimal filters if we're searching a specific type (not "Each")
-    if (type == null)
+    if (type == null || type == "Each")
         $("#chk-suboptimal, #chk-grouped").prop("disabled", true);
     else 
         $("#chk-suboptimal, #chk-mixed").prop("disabled", false);
@@ -511,7 +511,7 @@ function SetRankingTable(str_pokemons, num_rows = null,
                 + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</a></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
-            const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "bar-compare" : "")) + "</td>" : "");
+            const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
 
             tr.append(td_tier);
             tr.append(td_rank);

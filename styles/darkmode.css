@@ -17,7 +17,7 @@
     --col-widget-back: #2f2f2f;
     --col-widget-back-hover: #444;
 
-    --col-drawer-bg: rgba(27,27,27,0.75);
+    --col-drawer-bg: rgba(27,27,27,0.85);
 
     --col-row-bg: #2f2f2f;
     --col-alt-bg: #222;
@@ -105,6 +105,10 @@
         flex-basis: 2%;
     }
 
+    .shiny-img-div img, .search-icon {
+        filter: invert(1);
+    }
+
     /*
      * PokeDex Layouts
      */
@@ -139,8 +143,8 @@
     }
 
     /*
-    * Type Matrix/Chart
-    */
+     * Type Matrix/Chart
+     */
     #type-matrix tbody > tr > *:nth-child(n+3) {
         border-left: 1px solid var(--col-outline);
     }

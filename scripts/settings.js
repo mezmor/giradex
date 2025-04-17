@@ -97,7 +97,7 @@ function BindSettings() {
 function ToggleDrawer(drawer_icon, drawer_elem) {
 
     if (drawer_elem.css("display") == "none") {
-        drawer_elem.css("display", "initial");
+        drawer_elem.css("display", "revert");
         drawer_icon.addClass("active");
     } else {
         drawer_elem.css("display", "none");

@@ -48,7 +48,7 @@
         <div class="header-area" id="header-right">
             <form id=poke-search autocomplete=off class="v-middle">
                 <input id=poke-search-box type=text>
-                <img class="inlaid-icon" src="imgs/search.svg" />
+                <img class="inlaid-icon search-icon" src="imgs/search.svg" />
             </form>
             <nav>
                 <div id=site-settings-icon class="drawer v-middle">
@@ -317,21 +317,21 @@
                             <div id=hundo-stat-hp></div>
                             <div id=hundo-cp></div>
                             <!--effective-->
-                            <div class="row-header" data-suboptimal="">
+                            <div class="row-header" data-vis-nonhundo="">
                                 <span class="tooltip tooltip-top">Effective Stats
                                     <span class="tooltiptext">Real in-game stats for a Pokémon with the specified Level and IVs</span>
                                 </span>
                             </div>
-                            <div id=eff-stat-atk data-suboptimal></div>
-                            <div id=eff-stat-def data-suboptimal></div>
-                            <div id=eff-stat-hp data-suboptimal></div>
-                            <div id=eff-cp data-suboptimal></div>
+                            <div id=eff-stat-atk data-vis-nonhundo></div>
+                            <div id=eff-stat-def data-vis-nonhundo></div>
+                            <div id=eff-stat-hp data-vis-nonhundo></div>
+                            <div id=eff-cp data-vis-nonhundo></div>
                             <!--compare-->
                             <div></div>
                             <div class="off" style="grid-column: 2 / 6;">
-                                <div id=eff-iv-compare data-suboptimal></div>
-                                <div id=eff-stat-compare data-suboptimal></div>
-                                <div id=rat-pct-vs-max data-suboptimal></div>
+                                <div id=eff-iv-compare data-vis-nonhundo></div>
+                                <div id=eff-stat-compare data-vis-nonhundo></div>
+                                <div id=rat-pct-vs-max data-vis-nonhundo></div>
                                 <div id=sh-rat-pct-vs-max></div>
                             </div>
                             <div class="small-text full-row"><!--spacer--></div>
@@ -441,7 +441,6 @@
                     <p class="center off no-top-m" id=counters-disclaimer></p>
                 </div>
                 </div>
-                <br/>
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title" id="movesets-title">Best Movesets</div>
@@ -529,7 +528,6 @@
                 <li><a class="type-text bg-Fairy" onclick="LoadStrongestAndUpdateURL('Fairy')">Fairy</a></li>
             </ul>
         </div>
-        <br>
         <div class="card">
             <div id=strongest-header class="card-header">
                 <div class="card-title" style="padding: 0.5rem 3rem">
@@ -710,7 +708,6 @@
                 <li><a class="type-text bg-Fairy" onclick="LoadMovesAndUpdateURL('Fairy')">Fairy</a></li>
             </ul>
         </div>
-        <br>
         <div class="card">
             <div id=move-data-header class="card-header">
                 <div class="card-title">
