@@ -65,36 +65,50 @@ function BindAll() {
     BindPokeDex();
     BindRankings();
     BindMoveData();
+    BindMenu();
+    
+    // Passthrough clicks for touchscreens
+    $(document).click(function(event) { OnDocumentClick(event); });
+}
 
+/**
+ * Binds links in top menu nav
+ */
+function BindMenu() {
     // Link to Rankings Lists
     $("#rankings-link, #header-left").click(function(e) {
         LoadStrongestAndUpdateURL("Any", false);
+        CloseMenu();
         e.preventDefault();
         return false;
     });
     // Link to Move Data Lists
     $("#moves-link").click(function(e) {
         LoadMovesAndUpdateURL("Any");
+        CloseMenu();
         e.preventDefault();
         return false;
     });
     // Link to Type Chart
     $("#typechart-link").click(function(e) {
         LoadTypeChartAndUpdateURL();
+        CloseMenu();
         e.preventDefault();
         return false;
     });
-    
-    // Passthrough clicks for touchscreens
-    $(document).click(function(event) { OnDocumentClick(event); });
+}
 
-    // Clear "sticky" hover on drawers for touchscreens
-    $(".drawer").on("touchstart", (e)=>{
-        if ($(e.currentTarget).is(":hover")) {
-            e.currentTarget.style.pointerEvents = 'none';
-            setTimeout(()=>{e.currentTarget.style.pointerEvents = 'auto';}, 100);
-        }
-    })
+/**
+ * Hides and de-focuses the menu when navigating
+ */
+function CloseMenu() {
+    
+    // function only used on touch screen devices
+    if (!has_touch_screen)
+        return;
+
+    $(".menu-icon > drawer-popup").css("display", "none");
+    $(".menu-icon > drawer-icon-focused").removeClass("drawer-icon-focused");
 }
 
 /**
@@ -118,6 +132,31 @@ function OnDocumentClick(event)  {
         let rat_pcts = $(".counter-rat-pct > a");
         for (rat_pct of rat_pcts)
             $(rat_pct).css("border", "none");
+    }
+
+    // if clicking a drawer show only the associated popup
+    if ($(target).closest(".drawer").length) {
+        const this_popup = $(target).closest(".drawer").find(".drawer-popup");
+
+        // hide any other visible drawer popups
+        $(".drawer-popup").not(this_popup).css("display", "");
+        $(".drawer-popup").not(this_popup).siblings(".drawer-icon").removeClass("drawer-icon-focused");
+
+        // toggle this poup if we're clicking on the drawer icon
+        if ($(target).is(".drawer-icon")) {
+            if (this_popup.is(":visible")) {
+                this_popup.css("display",  "");
+                $(target).removeClass("drawer-icon-focused");
+            }
+            else {
+                this_popup.css("display",  "revert");
+                $(target).addClass("drawer-icon-focused");
+            }
+        }
+    }
+    else {
+        $(".drawer-popup").css("display", "");
+        $(".drawer-icon-focused").removeClass("drawer-icon-focused");
     }
 }
 
