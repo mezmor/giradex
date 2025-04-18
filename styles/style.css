@@ -51,6 +51,10 @@ label.togglebutton {
     --col-toggle-bg: var(--col-widget-back);
 }
 
+.tooltip {
+    --col-tooltip: var(--col-text);
+}
+
 /*
  * General Element Styles
  */

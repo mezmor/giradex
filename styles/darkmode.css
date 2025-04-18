@@ -28,6 +28,10 @@
         --color-grey: #444;
     }
 
+    .tooltip {
+        --col-tooltip-bg: #3b3b3b;
+    }
+
     /*
      * General Element Styles
      */
