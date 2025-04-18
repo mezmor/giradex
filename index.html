@@ -41,10 +41,12 @@
 <div id=loading-bar-c><div id=loading-bar></div></div>
 <header>
     <div class="site-size" id="header-content">
-        <div class="header-area" id="header-left" onclick="LoadStrongestAndUpdateURL('Any', false)" style="cursor: pointer;">
-            <img class="unselectable" id=logo src="imgs/dialga.png">
-            <h2 id="site-name">Dialga<span class="contrast">Dex</span></h2>
-        </div>
+        <a id="header-left" href="/">
+            <div class="header-area">
+                <img class="unselectable" id=logo src="imgs/dialga.png">
+                <h2 id="site-name">Dialga<span class="contrast">Dex</span></h2>
+            </div>
+        </a>
         <div class="header-area" id="header-right">
             <form id=poke-search autocomplete=off class="v-middle">
                 <input id=poke-search-box type=text>
@@ -140,9 +142,9 @@
                     <img class="drawer-icon" src="imgs/menu.svg" />
                     <div class="drawer-popup" id="nav-drawer">
                         <ul class="menu">
-                            <li id=rankings-link>Attacker Rankings</li>
-                            <li id=moves-link href=#>Move Data</li>
-                            <li id=typechart-link href=#>Type Chart</li>
+                            <li><a id=rankings-link href="/?strongest">Attacker Rankings</a></li>
+                            <li><a id=moves-link href="/?moves">Move Data</a></li>
+                            <li><a id=typechart-link href="/?typechart">Type Chart</a></li>
                         </ul>
                     </div>
                 </div>

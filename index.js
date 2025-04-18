@@ -67,18 +67,21 @@ function BindAll() {
     BindMoveData();
 
     // Link to Rankings Lists
-    $("#rankings-link").click(function() {
+    $("#rankings-link, #header-left").click(function(e) {
         LoadStrongestAndUpdateURL("Any", false);
+        e.preventDefault();
         return false;
     });
     // Link to Move Data Lists
-    $("#moves-link").click(function() {
+    $("#moves-link").click(function(e) {
         LoadMovesAndUpdateURL("Any");
+        e.preventDefault();
         return false;
     });
-    // Link to Move Data Lists
-    $("#typechart-link").click(function() {
+    // Link to Type Chart
+    $("#typechart-link").click(function(e) {
         LoadTypeChartAndUpdateURL();
+        e.preventDefault();
         return false;
     });
     
@@ -89,7 +92,7 @@ function BindAll() {
     $(".drawer").on("touchstart", (e)=>{
         if ($(e.currentTarget).is(":hover")) {
             e.currentTarget.style.pointerEvents = 'none';
-            setTimeout(()=>{e.currentTarget.style.pointerEvents = 'auto';}, 1);
+            setTimeout(()=>{e.currentTarget.style.pointerEvents = 'auto';}, 100);
         }
     })
 }
