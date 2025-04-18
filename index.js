@@ -84,6 +84,14 @@ function BindAll() {
     
     // Passthrough clicks for touchscreens
     $(document).click(function(event) { OnDocumentClick(event); });
+
+    // Clear "sticky" hover on drawers for touchscreens
+    $(".drawer").on("touchstart", (e)=>{
+        if ($(e.currentTarget).is(":hover")) {
+            e.currentTarget.style.pointerEvents = 'none';
+            setTimeout(()=>{e.currentTarget.style.pointerEvents = 'auto';}, 1);
+        }
+    })
 }
 
 /**

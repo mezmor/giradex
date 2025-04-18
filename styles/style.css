@@ -281,10 +281,10 @@ ul.menu > li:hover {
     white-space: nowrap;
 }
 
-.drawer:hover .drawer-popup {
+.drawer:hover .drawer-popup, .drawer:focus .drawer-popup {
     display: revert;
 }
-.drawer:hover .drawer-icon {
+.drawer:hover .drawer-icon, .drawer:focus .drawer-icon {
     filter: brightness(0) saturate(100%) invert(37%) sepia(76%) saturate(3643%) hue-rotate(200deg) brightness(96%) contrast(90%);
 }
 
