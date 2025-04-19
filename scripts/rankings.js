@@ -20,6 +20,8 @@ function BindRankings() {
         else if (urlParams.has('v')) urlParams.delete('v');
         
         window.history.pushState({}, "", "?" + urlParams.toString().replace(/=(?=&|$)/gm, ''));
+
+        CheckURLAndAct();
     });
 }
 
@@ -343,23 +345,23 @@ function BuildTiers(str_pokemons, top_compare, type) {
 
             switch (settings_metric) {
                 case 'DPS':
-                    if (check_rat >= 27.0) str_pok.tier = 'SSS';
-                    else if (check_rat >= 25.0) str_pok.tier = 'SS';
-                    else if (check_rat >= 23.0) str_pok.tier = 'S';
-                    else if (check_rat >= 22.0) str_pok.tier = 'A';
-                    else if (check_rat >= 21.0) str_pok.tier = 'B';
-                    else if (check_rat >= 20.0) str_pok.tier = 'C';
-                    else if (check_rat >= 19.0) str_pok.tier = 'D';
+                    if (check_rat >= 21.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 19.0) str_pok.tier = 'SS';
+                    else if (check_rat >= 18.0) str_pok.tier = 'S';
+                    else if (check_rat >= 17.5) str_pok.tier = 'A';
+                    else if (check_rat >= 16.5) str_pok.tier = 'B';
+                    else if (check_rat >= 15.5) str_pok.tier = 'C';
+                    else if (check_rat >= 15.0) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
                 case 'TDO':
-                    if (check_rat >= 475) str_pok.tier = 'SSS';
-                    else if (check_rat >= 430) str_pok.tier = 'SS';
+                    if (check_rat >= 500) str_pok.tier = 'SSS';
+                    else if (check_rat >= 450) str_pok.tier = 'SS';
                     else if (check_rat >= 400) str_pok.tier = 'S';
-                    else if (check_rat >= 350) str_pok.tier = 'A';
-                    else if (check_rat >= 325) str_pok.tier = 'B';
-                    else if (check_rat >= 310) str_pok.tier = 'C';
-                    else if (check_rat >= 285) str_pok.tier = 'D';
+                    else if (check_rat >= 375) str_pok.tier = 'A';
+                    else if (check_rat >= 360) str_pok.tier = 'B';
+                    else if (check_rat >= 340) str_pok.tier = 'C';
+                    else if (check_rat >= 315) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
                 /*case 'ER':
@@ -393,13 +395,13 @@ function BuildTiers(str_pokemons, top_compare, type) {
                     else str_pok.tier = 'F';
                     break;*/
                 case 'eDPS':
-                    if (check_rat >= 22.0) str_pok.tier = 'SSS';
-                    else if (check_rat >= 20.5) str_pok.tier = 'SS';
-                    else if (check_rat >= 19.0) str_pok.tier = 'S';
-                    else if (check_rat >= 18.5) str_pok.tier = 'A';
-                    else if (check_rat >= 17.5) str_pok.tier = 'B';
-                    else if (check_rat >= 16.75) str_pok.tier = 'C';
-                    else if (check_rat >= 16.0) str_pok.tier = 'D';
+                    if (check_rat >= 19.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 17.0) str_pok.tier = 'SS';
+                    else if (check_rat >= 16.5) str_pok.tier = 'S';
+                    else if (check_rat >= 15.5) str_pok.tier = 'A';
+                    else if (check_rat >= 14.75) str_pok.tier = 'B';
+                    else if (check_rat >= 14.0) str_pok.tier = 'C';
+                    else if (check_rat >= 13.5) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
             }

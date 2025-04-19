@@ -1200,6 +1200,7 @@ input.settings-num {
 }
 
 .bar-fg {
+    color: white;
     background-color: var(--col-widget);
     text-align: left;
     box-sizing: content-box;
@@ -1207,7 +1208,6 @@ input.settings-num {
 }
 
 .bar-txt {
-    color: white;
     font-size: 0.8em;
     margin: 2px 2px 2px 4px;
     text-shadow: 1px 1px 2px black;
