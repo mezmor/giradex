@@ -157,6 +157,9 @@ input {
 
 sup { vertical-align: top; }
 
+summary  { list-style: none; }
+summary::-webkit-details-marker { display: none; }
+
 /* 
  * Broad Site Layout 
  */
@@ -228,6 +231,7 @@ ul.footnotes {
 
 #nav-drawer {
     padding: 0;
+    min-width: 200px;
 }
 
 ul.menu {
@@ -245,7 +249,7 @@ ul.menu > li {
 ul.menu > li > a {
     display: block;
     width: 100%;
-    padding: 0.5em 0.5em;
+    padding: 0.5em 0.5em 0.5rem 1.5rem;
     box-sizing: border-box;
     border-bottom: 1px solid var(--col-outline);
 }
@@ -355,13 +359,60 @@ ul.menu > li:hover {
     font-weight: bold;
     font-size: 1.25rem;
     text-align: center;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
 }
 
 .card-footer {
     background-color: var(--col-header);
     border-top: 1px solid var(--col-outline);
+}
+
+/* 
+ * Summary Cards
+ */
+details summary.card-header {
+    cursor: pointer;
+    border-bottom: none;
+}
+details[open] summary.card-header {
+    border-bottom: 1px solid var(--col-outline);
+}
+
+summary.card-header .card-title {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    text-align: left;
+}
+summary.card-header .card-title::after { content: "+"; }
+details[open] summary.card-header .card-title::after { content: "—"; }
+
+details.card .card-body {
+    background-color: var(--col-alt-bg);
+}
+
+/* 
+ * FAQ
+ */
+#faq .card {
+    margin: 0.5rem 0;
+}
+#faq .card-body {
+    padding: 1em 3em 0em 2em;
+}
+#faq h3 {
+    margin: 0;
+    padding-bottom: 0.25em;
+}
+#faq p, #faq ul {
+    margin: 0;
+    padding: 0em 0em 1em 1em;
+    color: var(--col-text-midkey);
+}
+#faq .sidenote {
+    font-size: 90%;
+    font-style: italic;
+    color: var(--col-text-lowkey);
 }
 
 /* 

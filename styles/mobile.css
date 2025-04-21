@@ -312,6 +312,7 @@ body {
 @media screen and (max-width:600px) { 
     #strongest-table, 
     #pokedex, #pokedex-page, 
+    #faq,
     .type-links,
     #pokedex-move-table thead tr > *:nth-child(1):after {
         font-size: 14px;

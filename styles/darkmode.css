@@ -58,6 +58,20 @@
         background-image: linear-gradient(180deg, var(--col-header) 60%, var(--col-header-highlight));
     }
 
+    details.card summary.card-header {
+        border-bottom-left-radius: var(--card-radius);
+        border-bottom-right-radius: var(--card-radius);
+    }
+    details.card[open] summary.card-header {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    #faq .card-body {
+        border-bottom-left-radius: var(--card-radius);
+        border-bottom-right-radius: var(--card-radius);
+    }
+
     /* 
     * (Strongest) Table Formatting
     */

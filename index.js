@@ -96,6 +96,13 @@ function BindMenu() {
         e.preventDefault();
         return false;
     });
+    // Link to FAQ
+    $("#faq-link").click(function(e) {
+        LoadFAQAndUpdateURL();
+        CloseMenu();
+        e.preventDefault();
+        return false;
+    });
 }
 
 /**
@@ -234,9 +241,16 @@ function CheckURLAndAct() {
         return;
     }
 
-    // if url has 'moves' param...
+    // if url has 'typechart' param...
     if (params.has("typechart")) {
         LoadTypeChartAndUpdateURL();
+
+        return;
+    }
+
+    // if url has 'faq' param...
+    if (params.has("faq")) {
+        LoadFAQAndUpdateURL();
 
         return;
     }
@@ -262,10 +276,26 @@ function LoadTypeChartAndUpdateURL() {
 }
 
 /**
+ * Opens the Type Effectiveness Matrix and closes any other pages
+ */
+function LoadFAQAndUpdateURL() {
+    window.history.pushState({}, "", "?faq");
+    
+    // sets the page title
+    document.title = "FAQ - DialgaDex";
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Answers to common questions about DialgaDex.");
+
+    LoadPage("faq");
+}
+
+/**
  * Shows appropriate part of SPA, hiding all other parts
  */
 function LoadPage(pageName) {
-    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix'];
+    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix', 'faq'];
 
     pages.forEach(page=>{
         $("#"+page).css("display", (page==pageName ? "revert" : "none"));
