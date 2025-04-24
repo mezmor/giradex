@@ -42,8 +42,8 @@ function GetRaidStats(pkm_obj, tier = null) {
 
     let stats = {...pkm_obj.stats};
     
-    stats.atk = (stats.baseAttack + ivs.atk) * cpm;
-    stats.def = (stats.baseDefense + ivs.def) * cpm;
+    stats.atk = (stats.baseAttack + ivs.atk) * Math.fround(cpm);
+    stats.def = (stats.baseDefense + ivs.def) * Math.fround(cpm);
     stats.hp = [,600,,3600,9000,15000,22500,20000][tier];
 
     return stats; // returns by copy to prevent reassignment of reference

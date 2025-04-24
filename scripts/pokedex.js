@@ -284,8 +284,8 @@ function UpdatePokedexCPText(level, ivs) {
  * neutral towards the selected pokemon aren't displayed.
  */
 function LoadPokedexEffectiveness(pkm_obj) {
-
-    let types = pkm_obj.types;
+    const types = pkm_obj.types;
+    const full_effectiveness = GetTypesEffectivenessAgainstTypes(types);
 
     let effectiveness_0244 = [];
     let effectiveness_0391 = [];
@@ -294,16 +294,8 @@ function LoadPokedexEffectiveness(pkm_obj) {
     let effectiveness_256 = [];
 
     for (let attacker_type of POKEMON_TYPES) {
-        const type_effect = POKEMON_TYPES_EFFECT.get(attacker_type);
-        let mult = 1;
-        for (let type of types) {
-            if (type_effect[0].includes(type))
-                mult *= 0.391;
-            else if (type_effect[1].includes(type))
-                mult *= 0.625;
-            else if (type_effect[2].includes(type))
-                mult *= 1.60;
-        }
+        let mult = GetEffectivenessMultOfType(full_effectiveness, attacker_type);
+
         if (Math.abs(mult - 0.244) < 0.001)
             effectiveness_0244.push(attacker_type);
         else if (Math.abs(mult - 0.391) < 0.001)
@@ -410,6 +402,8 @@ function LoadPokedexCounters() {
     search_params.type = "Any";
     search_params.mixed = true;
     search_params.suboptimal = true;
+
+    search_params.real_damage = true;
 
     // array of counters pokemon and movesets found so far
     let counters = GetStrongestVersus(GetEnemyParams(current_pkm_obj), search_params);
@@ -613,8 +607,8 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     const hp = stats.hp;
 
     // shadow stats
-    const atk_sh = atk * 6 / 5;
-    const def_sh = def * 5 / 6;
+    const atk_sh = atk * Math.fround(1.2); // 6/5, from GM
+    const def_sh = def * Math.fround(0.8333333); // 5/6, from GM
 
     // removes previous table rows
     $("#pokedex-move-table tbody tr").remove();

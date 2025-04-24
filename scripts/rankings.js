@@ -101,6 +101,7 @@ function LoadStrongest(type = "Any") {
     search_params.versus = 
         versus_chk.is(":checked");
     search_params.type = type;
+    search_params.real_damage = false;
 
     if (type == "Each") {
         str_pokemons = SetRankingTable(GetStrongestOfEachType(search_params));
