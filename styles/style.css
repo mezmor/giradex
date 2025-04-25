@@ -172,10 +172,18 @@ summary::-webkit-details-marker { display: none; }
     padding: 5rem 10px;
     box-sizing: border-box;
 }
-#contacts {
-    margin: 100px 0;
+#footer {
+    margin: 5rem 0 2rem 0;
+    text-align: center;
+    font-size: 0.6rem;
+    color: var(--col-text-lowkey);
 }
-.page, #footer { display: none; }
+#footer-links {
+    width: min-content;
+    gap: 0.5em;
+    margin: auto;
+}
+.page { display: none; }
 
 .column-l {
     flex: 50%;
@@ -299,7 +307,7 @@ ul.menu > li:hover {
     white-space: nowrap;
 }
 
-@media (hover : hover) {
+@media (hover : hover) and (not (pointer : coarse))  {
     .drawer:hover .drawer-popup, .drawer:focus .drawer-popup {
         display: revert;
     }
@@ -382,37 +390,42 @@ summary.card-header .card-title {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    text-align: left;
 }
 summary.card-header .card-title::after { content: "+"; }
 details[open] summary.card-header .card-title::after { content: "—"; }
 
-details.card .card-body {
-    background-color: var(--col-alt-bg);
-}
-
 /* 
- * FAQ
+ * FAQ/About
  */
-#faq .card {
+.card.article {
     margin: 0.5rem 0;
 }
-#faq .card-body {
+.card.article .card-title {
+    text-align: left;
+}
+.card.article .card-body {
     padding: 1em 3em 0em 2em;
 }
-#faq h3 {
+.card.article h3,.card.article h4 {
     margin: 0;
     padding-bottom: 0.25em;
 }
-#faq p, #faq ul {
+.card.article p, .card.article ul {
     margin: 0;
     padding: 0em 0em 1em 1em;
     color: var(--col-text-midkey);
 }
-#faq .sidenote {
+.card.article .sidenote {
     font-size: 90%;
     font-style: italic;
     color: var(--col-text-lowkey);
+}
+.card.article .card-body {
+    background-color: var(--col-alt-bg);
+}
+.card.article a {
+    color: var(--col-sitename-contrast);
+    text-decoration: underline;
 }
 
 /* 
@@ -1165,6 +1178,7 @@ input.settings-num {
  * Dev Note
  */
  #note {
+    display: none;
     position: fixed;
     width: 250px;
     top: 10%;

@@ -66,6 +66,7 @@ function BindAll() {
     BindRankings();
     BindMoveData();
     BindMenu();
+    BindFooter();
     
     // Passthrough clicks for touchscreens
     $(document).click(function(event) { OnDocumentClick(event); });
@@ -96,10 +97,22 @@ function BindMenu() {
         e.preventDefault();
         return false;
     });
+}
+
+
+/**
+ * Binds links in footer nav
+ */
+function BindFooter() {
     // Link to FAQ
     $("#faq-link").click(function(e) {
         LoadFAQAndUpdateURL();
-        CloseMenu();
+        e.preventDefault();
+        return false;
+    });    
+    // Link to About
+    $("#contact-link, #credits-link, #privacy-link").click(function(e) {
+        LoadAboutAndUpdateURL();
         e.preventDefault();
         return false;
     });
@@ -109,13 +122,8 @@ function BindMenu() {
  * Hides and de-focuses the menu when navigating
  */
 function CloseMenu() {
-    
-    // function only used on touch screen devices
-    if (!has_touch_screen)
-        return;
-
-    $(".menu-icon > drawer-popup").css("display", "none");
-    $(".menu-icon > drawer-icon-focused").removeClass("drawer-icon-focused");
+    $("#menu-icon > .drawer-popup").css("display", "");
+    $("#menu-icon > .drawer-icon-focused").removeClass("drawer-icon-focused");
 }
 
 /**
@@ -255,6 +263,13 @@ function CheckURLAndAct() {
         return;
     }
 
+    // if url has 'about' param...
+    if (params.has("about")) {
+        LoadAboutAndUpdateURL();
+
+        return;
+    }
+
     // if no params, redirect to default strongest lists
     LoadStrongestAndUpdateURL();
 }
@@ -276,7 +291,7 @@ function LoadTypeChartAndUpdateURL() {
 }
 
 /**
- * Opens the Type Effectiveness Matrix and closes any other pages
+ * Opens the FAQ and closes any other pages
  */
 function LoadFAQAndUpdateURL() {
     window.history.pushState({}, "", "?faq");
@@ -292,10 +307,26 @@ function LoadFAQAndUpdateURL() {
 }
 
 /**
+ * Opens the About Page and closes any other pages
+ */
+function LoadAboutAndUpdateURL() {
+    window.history.pushState({}, "", "?about");
+    
+    // sets the page title
+    document.title = "About - DialgaDex";
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Credits, references, contact info, and details about DialgaDex.");
+
+    LoadPage("about");
+}
+
+/**
  * Shows appropriate part of SPA, hiding all other parts
  */
 function LoadPage(pageName) {
-    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix', 'faq'];
+    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix', 'faq', 'about'];
 
     pages.forEach(page=>{
         $("#"+page).css("display", (page==pageName ? "revert" : "none"));
@@ -303,7 +334,7 @@ function LoadPage(pageName) {
 
     // If we're loading any page, we're not on the landing/homepage
     // So show the footer
-    $("#footer").css("display", (!!pageName ? "revert" : "none"));
+    //$("#footer").css("display", (!!pageName ? "revert" : "none"));
 
     window.scrollTo({
         top: 0,

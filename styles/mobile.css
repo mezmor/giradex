@@ -271,10 +271,6 @@ body {
     flex-basis: 100%;
     margin: 0;
 }
-#footer .row {
-    flex-direction: column;
-    font-size: 80%;
-}
 
 /* fixes to header searchbar + strongest link */
 #strongest-button-c {
@@ -312,7 +308,7 @@ body {
 @media screen and (max-width:600px) { 
     #strongest-table, 
     #pokedex, #pokedex-page, 
-    #faq,
+    #faq, #about,
     .type-links,
     #pokedex-move-table thead tr > *:nth-child(1):after {
         font-size: 14px;

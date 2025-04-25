@@ -135,8 +135,8 @@ function LoadPokedexData(pokedex_mon) {
     if (!released) {
         $("#not-released").css("display", "revert");
         $("#released").css("display", "none");
-        if ($("#footer").css("display") != "none")
-            $("#footer").css("display", "none");
+        //if ($("#footer").css("display") != "none")
+        //    $("#footer").css("display", "none");
         return;
     }
 
@@ -144,8 +144,8 @@ function LoadPokedexData(pokedex_mon) {
 
     $("#not-released").css("display", "none");
     $("#released").css("display", "revert");
-    if ($("#footer").css("display") == "none")
-        $("#footer").css("display", "revert");
+    //if ($("#footer").css("display") == "none")
+    //    $("#footer").css("display", "revert");
 
     // sets global variables
     current_pkm_obj = pkm_obj;
