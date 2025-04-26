@@ -449,7 +449,7 @@ function ProcessAndSetCountersFromArray(counters,
                 rat_tr.addClass("contrast");
             }
 
-            if (has_touch_screen) {
+            if (HasTouchScreen()) {
                 rat_tr.click(function() {
                     ShowCountersPopup(this, true, counter);
                 });
@@ -504,7 +504,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
     if (show && counter) {
 
         // sets hover element's border for touch screens
-        if (has_touch_screen) {
+        if (HasTouchScreen()) {
             $(".counters-rat-row").removeClass("rat-selected");
             $(hover_element).addClass("rat-selected");
         }
@@ -542,7 +542,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
             + "</span></p>");
 
         // sets popup's click callback for touch devices
-        if (has_touch_screen) {
+        if (HasTouchScreen()) {
             $("#counters-popup").unbind("click");
             $("#counters-popup").click( function() {
                 LoadPokedexAndUpdateURL(GetPokeDexMon(counter.id, counter.form));
@@ -1011,50 +1011,140 @@ function BindPokeDex() {
             LoadPokedexCounters();
         }
     });
+
+    // Moveset Editor
+    $("#moveset-edit-icon").click(function() {
+        $("#overlay").addClass("active");
+
+        UpdateMovesetEditor();
+        $("#moveset-edit").get(0).show();
+    });
+    $("#move-reset").click(function() {
+        delete current_pkm_obj.fm_add;
+        delete current_pkm_obj.cm_add;
+        delete current_pkm_obj.fm_rem;
+        delete current_pkm_obj.cm_rem;
+        UpdateMovesetEditor();
+    });
+    $("#moveset-edit").on("close", function(e) {
+        if (e.target === e.currentTarget) {// only apply to this, not children
+            ClearTypeTiers();
+            ClearMoveUserMap();
+            UpdatePokemonStatsAndURL();
+            
+            $("#overlay").removeClass("active");
+        }
+    });
 }
 
+/**
+ * Updates the dialog to reflect the current state of a Pokemon's learnsets
+ */
+function UpdateMovesetEditor() {
+    $("#fm-select").html("");
+    $("#cm-select").html("");
+    
+    $("#fm-search-box").val("");
+    $("#cm-search-box").val("");
 
+    function GetEditableMove(move_name, move_type, is_elite) {
+        const move_obj = (move_type == "fm" ? jb_fm : jb_cm).find(e=>e.name==move_name);
+        if (!move_obj) return;
+
+        const li = $("<li class='move-select-move'><span class='type-text bg-"+move_obj.type+"'>"
+            +move_name+(is_elite ? "*" : "")+"</span></li>");
+        const a = $("<a class='absolute-right delete-icon'>&#10060;</span>");
+        a.click(function(e) {
+            // default move; add to _rem
+            if (current_pkm_obj[move_type].includes(move_name)) {
+                if (!Array.isArray(current_pkm_obj[move_type + "_rem"]))
+                    current_pkm_obj[move_type + "_rem"] = [];
+                current_pkm_obj[move_type + "_rem"].push(move_name);
+            }
+            // custom move; remove from _add
+            else if (Array.isArray(current_pkm_obj[move_type + "_add"])) {
+                const ndx = current_pkm_obj[move_type + "_add"].indexOf(move_name);
+                if (ndx > -1) {
+                    current_pkm_obj[move_type + "_add"].splice(ndx, 1);
+                }
+            }
+
+            UpdateMovesetEditor();
+        });
+        li.append(a);
+        return li;
+    }
+
+    const moves = GetPokemonMoves(current_pkm_obj);
+
+    for (const fm of moves[0]) {
+        $("#fm-select").append(GetEditableMove(fm, "fm", false));
+    }
+    for (const cm of moves[1]) {
+        $("#cm-select").append(GetEditableMove(cm, "cm", false));
+    }
+    for (const fm of moves[2]) {
+        $("#fm-select").append(GetEditableMove(fm, "fm", true));
+    }
+    for (const cm of moves[3]) {
+        $("#cm-select").append(GetEditableMove(cm, "cm", true));
+    }
+
+    if (!move_searchs_loaded) {
+        InitMoveInput("fm");
+        InitMoveInput("cm");
+        move_searchs_loaded = true;
+    }
+}
+
+let move_searchs_loaded = false;
 /**
  * Creates and displays an input field to easily enter a new move for addition
  * to the currently displayed Pokemon's moveset.
  */
-function ShowMoveInput(caller, moveType) {
-    let input_popup = $("<input id='move-search' autocomplete=off></input>");
-    $(caller).parent().append(input_popup);
-
+function InitMoveInput(moveType) {
     let moveList = [];
-    if (moveType == "fast" || moveType == "any")
+    if (moveType == "fm" || moveType == "any")
         jb_fm.forEach(e => moveList.push(e.name));
-    if (moveType == "charged" || moveType == "any")
+    if (moveType == "cm" || moveType == "any")
         jb_cm.forEach(e => moveList.push(e.name));
     moveList = moveList.sort();
 
     const moveSearch = new autoComplete({
-        selector: "#move-search",
+        selector: "#" + moveType + "-search-box",
         data: {
             src: moveList
         },
         resultsList: {
-            id: "suggestions",
+            class: "suggestions move-suggestions",
             maxResults: 5
         },
         resultItem: {
             highlight: true,
             element: (item, data) => {
-                let moveType = 'any-type';
+                let type = 'any-type';
                 let move = jb_fm.find(e => e.name == data.value);
                 if (!move) move = jb_cm.find(e => e.name == data.value);
-                if (move) moveType = move.type;
+                if (move) type = move.type;
 
                 const moveTag = $('<span></span>');
                 moveTag.html($(item).html().replaceAll(" Plus", "+"));
                 $(item).html('');
                 moveTag.addClass('type-text');
-                moveTag.addClass('bg-' + moveType);
+                moveTag.addClass('bg-' + type);
                 $(item).append(moveTag);
                 $(item).addClass('move-search-result');
             }
-        }
+        },
+        events: {
+            input: {
+                focus() {
+                    const inputValue = moveSearch.input.value;
+
+                    if (inputValue.length) moveSearch.start();
+                },
+            },
+        },
     })
     $(moveSearch.wrapper).addClass("move-input-popup");
     moveSearch.input.addEventListener("render", function(e) {
@@ -1062,35 +1152,21 @@ function ShowMoveInput(caller, moveType) {
     });
     moveSearch.input.addEventListener("selection", function(e) {
         const newMove = e.detail.selection.value;
+        if (moveSearch.input.value == "")
+            return;
 
-        if (moveType == "fast" || (moveType == "any" && jb_fm.map(e => e.name).includes(newMove))) {
-            if (!current_pkm_obj.elite_fm) 
-                current_pkm_obj.elite_fm = [];
-            current_pkm_obj.elite_fm.push(newMove);
-            ClearTypeTiers();
-            BuildMoveUserMap(true);
+        if (moveType == "fm" || (moveType == "any" && jb_fm.map(e => e.name).includes(newMove))) {
+            if (!current_pkm_obj.fm_add) 
+                current_pkm_obj.fm_add = [];
+            current_pkm_obj.fm_add.push(newMove);
+            UpdateMovesetEditor();
         }
-        else if (moveType == "charged" || (moveType == "any" && jb_cm.map(e => e.name).includes(newMove))) {
-            if (!current_pkm_obj.elite_cm) 
-                current_pkm_obj.elite_cm = [];
-            current_pkm_obj.elite_cm.push(newMove);
-            ClearTypeTiers();
-            BuildMoveUserMap(true);
+        else if (moveType == "cm" || (moveType == "any" && jb_cm.map(e => e.name).includes(newMove))) {
+            if (!current_pkm_obj.cm_add) 
+                current_pkm_obj.cm_add = [];
+            current_pkm_obj.cm_add.push(newMove);
+            UpdateMovesetEditor();
         }
-
-        $(moveSearch.wrapper).remove();
-        moveSearch.wrapper = undefined;
-        moveSearch.unInit();
-        input_popup.remove();
-        UpdatePokemonStatsAndURL();
-    });
-    
-    input_popup.focus();
-    $(input_popup).on('focusout', function() {
-        $(moveSearch.wrapper).remove();
-        moveSearch.wrapper = undefined;
-        moveSearch.unInit();
-        input_popup.remove();
     });
 }
 

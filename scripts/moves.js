@@ -183,6 +183,12 @@ function BuildMoveUserMap(force_reload = false) {
         }
     }
 }
+/**
+ * Clear move user cache (can rebuild later as needed)
+ */
+function ClearMoveUserMap() {
+    delete top_move_users;
+}
 
 /** 
  * Helper function to get an "effective" attack stat for sorting and finding

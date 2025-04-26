@@ -116,6 +116,11 @@ body {
     margin: 1rem 0;
 }
 
+dialog.card {
+    max-width: calc(100vw - 2 * var(--site-margin));
+    min-width: calc(100vw - 2 * var(--site-margin));
+}
+
 @media screen and (max-width:800px) { 
     /* fast and charge move */
     #strongest-table tr > *:nth-child(4), #strongest-table tr > *:nth-child(5)  { 
@@ -179,24 +184,6 @@ body {
     }
     #pokedex-move-table thead th {
         width: 100% !important;
-    }
-
-    #pokedex-add-fast, #pokedex-add-charged {
-        display: none;
-    }
-
-    #pokedex-add-any {
-        display: inline-block;
-        position: static;
-        margin-left: 5px;
-    }
-
-    #move-search {
-        font-size: 24px;
-    }
-
-    .move-input-popup > #suggestions {
-        font-size: 18px;
     }
     
     #counters-grid {
@@ -266,11 +253,6 @@ body {
     left: 5vw;
     top: 1vw;
 }*/
-
-.column-l, .column-r {
-    flex-basis: 100%;
-    margin: 0;
-}
 
 /* fixes to header searchbar + strongest link */
 #strongest-button-c {
@@ -395,7 +377,7 @@ body {
         font-size: 1.25em;
     }
     
-    header .drawer-popup, #suggestions {
+    header .drawer-popup, #poke-suggestions {
         position: fixed;
         top: var(--header-height);
         left: 0;
@@ -407,6 +389,9 @@ body {
         border-left: none;
         border-right: none;
     }
+
+    .column-l, .column-r { flex-basis: 100%; }
+    *:has(> .column-l, > .column-r) { flex-direction: column; }
 }
 
 @media screen and (max-width:500px) { 

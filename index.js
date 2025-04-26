@@ -7,28 +7,6 @@ $(document).ready(Main);
 
 // global constants and variables
 
-// whether user has touch screen
-let has_touch_screen = false;
-if ("maxTouchPoints" in navigator) {
-    has_touch_screen = navigator.maxTouchPoints > 0;
-} else if ("msMaxTouchPoints" in navigator) {
-    has_touch_screen = navigator.msMaxTouchPoints > 0;
-} else {
-    let mq = window.matchMedia && matchMedia("(pointer:coarse)");
-    if (mq && mq.media === "(pointer:coarse)") {
-        has_touch_screen = !!mq.matches;
-    } else if ('orientation' in window) {
-        has_touch_screen = true; // deprecated, but good fallback
-    } else {
-        // Only as a last resort, fall back to user agent sniffing
-        let UA = navigator.userAgent;
-        has_touch_screen = (
-            /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
-            /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
-        );
-    }
-}
-
 // FIXME these are not ideal, would be better that, if a new pokemon is loaded,
 //        whatever asynchronous operations were being done on the previous mon
 //        should be cancelled
@@ -70,6 +48,12 @@ function BindAll() {
     
     // Passthrough clicks for touchscreens
     $(document).click(function(event) { OnDocumentClick(event); });
+
+    // Close dialog by clicking away
+    $("#overlay").click(function(e) {
+        $("#overlay").removeClass("active");
+        $("dialog").toArray().forEach(e=>e.close());
+    });
 }
 
 /**
@@ -132,7 +116,7 @@ function CloseMenu() {
 function OnDocumentClick(event)  {
 
     // function only used on touch screen devices
-    if (!has_touch_screen)
+    if (!HasTouchScreen())
         return;
 
     let target = $(event.target);
@@ -404,8 +388,9 @@ function InitializePokemonSearch() {
             }
         },
         resultsList: {
-            id: "suggestions",
+            id: "poke-suggestions",
             tag: "table",
+            class: "suggestions",
             maxResults: 10
         },
         resultItem: {
@@ -466,4 +451,31 @@ function InitializePokemonSearch() {
         LoadPokedexAndUpdateURL(GetPokeDexMon(e.detail.selection.value.id, e.detail.selection.value.form));
         document.activeElement.blur();
     });
+}
+
+/**
+ * Check whether we're on mobile
+ */
+function HasTouchScreen() {
+    let has_touch_screen = false;
+    if ("maxTouchPoints" in navigator) {
+        has_touch_screen = navigator.maxTouchPoints > 0;
+    } else if ("msMaxTouchPoints" in navigator) {
+        has_touch_screen = navigator.msMaxTouchPoints > 0;
+    } else {
+        let mq = window.matchMedia && matchMedia("(pointer:coarse)");
+        if (mq && mq.media === "(pointer:coarse)") {
+            has_touch_screen = !!mq.matches;
+        } else if ('orientation' in window) {
+            has_touch_screen = true; // deprecated, but good fallback
+        } else {
+            // Only as a last resort, fall back to user agent sniffing
+            let UA = navigator.userAgent;
+            has_touch_screen = (
+                /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+                /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
+            );
+        }
+    }
+    return has_touch_screen
 }

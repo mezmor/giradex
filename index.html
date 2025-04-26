@@ -39,6 +39,7 @@
 
 <body class="darkmode">
 <div id=loading-bar-c><div id=loading-bar></div></div>
+<div id=overlay></div>
 <header>
     <div class="site-size" id="header-content">
         <a id="header-left" href="/">
@@ -49,7 +50,7 @@
         </a>
         <div class="header-area" id="header-right">
             <form id=poke-search autocomplete=off class="v-middle">
-                <input id=poke-search-box type=text>
+                <input id=poke-search-box class=search-box type=text>
                 <img class="inlaid-icon search-icon" src="imgs/search.svg" />
             </form>
             <nav>
@@ -241,8 +242,8 @@
                         </div>
                     </div>
                 </div>
-                <form id=stats-form>
                 <div class="card" id="stats-calculator">
+                    <form id=stats-form>
                     <div class="card-header">
                         <div class="card-title">Stats, IVs, and CP</div>
                     </div>
@@ -339,12 +340,12 @@
                             <div class="small-text full-row"><!--spacer--></div>
                         </div>
                     </div>
-                    <div class="card-footer">
+                    <div class="card-footer buttons">
                         <input type=button value=Reset id=stats-reset />
                         <input type=submit value=Calculate />
                     </div>
+                    </form>
                 </div>
-                </form>
                 <div class="card" id=effectiveness>
                     <div class="card-header">
                         <div class="card-title" id="effectiveness-title">Type Matchups</div>
@@ -408,7 +409,7 @@
                     <div class="card-header">
                         <div class="card-title">Raid Counters</div>
                         <div class="drawer absolute-right v-middle">
-                            <img class="drawer-icon" src="imgs/settings.svg" style="padding-right: 0.5em;"/>
+                            <img class="drawer-icon" src="imgs/settings.svg"/>
                             <div id=counters-filters class="drawer-popup"></div>
                         </div> 
                     </div>
@@ -429,42 +430,50 @@
                         </ul>
                     </div>
                 </div>
+                <dialog class="card" id="moveset-edit" style="white-space: nowrap;">
+                    <form autocomplete=off>
+                    <div class="card-header">
+                        <div class="card-title">Edit Moveset</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="column-l">
+                                <h3>Fast Moves</h3>
+                                <div style="position: relative; margin-bottom: 0.5em;">
+                                    <input id=fm-search-box class=search-box type=text>
+                                    <img class="inlaid-icon search-icon" src="imgs/search.svg" />
+                                </div>
+                                <ul class="move-select" id="fm-select"></ul>
+                            </div>
+                            <div class="column-r">
+                                <h3>Charged Moves</h3>
+                                <div style="position: relative; margin-bottom: 0.5em;">
+                                    <input id=cm-search-box class=search-box type=text>
+                                    <img class="inlaid-icon search-icon" src="imgs/search.svg" />
+                                </div>
+                                <ul class="move-select" id="cm-select"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer buttons">
+                        <input type="button" value="Reset" id="move-reset">
+                        <input type="submit" value="Apply" autofocus formmethod="dialog">
+                    </div>
+                    </form>
+                </dialog>
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title" id="movesets-title">Best Movesets</div>
+                        <div class="drawer absolute-right v-middle" id="moveset-edit-icon">
+                            <img class="drawer-icon" src="imgs/edit.svg"/>
+                        </div>
                     </div>
                     <div class="card-body">
                         <table class="table-bg move-table" id=pokedex-move-table>
                             <thead>
                                 <tr class=table-header>
-                                    <th style="position: relative">
-                                        <button class="plus-button tooltip" id="pokedex-add-any" onclick="ShowMoveInput(this, 'any')">+
-                                            <div class="tooltiptext">
-                                                <div class="tooltip-title">Add a new Move</div>
-                                                <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
-                                            </div>
-                                        </button>
-                                        <span style="position: relative">
-                                            Fast<br>Move
-                                            <button class="plus-button tooltip" id="pokedex-add-fast" onclick="ShowMoveInput(this, 'fast')">+
-                                                <div class="tooltiptext">
-                                                    <div class="tooltip-title">Add a new Fast Move</div>
-                                                    <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
-                                                </div>
-                                            </button>
-                                        </span>
-                                    </th>
-                                    <th>
-                                        <span style="position: relative">
-                                            Charged<br>Move
-                                            <button class="plus-button tooltip" id="pokedex-add-charged" onclick="ShowMoveInput(this, 'charged')">+
-                                                <div class="tooltiptext">
-                                                    <div class="tooltip-title">Add a new Charged Move</div>
-                                                    <p><i>New move will only persist for your own session, and will be reset as soon as the page is closed/refreshed.</i></p>
-                                                </div>
-                                            </button>
-                                        </span>
-                                    </th>
+                                    <th>Fast Move</th>
+                                    <th>Charged Move</th>
                                     <th>DPS</th>
                                     <th>DPS<br><span class='shadow-text'>(Shadow)</span></th>
                                     <th>TDO</th>
@@ -531,7 +540,7 @@
                     <span id="strongest-title-suffix"></span>
                 </div>
                 <div class="drawer absolute-right v-middle">
-                    <img class="drawer-icon" src="imgs/settings.svg" style="padding-right: 0.5em;"/>
+                    <img class="drawer-icon" src="imgs/settings.svg"/>
                     <div id=strongest-filters class="drawer-popup">
                         <div id="filter-settings">
                             <div class="settings-list">

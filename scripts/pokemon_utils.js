@@ -119,6 +119,26 @@ function GetPokemonMoves(pkm_obj) {
         }
     }
 
+    // Add moves if in customizations
+    if (Array.isArray(pkm_obj.fm_add)) {
+        for (const f of pkm_obj.fm_add) 
+            elite_fm.push(f);
+    }
+    if (Array.isArray(pkm_obj.cm_add)) {
+        for (const c of pkm_obj.cm_add) 
+            elite_cm.push(c);
+    }
+    
+    // Remove moves if in customizations
+    if (Array.isArray(pkm_obj.fm_rem)) {
+        fm = fm.filter(f=>!pkm_obj.fm_rem.includes(f));
+        elite_fm = elite_fm.filter(f=>!pkm_obj.fm_rem.includes(f));
+    }
+    if (Array.isArray(pkm_obj.cm_rem)) {
+        cm = cm.filter(c=>!pkm_obj.cm_rem.includes(c));
+        elite_cm = elite_cm.filter(c=>!pkm_obj.cm_rem.includes(c));
+    }
+
     return [fm, cm, elite_fm, elite_cm, pure_only_cm, shadow_only_cm];
 }
 
