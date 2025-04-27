@@ -1186,9 +1186,9 @@ th.vertical a.type-text {
  */
 .settings-list {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     column-gap: 2em;
-    row-gap: 0.25em;
+    row-gap: 0.5em;
     height: max-content;
 }
 
@@ -1224,7 +1224,7 @@ th.vertical a.type-text {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    gap: 0.5em;
+    gap: 1em;
 
     justify-self: stretch;
 }

@@ -61,7 +61,7 @@
                         <div class=settings-list>
                             <div class=settings-subtitle>Metric Settings</div>
                             <span>PvE metric</span>
-                                <div class="setting-value">
+                                <div class="col">
                                     <span id=metric-dps class="settings-opt tooltip unselectable">DPS
                                         <span class="tooltiptext">
                                             <div class="tooltip-title">Damage Per Second</div>
@@ -84,20 +84,21 @@
                                             </p></span></span>
                                 </div>
                             <span>Pokémon Level</span>
-                                <div class="setting-value">
-                                    <span id=lvl-30 class="settings-opt unselectable">30</span>
-                                    <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
-                                    <span id=lvl-50 class="settings-opt unselectable">50</span>
+                                <div class="col">
+                                    <div class="setting-value">
+                                        <span id=lvl-30 class="settings-opt unselectable">30</span>
+                                        <span id=lvl-40 class="settings-opt settings-opt-sel unselectable">40</span>
+                                        <span id=lvl-50 class="settings-opt unselectable">50</span>
+                                    </div>
+                                    <span id=lvl-xl-budget class="settings-opt unselectable tooltip">Budget50
+                                        <span class="tooltiptext">
+                                            <div class="tooltip-title">Level 50 for Budget Pokémon</div>
+                                            <ul>
+                                                <li>Use stats at Level 40 for Legendaries</li>
+                                                <li>Use stats at Level 50 for non-Legendaries</li>
+                                                <li>Helps adjust for the scarcity of rare XL candies</li>
+                                            </ul></span></span>
                                 </div>
-                            <span>&nbsp;</span>
-                                <span id=lvl-xl-budget class="settings-opt unselectable tooltip">Budget50
-                                    <span class="tooltiptext">
-                                        <div class="tooltip-title">Level 50 for Budget Pokémon</div>
-                                        <ul>
-                                            <li>Use stats at Level 40 for Legendaries</li>
-                                            <li>Use stats at Level 50 for non-Legendaries</li>
-                                            <li>Helps adjust for the scarcity of rare XL candies</li>
-                                        </ul></span></span>
                                 <!--<span id=lvl-both class="settings-opt unselectable tooltip">40+50
                                     <span class="tooltiptext">Shows both level 40 and level 50 entries in type ranks, otherwise uses level 40 for PokeDex</span></span>-->
                             <!--<div class=settings-subtitle><i>Beta</i> Features</div>-->
@@ -117,15 +118,13 @@
                                     <p>Size of battle team for computing eDPS</p>
                                     <p><i>Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death</i></p></span>
                             </span>
-                                <div class="setting-value">
-                                    <span>&#8199;</span><span>&#8199;</span>
-                                    <span id=rt-6 class="settings-opt settings-opt-sel unselectable">6</span>
-                                    <span id=rt-1 class="settings-opt unselectable">1</span>
+                                <div class="col">
+                                    <span id=rt-6 class="settings-opt settings-opt-sel unselectable">6-Stack</span>
+                                    <span id=rt-1 class="settings-opt unselectable">Solo</span>
+                                    <span id=rt-m1 class="settings-opt unselectable tooltip">MegaSolo
+                                        <span class="tooltiptext">
+                                        <p>Use a 6-mon team for everything but Megas, which fight solo</p></span></span>
                                 </div>
-                            <span>&nbsp;</span>
-                                <span id=rt-m1 class="settings-opt unselectable tooltip">Mega1
-                                    <span class="tooltiptext">
-                                    <p>Use a 6-mon team for everything but Megas, which fight solo</p></span></span>
                             <span class="tooltip tooltip-left">Relobby Time
                                 <span class="tooltiptext">Time spent max reviving a full raid team and rejoining the battle</span>
                             </span>
@@ -935,7 +934,7 @@
                 <h4>Media credits:</h4>
                 <ul>
                     <li>Effectiveness and Shadow icons adapted from <a target="_blank" href=https://game-icons.net>Game-Icons.net</a>, with some minor modifications.</li>
-                    <li>Additional Navigation, Settings, and Search icons adapted from <a target="_blank" href=https://www.svgrepo.com>SVG Repo</a>, with some minor modifications.</li>
+                    <li>Additional Navigation, Settings, Search, and Delete icons adapted from <a target="_blank" href=https://www.svgrepo.com>SVG Repo</a>, with some minor modifications.</li>
                     <li>Pokémon images/gifs from <a target="_blank" href=https://pokemonshowdown.com>Pokémon Showdown</a> and <a target="_blank" href=https://pokeminers.com>PokéMiners</a>.</li>
                 </ul>
                 <h4>Programming credits:</h4>
@@ -1229,9 +1228,12 @@
                     your modifications aren't lost during normal browsing.</p>
                 <h3>How do I add new moves to a Pokémon?</h3>
                 <p>On the Pokémon's dex page, scroll to the "movesets" area. In the header, you can press
-                    the "+" button to open a search box. Start typing the name of the move you're looking
-                    for into this box, then select it from the displayed options.</p>
-                <h3>How do I check release the shadow version of a Pokémon?</h3>
+                    the Edit (pencil) button to open the learnset editor.</p>
+                <p>To add a new move, go to the correct area (fast or charged move) and start typing the name
+                    of the move you're looking for into the search box, then select it from the displayed options.</p>
+                <p>To delete a move (either from the Pokémon's real learnset, or a move you added), find it in
+                    the current move list and press the red X to delete it.</p>
+                <h3>How do I release the shadow version of a Pokémon?</h3>
                 <p>On the Pokémon's dex page, scroll to the top where you find the Pokémon's name and image.
                     Next to the Pokémon's name is a purple, flame-like "Shadow" icon. Clicking on this icon
                     will toggle whether the shadow version of this species/form has been released.</p>

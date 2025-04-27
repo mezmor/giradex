@@ -1073,8 +1073,8 @@ function UpdateMovesetEditor() {
 
         const li = $("<li class='move-select-move'><span class='type-text bg-"+move_obj.type+"'>"
             +move_name+(is_elite ? "*" : "")+"</span></li>");
-        const a = $("<a class='absolute-right delete-icon'>&#10060;</span>");
-        a.click(function(e) {
+        const img = $("<img class='absolute-right delete-icon' src='imgs/delete.svg' />");
+        img.click(function(e) {
             // default move; add to _rem
             if (current_pkm_obj[move_type].includes(move_name)) {
                 if (!Array.isArray(current_pkm_obj[move_type + "_rem"]))
@@ -1091,7 +1091,7 @@ function UpdateMovesetEditor() {
 
             UpdateMovesetEditor();
         });
-        li.append(a);
+        li.append(img);
         return li;
     }
 
