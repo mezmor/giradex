@@ -252,8 +252,8 @@ function SetTeamSize(normal_mon_count, mega_count) {
  * Sets the relobby penalty timespan for each full raid team wipe
  */
 function SetRelobbyPenalty(penalty) {
-    // round to nearest 1, clamped between 0 and 20
-    penalty = Math.max(0, Math.min(20, Math.round(penalty)))
+    // round to nearest 1, clamped between 0 and 300
+    penalty = Math.max(0, Math.min(300, Math.round(penalty)))
     $("#relobby-time").val(penalty);
 
     // sets global variable

@@ -96,6 +96,7 @@ function LoadStrongest(type = "Any") {
     $("#strongest-table tbody tr").remove();
 
     const search_params = GetSearchParms(type, versus);
+    search_params.real_damage = false;
 
     if (type == "Each") {
         str_pokemons = SetRankingTable(GetStrongestOfEachType(search_params));

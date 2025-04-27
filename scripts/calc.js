@@ -20,7 +20,7 @@ const estimated_cm_power = 11670;
  * Also can receive the enemy defense stat and the y - enemy's DPS - if known.
  */
 function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
-    enemy_def = 180, enemy_y = null) {
+    enemy_def = 180, enemy_y = null, real_damage = false) {
 
     if (!fm_obj || !cm_obj)
         return 0;
@@ -43,8 +43,8 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
 
     // fast move variables
     const fm_dmg_mult = fm_mult
-        * ((types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? 1.2 : 1);
-    const fm_dmg = 0.5 * ProcessPower(fm_obj) * (atk / enemy_def) * fm_dmg_mult + 0.5;
+        * ((types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? Math.fround(1.2) : 1);
+    const fm_dmg = CalcDamage(atk, enemy_def, ProcessPower(fm_obj), fm_dmg_mult, real_damage);
     const fm_dps = fm_dmg / ProcessDuration(fm_obj.duration);
     const fm_eps = fm_obj.energy_delta / ProcessDuration(fm_obj.duration);
 
@@ -53,8 +53,8 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     const pp_boost = GetPartyBoost(f_to_c_ratio);
 
     // charged move variables
-    const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
-    const cm_dmg = 0.5 * ProcessPower(cm_obj) * (atk / enemy_def) * cm_dmg_mult + 0.5;
+    const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? Math.fround(1.2) : 1);
+    const cm_dmg = CalcDamage(atk, enemy_def, ProcessPower(cm_obj), cm_dmg_mult, real_damage);
     const cm_dps = cm_dmg / ProcessDuration(cm_obj.duration);
     const cm_dps_adj = cm_dps * (1 + pp_boost);
     let cm_eps = -cm_obj.energy_delta / ProcessDuration(cm_obj.duration);
@@ -152,12 +152,12 @@ function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
 
     // fast move variables
     const fm_dmg_mult = fm_mult
-        * ((types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? 1.2 : 1);
-    const fm_dmg = 0.5 * ProcessPower(fm_obj) * (atk / enemy_def) * fm_dmg_mult + 0.5;
+        * ((types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? Math.fround(1.2) : 1);
+    const fm_dmg = CalcDamage(atk, enemy_def, ProcessPower(fm_obj), fm_dmg_mult, true);
 
     // charged move variables
-    const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? 1.2 : 1);
-    const cm_dmg = 0.5 * ProcessPower(cm_obj) * (atk / enemy_def) * cm_dmg_mult + 0.5;
+    const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? Math.fround(1.2) : 1);
+    const cm_dmg = CalcDamage(atk, enemy_def, ProcessPower(cm_obj), cm_dmg_mult, true);
 
     let fms_per_cm = 1;
     let fm_dur = ProcessDuration(fm_obj.duration);
@@ -237,6 +237,20 @@ function ProcessPower(move_obj) {
 }
 
 /**
+ * Mirrors the damage formula. Can do exact calculation using rounded = true, or
+ * approximation with bias for general metrics.
+ * 
+ * https://gamepress.gg/pokemongo/damage-mechanics
+ */
+function CalcDamage(atk, def, power, modifiers, rounded = false) {
+    if (rounded)
+        return Math.floor(Math.fround(0.5 * power * (atk / def) * modifiers)) + 1;
+    
+    return 0.5 * power * (atk / def) * modifiers + 0.5;
+}
+
+
+/**
  * Gets array with an arbitrary number of a specific pokemon's strongest movesets
  * against a specific enemy pokemon.
  *
@@ -256,8 +270,8 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
     const effectiveness = GetTypesEffectivenessAgainstTypes(types);
     const stats = GetPokemonStats(pkm_obj, level);
     stats.hp = Math.floor(stats.hp);
-    const atk = (shadow) ? (stats.atk * 6 / 5) : stats.atk;
-    const def = (shadow) ? (stats.def * 5 / 6) : stats.def;
+    const atk = (shadow) ? (stats.atk * Math.fround(1.2)) : stats.atk;
+    const def = (shadow) ? (stats.def * Math.fround(0.8333333)) : stats.def;
     const hp = stats.hp;
     const moves = GetPokemonMoves(pkm_obj);
     if (moves.length != 6)
@@ -354,7 +368,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
             for (enemy_y of enemy_moveset_ys) {
                 // calculates the data
                 const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
-                    fm_mult, cm_mult, enemy_def, enemy_y);
+                    fm_mult, cm_mult, enemy_def, enemy_y, search_params.real_damage);
                 const tdo = GetTDO(dps, hp, def, enemy_y);
                 // metrics from Reddit user u/Elastic_Space
                 const rat = GetMetric(dps, tdo, pkm_obj, enemy_params);
@@ -456,7 +470,8 @@ function GetStrongestOfEachType(search_params) {
     // build a basic enemy to "sim" against
     let enemy_params = {
         weakness: null,
-        enemy_ys: [{y: null, cm_dmg: null, time_to_cm: null}] // use defaults
+        enemy_ys: [{y: null, cm_dmg: null, time_to_cm: null}], // use defaults
+        stats: {atk: null, def: 180, hp: 1000000000} // Use huge HP to approach "theoretical" eDPS
     };
 
     for (const type of POKEMON_TYPES) {
