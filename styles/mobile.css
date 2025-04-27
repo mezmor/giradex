@@ -452,6 +452,10 @@ dialog.card {
         width: 5px;
     }
 
+    #strongest-header .card-title {
+        font-size: 0.9em;
+    }
+
     .tier-label {
         font-size: 0;
     }
