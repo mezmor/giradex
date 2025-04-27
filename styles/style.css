@@ -388,12 +388,6 @@ ul.menu > li:hover {
 /**
  * Form card (with buttons in footer)
  */
-#stats-form input {
-    background-color: var(--col-widget-back);
-    border: 1px solid var(--col-outline);
-    border-radius: var(--border-radius);
-}
-
 .card-footer.buttons {
     display: flex;
     justify-content: center;
