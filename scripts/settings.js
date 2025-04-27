@@ -11,7 +11,7 @@ let settings_metric = "eDPS";
 let settings_default_level = [40];
 let settings_xl_budget = false;
 let settings_pve_turns = true;
-let settings_strongest_count = 20;
+let settings_strongest_count = 25;
 let settings_compare = "budget";
 let settings_tiermethod = "jenks";
 let settings_party_size = 1;
@@ -316,11 +316,11 @@ function ToggleNote() {
  * Sets the length of the "strongest counters" list for a specific type
  */
 function SetStrongestCount(count) {
-    // round to nearest multiple of 10, clamped between 20 and 50
-    if (count % 10) {
-        count = Math.max(20, Math.min(50, Math.floor(count/10)*10))
-        $("#strongest-count").val(count);
-    }
+    const nearestV = 5, minV = 10, maxV = 500;
+
+    // round to nearest multiple of 5, clamped between 10 and 500
+    count = Math.max(minV, Math.min(maxV, Math.floor(count/nearestV)*nearestV));
+    $("#strongest-count").val(count);
 
     // sets global variable
     settings_strongest_count = count;
