@@ -138,6 +138,12 @@ input {
     font-family: inherit;
     font-size: inherit;
     color: inherit;
+    background-color: var(--col-widget-back);
+    border: 1px solid var(--col-outline);
+    border-radius: var(--border-radius);
+}
+input:hover, input:focus {
+    background-color: var(--col-widget-back-hover);
 }
 
 input[type="number"] {
@@ -149,13 +155,8 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
 }
-
-input { 
-    color: inherit;
-    background-color: var(--col-widget-back);
-}
-input:hover, input:focus {
-    background-color: var(--col-widget-back-hover);
+input[type="button"], button {
+    cursor: pointer;
 }
 
 sup { vertical-align: top; }
@@ -387,6 +388,12 @@ ul.menu > li:hover {
 /**
  * Form card (with buttons in footer)
  */
+#stats-form input {
+    background-color: var(--col-widget-back);
+    border: 1px solid var(--col-outline);
+    border-radius: var(--border-radius);
+}
+
 .card-footer.buttons {
     display: flex;
     justify-content: center;

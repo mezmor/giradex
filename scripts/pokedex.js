@@ -354,10 +354,12 @@ function LoadPokedexEffectiveness(pkm_obj) {
 function ResetPokedexCounters() {    
     // shows cell with loading image in the counters table
     $("#counters-grid").empty();
-    let div = $("<div></div>");
+    let div = $("<div id='counters-loading'></div>");
     let img = $("<img class=loading src=imgs/loading.gif></img>");
     div.append(img);
     div.css("height", "125px");
+    div.css("grid-column", "1 / 11")
+    div.css("margin", "0 auto");
     $("#counters-grid").append(div);
 
     counters_loaded = false;
@@ -377,10 +379,27 @@ function LoadPokedexCounters() {
     let search_params = GetSearchParms("Any", false);
 
     // array of counters pokemon and movesets found so far
-    let counters = GetStrongestVersus(GetEnemyParams(current_pkm_obj), search_params);
-    ProcessAndSetCountersFromArray(counters);
-
-    counters_loaded = true;
+    if (current_pkm_obj.fm && current_pkm_obj.cm) {
+        if (current_pkm_obj.fm.length*current_pkm_obj.cm.length <= 40) { // Mew
+            let counters = GetStrongestVersus(GetEnemyParams(current_pkm_obj), search_params);
+            ProcessAndSetCountersFromArray(counters);
+            counters_loaded = true;
+        }
+        else {
+            $("#counters-loading").empty();
+            let load_button = $("<input type='button' value='Click to Load' />");
+            load_button.click(function (e) {
+                let counters = GetStrongestVersus(GetEnemyParams(current_pkm_obj), search_params);
+                ProcessAndSetCountersFromArray(counters);
+                counters_loaded = true;
+            });
+            $("#counters-loading").append(load_button);
+        }
+    }
+    else { // Smeargle
+        $("#counters-loading").empty();
+        $("#counters-loading").text("Pokémon has no valid movesets to calculate against.");
+    }
 }
 
 
@@ -545,6 +564,7 @@ function ShowCountersPopup(hover_element, show, counter = null) {
         if (HasTouchScreen()) {
             $("#counters-popup").unbind("click");
             $("#counters-popup").click( function() {
+                $("#counters-popup").css("display", "none");
                 LoadPokedexAndUpdateURL(GetPokeDexMon(counter.id, counter.form));
                 window.scrollTo(0, 0);
             });
@@ -1041,8 +1061,8 @@ function BindPokeDex() {
  * Updates the dialog to reflect the current state of a Pokemon's learnsets
  */
 function UpdateMovesetEditor() {
-    $("#fm-select").html("");
-    $("#cm-select").html("");
+    $("#fm-select").empty();
+    $("#cm-select").empty();
     
     $("#fm-search-box").val("");
     $("#cm-search-box").val("");
