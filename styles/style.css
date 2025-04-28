@@ -1414,20 +1414,11 @@ input.settings-num {
     margin: 0 auto;
     padding: 0;
     list-style-type: none;
-    overflow: hidden;
 }
-#any-type-strongest-link, #each-type-strongest-link {
-    grid-column-end: span 3;
-    font-size: 1.15em;
+#any-type-strongest-link, #each-type-strongest-link, #any-type-move-link {
+    grid-column: span 2;
+    margin-bottom: 0.8em;
     background-color: var(--col-widget);
-    margin-bottom: 0.4em;
-}
-
-#any-type-move-link {
-    grid-column-end: span 6;
-    font-size: 1.15em;
-    background-color: var(--col-widget);
-    margin-bottom: 0.4em;
 }
 
 /* 

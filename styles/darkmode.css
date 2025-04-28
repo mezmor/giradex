@@ -183,7 +183,10 @@
     #strongest-table .type-text { 
         text-transform: none;
     }
-    .bg-Dark { background-color: rgb(56, 44, 36); }
+    .bg-Dark { 
+        background-color: rgb(56, 44, 36);
+        box-shadow: 1px 1px rgb(92, 86, 82);
+    }
 
     .tier-label {
         /*opacity: 0.8;*/
