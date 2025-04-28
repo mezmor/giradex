@@ -254,9 +254,14 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     if (is_selected && poke_obj && form != "Mega" && form != "MegaY") {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + "'></img>");
         shadow_icon.on('click', function(e) { 
+            let can_be_shadow = poke_obj.shadow && poke_obj.shadow_released;
             poke_obj.shadow = !can_be_shadow;
             poke_obj.shadow_released = !can_be_shadow;
+            shadow_icon.removeClass("filter-" + (can_be_shadow ? 'shadow' : 'noshadow'));
+            shadow_icon.addClass("filter-" + (can_be_shadow ? 'noshadow' : 'shadow'));
             ClearTypeTiers();
+            UpdatePokemonStatsAndURL();
+            e.stopPropagation();
         })
         pokemon_name_p.append(shadow_icon);
     }

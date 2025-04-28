@@ -765,7 +765,11 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             let pct_str = FormatDecimal(avg_rat_sh_pct_vs_max, 3, 2) + "%";
             if (isNaN(avg_rat_sh_pct_vs_max))
                 pct_str = "??";
+            $("#sh-rat-pct-vs-max").css("display", "");
             $("#sh-rat-pct-vs-max").html(pct_str + " of Perfect " + settings_metric + " when Shadow");
+        }
+        else {
+            $("#sh-rat-pct-vs-max").css("display", "none");
         }
 
         // appends the next fast move chunk, if there is more
