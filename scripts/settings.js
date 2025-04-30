@@ -11,13 +11,14 @@ let settings_metric = "eDPS";
 let settings_default_level = [40];
 let settings_xl_budget = false;
 let settings_pve_turns = true;
-let settings_strongest_count = 20;
+let settings_strongest_count = 25;
 let settings_compare = "budget";
 let settings_tiermethod = "jenks";
 let settings_party_size = 1;
 let settings_relobbytime = 10;
 let settings_team_size_normal = 6;
 let settings_team_size_mega = 6;
+let settings_theme = "darkmode";
 
 // inaccessible
 let settings_metric_exp = 0.225;
@@ -27,22 +28,20 @@ let settings_newdps = true;
  * Bind event handlers for all settings options
  */
 function BindSettings() {
-    // Expand/Shrink Settings
-    $("#settings-hide").click(SwapSettingsStatus);
-
-    // Dark Mode
-    $("#darkmode-toggle").click(function() { 
-        if ($("body").hasClass("darkmode")) {
-            $("body").removeClass("darkmode");
-            $("#toggle-sun").css("display", "none");
-            $("#toggle-moon").css("display", "inline");
+    // Refresh list when any options change
+    $("#filter-settings :checkbox").change(function() {
+        if ($("#strongest").is(":visible")) {
+            CheckURLAndAct();
         }
-        else {
-            $("body").addClass("darkmode");
-            $("#toggle-sun").css("display", "inline");
-            $("#toggle-moon").css("display", "none");
+        else if ($("#counters").is(":visible")) {
+            ResetPokedexCounters();
+            LoadPokedexCounters();
         }
     });
+
+    // Dark Mode
+    $("#opt-darkmode").click(function() { SetTheme("darkmode"); });
+    $("#opt-lightmode").click(function() { SetTheme("lightmode"); });
 
     // Expand/Shrink Dev Note
     $("#note-icon").click(function() { ToggleNote(); });
@@ -69,17 +68,13 @@ function BindSettings() {
     $("#rt-m1").click(function() { SetTeamSize(6, 1); });
 
     // Pokemon Lvl
+    $("#lvl-30").click(function() { SetDefaultLevel([30], false); });
     $("#lvl-40").click(function() { SetDefaultLevel([40], false); });
     $("#lvl-50").click(function() { SetDefaultLevel([50], false); });
     $("#lvl-xl-budget").click(function() { SetDefaultLevel([40], true); });
     //$("#lvl-both").click(function() { SetDefaultLevel([40, 50], false); });
 
     // Metric Calc options
-    //$("#chk-rescale").change(function() { CheckURLAndAct(); });
-    $("#chk-pve-turns").change(function() { 
-        settings_pve_turns = this.checked;
-        CheckURLAndAct(); 
-    });
     $("#chk-newdps").change(function() { 
         settings_newdps = this.checked;
         estimated_y_numerator = (settings_newdps ? 1970 : 900);
@@ -108,16 +103,14 @@ function BindSettings() {
 /**
  * Swaps whether the settings list is being displayed or not.
  */
-function SwapSettingsStatus() {
+function ToggleDrawer(drawer_icon, drawer_elem) {
 
-    const list = $("#settings-container");
-
-    if (list.css("display") == "none") {
-        list.css("display", "initial");
-        $(this).text("[hide]");
+    if (drawer_elem.css("display") == "none") {
+        drawer_elem.css("display", "revert");
+        drawer_icon.addClass("active");
     } else {
-        list.css("display", "none");
-        $(this).text("[show]");
+        drawer_elem.css("display", "none");
+        drawer_icon.removeClassClass("active");
     }
 }
 
@@ -194,6 +187,9 @@ function SetMetric(metric) {
     $("#table-metric-header").html(settings_metric);
     $("#table-metric-header-sh").html(settings_metric + "<br>(Shadow)");
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+
     // reload page
     CheckURLAndAct();
 }
@@ -215,6 +211,9 @@ function SetPartySize(party_size) {
     $("#pp-4").removeClass("settings-opt-sel");
     
     $("#pp-" + party_size.toString()).addClass("settings-opt-sel");
+
+    // Reset any cached tier rankings
+    ClearTypeTiers();
 
     // reload page
     CheckURLAndAct();
@@ -242,6 +241,9 @@ function SetTeamSize(normal_mon_count, mega_count) {
     else if (normal_mon_count == 6 && mega_count == 1)
         $("#rt-m1").addClass("settings-opt-sel");
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
 }
@@ -250,13 +252,16 @@ function SetTeamSize(normal_mon_count, mega_count) {
  * Sets the relobby penalty timespan for each full raid team wipe
  */
 function SetRelobbyPenalty(penalty) {
-    // round to nearest 1, clamped between 0 and 20
-    penalty = Math.max(0, Math.min(20, Math.round(penalty)))
+    // round to nearest 1, clamped between 0 and 300
+    penalty = Math.max(0, Math.min(300, Math.round(penalty)))
     $("#relobby-time").val(penalty);
 
     // sets global variable
     settings_relobbytime = penalty;
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
 }
@@ -270,6 +275,7 @@ function SetDefaultLevel(level, xl_budget = false) {
     settings_xl_budget = xl_budget;
 
     // sets settings options selected class
+    $("#lvl-30").removeClass("settings-opt-sel");
     $("#lvl-40").removeClass("settings-opt-sel");
     $("#lvl-50").removeClass("settings-opt-sel");
     $("#lvl-xl-budget").removeClass("settings-opt-sel");
@@ -279,11 +285,16 @@ function SetDefaultLevel(level, xl_budget = false) {
         $("#lvl-xl-budget").addClass("settings-opt-sel");
     else if (level.length > 1 && level[0] == 40 && level[1] == 50)
         $("#lvl-both").addClass("settings-opt-sel");
+    else if (level[0] == 30)
+        $("#lvl-30").addClass("settings-opt-sel");
     else if (level[0] == 40)
         $("#lvl-40").addClass("settings-opt-sel");
     else if (level[0] == 50)
         $("#lvl-50").addClass("settings-opt-sel");
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
 }
@@ -305,11 +316,11 @@ function ToggleNote() {
  * Sets the length of the "strongest counters" list for a specific type
  */
 function SetStrongestCount(count) {
-    // round to nearest multiple of 10, clamped between 20 and 50
-    if (count % 10) {
-        count = Math.max(20, Math.min(50, Math.floor(count/10)*10))
-        $("#strongest-count").val(count);
-    }
+    const nearestV = 5, minV = 10, maxV = 500;
+
+    // round to nearest multiple of 5, clamped between 10 and 500
+    count = Math.max(minV, Math.min(maxV, Math.floor(count/nearestV)*nearestV));
+    $("#strongest-count").val(count);
 
     // sets global variable
     settings_strongest_count = count;
@@ -341,6 +352,9 @@ function SetCompare(compareTo = "top") {
             break;
     }
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
 }
@@ -372,6 +386,88 @@ function SetTierMethod(method = "jenks") {
             break;
     }
 
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
     // reload page
     CheckURLAndAct();
+}
+
+/**
+ * Sets the css stylesheet
+ */
+function SetTheme(theme = "darkmode") {
+    $("body").removeClass();
+    $("body").addClass(theme);
+    settings_theme = theme;
+
+    $("#opt-darkmode").removeClass("settings-opt-sel");
+    $("#opt-lightmode").removeClass("settings-opt-sel");
+    $("#opt-"+theme).addClass("settings-opt-sel");
+}
+
+/**
+ * Gets the default search parameters (to be used for generic type-tier-making)
+ */
+function GetDefaultSearchParams() {
+    return {
+        versus: false,
+        unreleased: false,
+        mega: true,
+        shadow: true,
+        legendary: true,
+        elite: true,
+        suboptimal: false,
+        mixed: true
+    };
+}
+
+/**
+ * Gets the default search parameters (to be used for generic type-tier-making)
+ */
+function IsDefaultSearchParams(search_params) {
+    return search_params.type != 'Any' && search_params.type != 'Each' &&
+        search_params.versus===false &&
+        search_params.unreleased===false &&
+        search_params.mega===true &&
+        search_params.shadow===true &&
+        search_params.legendary===true &&
+        search_params.elite===true &&
+        search_params.suboptimal===false &&
+        search_params.mixed===true;
+}
+
+/**
+ * Gets the search parameters
+ * The type can be 'each', 'any' or an actual type.
+ */
+function GetSearchParms(type, versus) {
+    let search_params = {
+        versus,
+        type
+    };
+    search_params.unreleased =
+        $("#filter-settings input[value='unreleased']:checkbox").is(":checked");
+    search_params.mega =
+        $("#filter-settings input[value='mega']:checkbox").is(":checked");
+    search_params.shadow =
+        $("#filter-settings input[value='shadow']:checkbox").is(":checked");
+    search_params.legendary =
+        $("#filter-settings input[value='legendary']:checkbox").is(":checked");
+    search_params.elite =
+        $("#filter-settings input[value='elite']:checkbox").is(":checked");
+    search_params.suboptimal =
+        $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
+    search_params.mixed =
+        $("#filter-settings input[value='mixed']:checkbox").is(":checked");
+    return search_params;
+}
+
+/**
+ * Moves the filters popup drawer between cards.
+ * Ensures the same filters are shared everywhere, without duplicating all the DOM.
+ */
+function MoveFilterPopup(new_parent_id) {
+    // Move filters for display
+    $("#filter-settings").appendTo(new_parent_id);
 }

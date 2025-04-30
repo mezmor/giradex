@@ -34,7 +34,7 @@ function LoadMoves(type = "Any") {
     if (!finished_loading)
         return;
 
-    cur_sort.type = type;
+    cur_sort.move_type = type;
 
     // displays what should be displayed 
     LoadPage("move-data");
@@ -51,19 +51,20 @@ function LoadMoves(type = "Any") {
     cur_sort.move_kind = move_kind_chk.prop("checked") ? "Charged" : "Fast";
 
     // sets titles
-    let title = cur_sort.move_kind + " Moves of " + cur_sort.type + " type";
+    let title = (cur_sort.move_type == "Any" ? "" : cur_sort.move_type + "-type ") + 
+        cur_sort.move_kind + " Moves";
     document.title = title + " - DialgaDex"; // page title
-    $("#move-type-title").text(cur_sort.type);
+    $("#move-type-title").text(cur_sort.move_type == "Any" ? "" : cur_sort.move_type + "-type");
 
     // sets description
     $('meta[name=description]').attr('content', 
         "All the hidden move data attributes for " + 
         (type == "Any" ? "" : type + " ") + cur_sort.move_kind + 
-        " moves in Pokemon Go. " + 
+        " moves in Pokémon Go. " + 
         "Includes metrics which evaluate how effective each move is.");
 
     BuildMoveUserMap();
-    cur_sort.move_data = GetMoveData(cur_sort.type, cur_sort.move_kind);
+    cur_sort.move_data = GetMoveData(cur_sort.move_type, cur_sort.move_kind);
     SetMoveTable(cur_sort);
 }
 
@@ -81,6 +82,9 @@ function LoadMovesAndUpdateURL(type = "Any", move_kind) {
     else {
         $("#chk-move-kind").prop("checked", (move_kind.toLowerCase() == "charged"));
     }
+    // override cur_sort back to move_kind default
+    cur_sort.sort_by = undefined;
+
     let url = "?moves=" + move_kind + "&t=" + type;
 
     window.history.pushState({}, "", url);
@@ -181,6 +185,12 @@ function BuildMoveUserMap(force_reload = false) {
             }
         }
     }
+}
+/**
+ * Clear move user cache (can rebuild later as needed)
+ */
+function ClearMoveUserMap() {
+    delete top_move_users;
 }
 
 /** 

@@ -42,14 +42,24 @@ function GetRaidStats(pkm_obj, tier = null) {
 
     let stats = {...pkm_obj.stats};
     
-    stats.atk = (stats.baseAttack + ivs.atk) * cpm;
-    stats.def = (stats.baseDefense + ivs.def) * cpm;
+    stats.atk = (stats.baseAttack + ivs.atk) * Math.fround(cpm);
+    stats.def = (stats.baseDefense + ivs.def) * Math.fround(cpm);
     stats.hp = [,600,,3600,9000,15000,22500,20000][tier];
 
     return stats; // returns by copy to prevent reassignment of reference
 }
 
+/**
+ * Gets the Pokemon GO CP, based on effective stats.
+ */
+function GetPokemonCP(stats) {
+    let cp = Math.floor(stats.atk * Math.pow(stats.def, 0.5)
+                * Math.pow(stats.hp, 0.5) / 10);
+    if (cp < 10)
+        cp = 10;
 
+    return cp;
+}
 
 /**
  * Gets array of six arrays. The specified Pokemon's 
@@ -109,6 +119,26 @@ function GetPokemonMoves(pkm_obj) {
         }
     }
 
+    // Add moves if in customizations
+    if (Array.isArray(pkm_obj.fm_add)) {
+        for (const f of pkm_obj.fm_add) 
+            elite_fm.push(f);
+    }
+    if (Array.isArray(pkm_obj.cm_add)) {
+        for (const c of pkm_obj.cm_add) 
+            elite_cm.push(c);
+    }
+    
+    // Remove moves if in customizations
+    if (Array.isArray(pkm_obj.fm_rem)) {
+        fm = fm.filter(f=>!pkm_obj.fm_rem.includes(f));
+        elite_fm = elite_fm.filter(f=>!pkm_obj.fm_rem.includes(f));
+    }
+    if (Array.isArray(pkm_obj.cm_rem)) {
+        cm = cm.filter(c=>!pkm_obj.cm_rem.includes(c));
+        elite_cm = elite_cm.filter(c=>!pkm_obj.cm_rem.includes(c));
+    }
+
     return [fm, cm, elite_fm, elite_cm, pure_only_cm, shadow_only_cm];
 }
 
@@ -121,11 +151,12 @@ function GetPokemonMoves(pkm_obj) {
  * 
  * If unique_shadow is false, shadows will hash to the same as their pure form.
  */
-function GetUniqueIdentifier(pkm_obj, unique_shadow = true) {
-    return pkm_obj.id + "-" + 
-        pkm_obj.form + "-" + 
-        (unique_shadow ? pkm_obj.shadow + "-" : "") + 
-        (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]);
+function GetUniqueIdentifier(pkm_obj, unique_shadow = true, unique_level = true) {
+    return pkm_obj.id + 
+        "-" + pkm_obj.form + 
+        (unique_shadow ? "-" + pkm_obj.shadow : "") + 
+        (unique_level ? 
+            "-" + (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]) : "");
 }
 
 
@@ -223,8 +254,14 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     if (is_selected && poke_obj && form != "Mega" && form != "MegaY") {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + "'></img>");
         shadow_icon.on('click', function(e) { 
+            let can_be_shadow = poke_obj.shadow && poke_obj.shadow_released;
             poke_obj.shadow = !can_be_shadow;
             poke_obj.shadow_released = !can_be_shadow;
+            shadow_icon.removeClass("filter-" + (can_be_shadow ? 'shadow' : 'noshadow'));
+            shadow_icon.addClass("filter-" + (can_be_shadow ? 'noshadow' : 'shadow'));
+            ClearTypeTiers();
+            UpdatePokemonStatsAndURL();
+            e.stopPropagation();
         })
         pokemon_name_p.append(shadow_icon);
     }

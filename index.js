@@ -7,28 +7,6 @@ $(document).ready(Main);
 
 // global constants and variables
 
-// whether user has touch screen
-let has_touch_screen = false;
-if ("maxTouchPoints" in navigator) {
-    has_touch_screen = navigator.maxTouchPoints > 0;
-} else if ("msMaxTouchPoints" in navigator) {
-    has_touch_screen = navigator.msMaxTouchPoints > 0;
-} else {
-    let mq = window.matchMedia && matchMedia("(pointer:coarse)");
-    if (mq && mq.media === "(pointer:coarse)") {
-        has_touch_screen = !!mq.matches;
-    } else if ('orientation' in window) {
-        has_touch_screen = true; // deprecated, but good fallback
-    } else {
-        // Only as a last resort, fall back to user agent sniffing
-        let UA = navigator.userAgent;
-        has_touch_screen = (
-            /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
-            /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
-        );
-    }
-}
-
 // FIXME these are not ideal, would be better that, if a new pokemon is loaded,
 //        whatever asynchronous operations were being done on the previous mon
 //        should be cancelled
@@ -65,25 +43,71 @@ function BindAll() {
     BindPokeDex();
     BindRankings();
     BindMoveData();
-
-    // Link to Rankings Lists
-    $("#rankings-link").click(function() {
-        LoadStrongestAndUpdateURL("Any", false);
-        return false;
-    });
-    // Link to Move Data Lists
-    $("#moves-link").click(function() {
-        LoadMovesAndUpdateURL("Any");
-        return false;
-    });
-    // Link to Move Data Lists
-    $("#typechart-link").click(function() {
-        LoadTypeChartAndUpdateURL();
-        return false;
-    });
+    BindMenu();
+    BindFooter();
     
     // Passthrough clicks for touchscreens
     $(document).click(function(event) { OnDocumentClick(event); });
+
+    // Close dialog by clicking away
+    $("#overlay").click(function(e) {
+        $("#overlay").removeClass("active");
+        $("dialog").toArray().forEach(e=>e.close());
+    });
+}
+
+/**
+ * Binds links in top menu nav
+ */
+function BindMenu() {
+    // Link to Rankings Lists
+    $("#rankings-link, #header-left").click(function(e) {
+        LoadStrongestAndUpdateURL("Any", false);
+        CloseMenu();
+        e.preventDefault();
+        return false;
+    });
+    // Link to Move Data Lists
+    $("#moves-link").click(function(e) {
+        LoadMovesAndUpdateURL("Any");
+        CloseMenu();
+        e.preventDefault();
+        return false;
+    });
+    // Link to Type Chart
+    $("#typechart-link").click(function(e) {
+        LoadTypeChartAndUpdateURL();
+        CloseMenu();
+        e.preventDefault();
+        return false;
+    });
+}
+
+
+/**
+ * Binds links in footer nav
+ */
+function BindFooter() {
+    // Link to FAQ
+    $("#faq-link").click(function(e) {
+        LoadFAQAndUpdateURL();
+        e.preventDefault();
+        return false;
+    });    
+    // Link to About
+    $("#contact-link, #credits-link, #privacy-link").click(function(e) {
+        LoadAboutAndUpdateURL();
+        e.preventDefault();
+        return false;
+    });
+}
+
+/**
+ * Hides and de-focuses the menu when navigating
+ */
+function CloseMenu() {
+    $("#menu-icon > .drawer-popup").css("display", "");
+    $("#menu-icon > .drawer-icon-focused").removeClass("drawer-icon-focused");
 }
 
 /**
@@ -92,7 +116,7 @@ function BindAll() {
 function OnDocumentClick(event)  {
 
     // function only used on touch screen devices
-    if (!has_touch_screen)
+    if (!HasTouchScreen())
         return;
 
     let target = $(event.target);
@@ -107,6 +131,31 @@ function OnDocumentClick(event)  {
         let rat_pcts = $(".counter-rat-pct > a");
         for (rat_pct of rat_pcts)
             $(rat_pct).css("border", "none");
+    }
+
+    // if clicking a drawer show only the associated popup
+    if ($(target).closest(".drawer").length) {
+        const this_popup = $(target).closest(".drawer").find(".drawer-popup");
+
+        // hide any other visible drawer popups
+        $(".drawer-popup").not(this_popup).css("display", "");
+        $(".drawer-popup").not(this_popup).siblings(".drawer-icon").removeClass("drawer-icon-focused");
+
+        // toggle this poup if we're clicking on the drawer icon
+        if ($(target).is(".drawer-icon")) {
+            if (this_popup.is(":visible")) {
+                this_popup.css("display",  "");
+                $(target).removeClass("drawer-icon-focused");
+            }
+            else {
+                this_popup.css("display",  "revert");
+                $(target).addClass("drawer-icon-focused");
+            }
+        }
+    }
+    else {
+        $(".drawer-popup").css("display", "");
+        $(".drawer-icon-focused").removeClass("drawer-icon-focused");
     }
 }
 
@@ -184,12 +233,29 @@ function CheckURLAndAct() {
         return;
     }
 
-    // if url has 'moves' param...
+    // if url has 'typechart' param...
     if (params.has("typechart")) {
         LoadTypeChartAndUpdateURL();
 
         return;
     }
+
+    // if url has 'faq' param...
+    if (params.has("faq")) {
+        LoadFAQAndUpdateURL();
+
+        return;
+    }
+
+    // if url has 'about' param...
+    if (params.has("about")) {
+        LoadAboutAndUpdateURL();
+
+        return;
+    }
+
+    // if no params, redirect to default strongest lists
+    LoadStrongestAndUpdateURL();
 }
 
 /**
@@ -203,24 +269,62 @@ function LoadTypeChartAndUpdateURL() {
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Each attacking type's effectiveness against raid bosses in Pokemon Go.");
+        "Each attacking type's effectiveness against raid bosses in Pokémon Go.");
 
     LoadPage("type-matrix");
+}
+
+/**
+ * Opens the FAQ and closes any other pages
+ */
+function LoadFAQAndUpdateURL() {
+    window.history.pushState({}, "", "?faq");
+    
+    // sets the page title
+    document.title = "FAQ - DialgaDex";
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Answers to common questions about DialgaDex.");
+
+    LoadPage("faq");
+}
+
+/**
+ * Opens the About Page and closes any other pages
+ */
+function LoadAboutAndUpdateURL() {
+    window.history.pushState({}, "", "?about");
+    
+    // sets the page title
+    document.title = "About - DialgaDex";
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Credits, references, contact info, and details about DialgaDex.");
+
+    LoadPage("about");
 }
 
 /**
  * Shows appropriate part of SPA, hiding all other parts
  */
 function LoadPage(pageName) {
-    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix'];
+    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix', 'faq', 'about'];
 
     pages.forEach(page=>{
-        $("#"+page).css("display", (page==pageName ? "initial" : "none"));
+        $("#"+page).css("display", (page==pageName ? "revert" : "none"));
     });
 
     // If we're loading any page, we're not on the landing/homepage
     // So show the footer
-    $("#footer").css("display", (!!pageName ? "initial" : "none"));
+    //$("#footer").css("display", (!!pageName ? "revert" : "none"));
+
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+    });
 }
 
 /**
@@ -284,8 +388,9 @@ function InitializePokemonSearch() {
             }
         },
         resultsList: {
-            id: "suggestions",
+            id: "poke-suggestions",
             tag: "table",
+            class: "suggestions",
             maxResults: 10
         },
         resultItem: {
@@ -344,5 +449,33 @@ function InitializePokemonSearch() {
     });
     pokemonSearch.input.addEventListener("selection", function(e) {
         LoadPokedexAndUpdateURL(GetPokeDexMon(e.detail.selection.value.id, e.detail.selection.value.form));
+        document.activeElement.blur();
     });
+}
+
+/**
+ * Check whether we're on mobile
+ */
+function HasTouchScreen() {
+    let has_touch_screen = false;
+    if ("maxTouchPoints" in navigator) {
+        has_touch_screen = navigator.maxTouchPoints > 0;
+    } else if ("msMaxTouchPoints" in navigator) {
+        has_touch_screen = navigator.msMaxTouchPoints > 0;
+    } else {
+        let mq = window.matchMedia && matchMedia("(pointer:coarse)");
+        if (mq && mq.media === "(pointer:coarse)") {
+            has_touch_screen = !!mq.matches;
+        } else if ('orientation' in window) {
+            has_touch_screen = true; // deprecated, but good fallback
+        } else {
+            // Only as a last resort, fall back to user agent sniffing
+            let UA = navigator.userAgent;
+            has_touch_screen = (
+                /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+                /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
+            );
+        }
+    }
+    return has_touch_screen
 }

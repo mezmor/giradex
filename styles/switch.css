@@ -20,15 +20,18 @@ Some modifications made to suit this application
     --toggle-wider: 1em;
     --color-handle: #fff;
     --color-grey: #c0c0c0;
-    --color-green: #4296f4;
+    --color-blue: #4296f4;
     --color-disabled-border: #a0a0a0;
     --label-spacing: 6px;
     --disable-border-width: 1px;
+
+    cursor: pointer;
+    text-align: left !important;
 }
 
-#settings .switch {
-    --button-width: 2em;
-    --button-height: 1em;
+.drawer-popup .switch {
+    --button-width: 2.5em;
+    --button-height: 1.2em;
     --toggle-diameter: calc(var(--button-height) - 2px);
     vertical-align: middle;
 }
@@ -63,7 +66,7 @@ Some modifications made to suit this application
 }
 
 .switch input[type="checkbox"]:checked + .slider {
-    background-color: var(--color-green);
+    background-color: var(--color-blue);
 }
 
 .switch input[type="checkbox"]:disabled + .slider {

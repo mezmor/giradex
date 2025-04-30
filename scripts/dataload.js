@@ -183,7 +183,7 @@ function SwapShiny(element) {
 
     if (src.includes(GIFS_URL)) {
         src = src.replace(GIFS_URL, SHINY_GIFS_URL);
-        shiny_img.css("display", "initial");
+        shiny_img.css("display", "revert");
 
     } else if (src.includes(SHINY_GIFS_URL)) {
         src = src.replace(SHINY_GIFS_URL, GIFS_URL);
@@ -191,7 +191,7 @@ function SwapShiny(element) {
 
     } else if (src.includes(POGO_PNGS_URL)) {
         src = src.replace(POGO_PNGS_URL, SHINY_POGO_PNGS_URL);
-        shiny_img.css("display", "initial");
+        shiny_img.css("display", "revert");
 
     } else if (src.includes(SHINY_POGO_PNGS_URL)) {
         src = src.replace(SHINY_POGO_PNGS_URL, POGO_PNGS_URL);

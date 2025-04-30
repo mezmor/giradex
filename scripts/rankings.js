@@ -1,4 +1,4 @@
-let str_pokemons;
+let str_pokemons, type_tiers;
 
 /**
  * Bind event handlers for a rankings table
@@ -20,30 +20,27 @@ function BindRankings() {
         else if (urlParams.has('v')) urlParams.delete('v');
         
         window.history.pushState({}, "", "?" + urlParams.toString().replace(/=(?=&|$)/gm, ''));
-    });
 
-    // Refresh list when any options change
-    $("#strongest :checkbox").change(function() {
-        //LoadStrongest();
         CheckURLAndAct();
     });
 }
-
 
 /**
  * Loads the list of the strongest pokemon of a specific type in pokemon go.
  * The type can be 'each', 'any' or an actual type.
  */
 function LoadStrongest(type = "Any") {
-
     if (!finished_loading)
         return;
+
+    // Move filters for display
+    MoveFilterPopup("#strongest-filters");
 
     // displays what should be displayed 
     LoadPage("strongest");
 
     // Only enable suboptimal filters if we're searching a specific type (not "Each")
-    if (type == null)
+    if (type == null || type == "Each")
         $("#chk-suboptimal, #chk-grouped").prop("disabled", true);
     else 
         $("#chk-suboptimal, #chk-mixed").prop("disabled", false);
@@ -66,41 +63,40 @@ function LoadStrongest(type = "Any") {
     else {
         versus_chk.prop("disabled", false);
     }
+    const versus = versus_chk.is(":checked");
 
     // sets titles
-    let title = "Strongest Pokémon of " + type + " type";
+    let title = "Best " + (type == "Any" || type == "Each" || versus ? "" : type + "-type ") + "Attackers";
+    if (type == "Each")
+        title = title + " of Each type";
+    if (versus)
+        title = title + " against " + type + "-type Bosses";
     document.title = title + " - DialgaDex"; // page title
-    $("#strongest-type-title").text(type);
+
+    $("#strongest-type-title").text("");
+    $("#strongest-title-suffix").text("");
+    if (type == "Any") {
+        $("#strongest-type-title").text("Overall");
+    }
+    else if (type == "Each") {
+        $("#strongest-title-suffix").text("of Each Type");
+    }
+    else {
+        $("#strongest-type-title").html(type + "<span class='desktop'>-type<span>");
+    }
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Best " + (type == "Any" || type == "Each" || versus_chk.is(":checked") ? "" : type + "-type ") + 
+        "Best " + (type == "Any" || type == "Each" || versus ? "" : type + "-type ") + 
         "raid counters " + 
-        (type != "Any" && type != "Each" && versus_chk.is(":checked") ? "against " + type + "-type bosses ": "") + 
-        "in Pokemon Go, using the new eDPS metric.");
+        (type != "Any" && type != "Each" && versus ? "against " + type + "-type bosses ": "") + 
+        "in Pokémon Go, using the new eDPS metric.");
 
     // removes previous table rows
     $("#strongest-table tbody tr").remove();
 
-    // gets checkboxes filters
-    let search_params = {};
-    search_params.unreleased =
-        $("#strongest input[value='unreleased']:checkbox").is(":checked");
-    search_params.mega =
-        $("#strongest input[value='mega']:checkbox").is(":checked");
-    search_params.shadow =
-        $("#strongest input[value='shadow']:checkbox").is(":checked");
-    search_params.legendary =
-        $("#strongest input[value='legendary']:checkbox").is(":checked");
-    search_params.elite =
-        $("#strongest input[value='elite']:checkbox").is(":checked");
-    search_params.suboptimal =
-        $("#strongest input[value='suboptimal']:checkbox").is(":checked");
-    search_params.mixed =
-        $("#strongest input[value='mixed']:checkbox").is(":checked");
-    search_params.versus = 
-        versus_chk.is(":checked");
-    search_params.type = type;
+    const search_params = GetSearchParms(type, versus);
+    search_params.real_damage = false;
 
     if (type == "Each") {
         str_pokemons = SetRankingTable(GetStrongestOfEachType(search_params));
@@ -108,21 +104,23 @@ function LoadStrongest(type = "Any") {
         str_pokemons = GetStrongestOfOneType(search_params);
         
         /* Disable Rescale
-        const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
+        const rescale = $("#filter-settings input[value='rescale']:checkbox").is(":checked");
         if (rescale && (settings_metric == 'ER'
                         || settings_metric == 'EER'
                         || settings_metric == 'TER'))
             str_pokemons.forEach(str_pok => str_pok.rat /= 1.6);*/
 
-        ProcessAndGroup(str_pokemons, type);
+        ProcessAndGroup(str_pokemons, type, settings_strongest_count);
         SetRankingTable(str_pokemons, settings_strongest_count, true, true, true);
+
+        if (IsDefaultSearchParams(search_params))
+            SetTypeTier(type, str_pokemons);
     }
 
     // Display relevant footnotes
-    $("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
-    $("#footnote-mixed-moveset").css('display', search_params.mixed ? 'block' : 'none');
+    //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
+    $("#footnote-typed-ranking").css('display', search_params.type != "Any" ? 'block' : 'none');
     $("#footnote-versus").css('display', search_params.versus ? 'block' : 'none');
-    $("#footnote-party-power").css('display', settings_party_size > 1 ? 'block' : 'none');
 }
 
 
@@ -134,17 +132,16 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
     if (!finished_loading)
         return false;
 
-    LoadStrongest(type);
+    if (versus !== null)
+        $("#chk-versus").prop("checked", !!versus);
 
     let url = "?strongest&t=" + type;
-    if (versus === null) {
-        if ($("#chk-versus").prop("checked")) 
-            url += '&v';
-    }
-    else
-        $("#chk-versus").prop("checked", versus);
+    if ($("#chk-versus").prop("checked")) 
+        url += '&v';
 
     window.history.pushState({}, "", url);
+    
+    LoadStrongest(type);
 }
 
 /**
@@ -190,15 +187,15 @@ function GetComparisonMon(str_pokemons) {
  * Group pokemon if needed, with ratings relative to best moveset.
  * Else build tiers and calculate ratings relative to a baseline.
  */
-function ProcessAndGroup(str_pokemons, type) {
-    const display_grouped = $("#strongest input[value='grouped']:checkbox").is(":checked") 
-        && $("#strongest input[value='suboptimal']:checkbox").is(":checked");
+function ProcessAndGroup(str_pokemons, type, strongest_count) {
+    const display_grouped = $("#filter-settings input[value='grouped']:checkbox").is(":checked") 
+        && $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
         
     const top_compare = GetComparisonMon(str_pokemons);
 
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
-        str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); //truncate to top movesets early
+        str_pokemons.length = Math.min(str_pokemons.length, strongest_count); //truncate to top movesets early
 
         let str_pokemons_optimal = new Map(); // map of top movesets per mon
         let rat_order = 0;
@@ -232,7 +229,7 @@ function ProcessAndGroup(str_pokemons, type) {
         }
         BuildTiers(str_pokemons, top_compare, type);
     
-        str_pokemons.length = Math.min(str_pokemons.length, settings_strongest_count); // truncate late so all movesets could be evaluated
+        str_pokemons.length = Math.min(str_pokemons.length, strongest_count); // truncate late so all movesets could be evaluated
     }
 }
 
@@ -341,7 +338,7 @@ function BuildTiers(str_pokemons, top_compare, type) {
             if (type != 'Any') check_rat /= 1.6;
 
             /* Disable rescale
-            const rescale = $("#settings input[value='rescale']:checkbox").is(":checked");
+            const rescale = $("#filter-settings input[value='rescale']:checkbox").is(":checked");
             if ((!rescale || (settings_metric == 'DPS' || settings_metric == 'TDO')) 
                 && (search_params.versus || (search_params.type != 'Any' && search_params.mixed))) {
                 check_rat /= 1.6;
@@ -349,23 +346,23 @@ function BuildTiers(str_pokemons, top_compare, type) {
 
             switch (settings_metric) {
                 case 'DPS':
-                    if (check_rat >= 27.0) str_pok.tier = 'SSS';
-                    else if (check_rat >= 25.0) str_pok.tier = 'SS';
-                    else if (check_rat >= 23.0) str_pok.tier = 'S';
-                    else if (check_rat >= 22.0) str_pok.tier = 'A';
-                    else if (check_rat >= 21.0) str_pok.tier = 'B';
-                    else if (check_rat >= 20.0) str_pok.tier = 'C';
-                    else if (check_rat >= 19.0) str_pok.tier = 'D';
+                    if (check_rat >= 21.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 19.0) str_pok.tier = 'SS';
+                    else if (check_rat >= 18.0) str_pok.tier = 'S';
+                    else if (check_rat >= 17.5) str_pok.tier = 'A';
+                    else if (check_rat >= 16.5) str_pok.tier = 'B';
+                    else if (check_rat >= 15.5) str_pok.tier = 'C';
+                    else if (check_rat >= 15.0) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
                 case 'TDO':
-                    if (check_rat >= 475) str_pok.tier = 'SSS';
-                    else if (check_rat >= 430) str_pok.tier = 'SS';
+                    if (check_rat >= 500) str_pok.tier = 'SSS';
+                    else if (check_rat >= 450) str_pok.tier = 'SS';
                     else if (check_rat >= 400) str_pok.tier = 'S';
-                    else if (check_rat >= 350) str_pok.tier = 'A';
-                    else if (check_rat >= 325) str_pok.tier = 'B';
-                    else if (check_rat >= 310) str_pok.tier = 'C';
-                    else if (check_rat >= 285) str_pok.tier = 'D';
+                    else if (check_rat >= 375) str_pok.tier = 'A';
+                    else if (check_rat >= 360) str_pok.tier = 'B';
+                    else if (check_rat >= 340) str_pok.tier = 'C';
+                    else if (check_rat >= 315) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
                 /*case 'ER':
@@ -399,13 +396,13 @@ function BuildTiers(str_pokemons, top_compare, type) {
                     else str_pok.tier = 'F';
                     break;*/
                 case 'eDPS':
-                    if (check_rat >= 22.0) str_pok.tier = 'SSS';
-                    else if (check_rat >= 20.5) str_pok.tier = 'SS';
-                    else if (check_rat >= 19.0) str_pok.tier = 'S';
-                    else if (check_rat >= 18.5) str_pok.tier = 'A';
-                    else if (check_rat >= 17.5) str_pok.tier = 'B';
-                    else if (check_rat >= 16.75) str_pok.tier = 'C';
-                    else if (check_rat >= 16.0) str_pok.tier = 'D';
+                    if (check_rat >= 19.0) str_pok.tier = 'SSS';
+                    else if (check_rat >= 17.0) str_pok.tier = 'SS';
+                    else if (check_rat >= 16.5) str_pok.tier = 'S';
+                    else if (check_rat >= 15.5) str_pok.tier = 'A';
+                    else if (check_rat >= 14.75) str_pok.tier = 'B';
+                    else if (check_rat >= 14.0) str_pok.tier = 'C';
+                    else if (check_rat >= 13.5) str_pok.tier = 'D';
                     else str_pok.tier = 'F';
                     break;
             }
@@ -427,10 +424,10 @@ function BuildTiers(str_pokemons, top_compare, type) {
  */
 function SetRankingTable(str_pokemons, num_rows = null, 
     display_numbered = false, highlight_suboptimal = false, show_pct = false) {
-    const display_grouped = $("#strongest input[value='grouped']:checkbox").is(":checked") 
-        && $("#strongest input[value='suboptimal']:checkbox").is(":checked");
+    const display_grouped = $("#filter-settings input[value='grouped']:checkbox").is(":checked") 
+        && $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
 
-    const best_pct = str_pokemons[0].pct / 100;
+    const best_pct = str_pokemons[0].pct;
 
     if (!num_rows || num_rows > str_pokemons.length)
         num_rows = str_pokemons.length;
@@ -513,12 +510,7 @@ function SetRankingTable(str_pokemons, num_rows = null,
                 + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</a></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
-            const td_pct = ((show_pct) ? "<td>" 
-                + "<div class='bar-bg' style='width: calc(" + (100 / best_pct) + "% - 10px);'>"
-                + "<div class='bar-fg" + ((Math.abs(p.pct - 100) < 0.000001) ? " bar-compare" : "") + "' style='width: " + p.pct + "%;'>"
-                + "<span class='bar-txt'>"
-                + p.pct.toFixed(1) + "%</td>"
-                + "</span></div></div>" : "");
+            const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
 
             tr.append(td_tier);
             tr.append(td_rank);
@@ -537,4 +529,100 @@ function SetRankingTable(str_pokemons, num_rows = null,
             $("#strongest-table tbody").append(empty_row);
         }
     }
+}
+
+/**
+ * Look up a pokemon's tier ranking for a specific type
+ */
+function GetTypeTier(type, pkm_obj) {
+    BuildTypeTier(type);
+
+    let tiers = {
+        pure: type_tiers[type][GetUniqueIdentifier({
+            id: pkm_obj.id, 
+            form: pkm_obj.form,
+            shadow: false
+        }, true, false)] ?? "F"
+    };
+    if (pkm_obj.shadow) {
+        tiers.shadow = type_tiers[type][GetUniqueIdentifier({
+            id: pkm_obj.id, 
+            form: pkm_obj.form,
+            shadow: true
+        }, true, false)] ?? "F";
+    }
+
+    return tiers;
+}
+
+/**
+ * If not already built, create a lookup for tier rankings of mons' typed movesets
+ */
+function BuildTypeTier(type) {
+    if (type_tiers && type_tiers[type]) return; // Already built
+    
+    let search_params = {
+        ...GetDefaultSearchParams(),
+        type
+    };
+
+    let strongest = GetStrongestOfOneType(search_params);
+    ProcessAndGroup(strongest, type, Number.MAX_VALUE);
+    SetTypeTier(type, strongest);
+}
+
+/**
+ * Takes a ranking list of mons (with tier info) and caches it for later lookup
+ */
+function SetTypeTier(type, strongest_list) {
+    if (!type_tiers) type_tiers = {};
+    if (type_tiers[type]) return; // should always be the same, so don't re-write
+
+    type_tiers[type] = Object.fromEntries(
+        strongest_list.map(e=>[GetUniqueIdentifier(e, true, false), e.tier])
+    );
+}
+
+/**
+ * Reset type tiers (e.g. if a changed setting would alter how tiers are made)
+ */
+function ClearTypeTiers() {
+    type_tiers = undefined;
+}
+
+/**
+ * Converts a tier string label to an integer for sorting
+ * 
+ * Could be done "cleaner" programmatically, but this switch lookup will be faster
+ */
+function TierToInt(tierLabel) {
+    if (!tierLabel) return 0;
+
+    switch (tierLabel) {
+        case "MRay": 
+            return 1000;
+        case "A":
+            return 5;
+        case "B":
+            return 4;
+        case "C":
+            return 3;
+        case "D":
+            return 2;
+        case "F":
+            return 1;
+        default: // Some form of "S"
+            return 100 + tierLabel.length;
+    }
+}
+
+/**
+ * Create a "Progress" bar scaled to some absolute best 
+ */
+function GetBarHTML(val, val_txt, full_val, max_val, add_classes) {
+    return "<div class='bar-bg' style='width: calc(" + (full_val/max_val * 100) + "% - 10px);'>"
+        + "<div class='bar-fg" + (!!add_classes ? " " + add_classes : "") + "' style='width: " + (val/full_val * 100) + "%;'>"
+        + "<span class='bar-txt'>"
+        + val_txt
+        + "</span></div></div>";
 }
