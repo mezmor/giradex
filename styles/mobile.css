@@ -452,7 +452,7 @@ dialog.card {
         width: 5px;
     }
 
-    #strongest-header .card-title {
+    #strongest-header .card-title, #strongest-header .drawer-icon {
         font-size: 0.9em;
     }
 
