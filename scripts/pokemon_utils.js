@@ -335,6 +335,9 @@ function GetSearchString(pkm_arr) {
     function IntersectAllSets(sets_arr) {
         return sets_arr.reduce((accumulator, this_set)=>accumulator.intersection(this_set), sets_arr[0]);
     }
+    function SetEquals(set1, set2) {
+        return set1.size === set2.size && Array.from(set1).every(x => set2.has(x));
+    }
 
     let str = "";
     
@@ -352,12 +355,14 @@ function GetSearchString(pkm_arr) {
     }
 
     // Pure forms
-    str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&!e.shadow).map(e=>e.id)).join(",") + ",shadow,mega1-";
+    if (pkm_arr.some(e=>e.shadow||e.form=="Mega"||e.form=="MegaY")) {
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&!e.shadow).map(e=>e.id)).join(",") + ",shadow,mega1-";
+    }
 
     // Alternate (non-Mega) forms
     const has_alt_forms = GetUnique(pkm_arr.filter(e=>GetPokemonForms(e.id).filter(e=>e!="Mega"&&e!="MegaY").length > 1).map(e=>e.id));
     for (let pkm_id of has_alt_forms) {
-        const all_possible_forms = new Set(GetPokemonForms(pkm_id).filter(e=>e!="Mega"&&e!="MegaY"));
+        const all_possible_forms = new Set(GetPokemonForms(pkm_id).map(f=>jb_pkm.find(p=>p.id==pkm_id&&p.form==f)).filter(p=>p&&p.form!="Mega"&&p.form!="MegaY"));
         const filtered_in_forms = new Set(pkm_arr.filter(e=>e.id==pkm_id).map(e=>e.form).filter(e=>e!="Mega"&&e!="MegaY"));
 
         // Check if we need to try filtering down more specifically than by id
@@ -372,24 +377,33 @@ function GetSearchString(pkm_arr) {
             // Try type-based filtering
             const all_type_combos = Array.from(all_possible_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
             const filtered_in_type_combos = Array.from(filtered_in_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
+            const filtered_in_types = UnionAllSets(filtered_in_type_combos);
 
             const all_shared_types = IntersectAllSets(all_type_combos); // Types that are common to every form
-            if (!all_shared_types.isDisjointFrom(all_type_combos[0])) // If all forms have identical typing, we can't use this filtering
+            if (all_type_combos.every(tc=>SetEquals(all_shared_types, tc))) // If all forms have identical typing, we can't use this filtering
                 continue;
 
-            const shared_types_among_filtered_in = IntersectAllSets(filtered_in_type_combos); // Types that are common to every form we want
-            const filtered_in_unshared_types = shared_types_among_filtered_in.difference(all_shared_types); // Ignore types that every possible form has anyway (because that doesn't filter anything)
-            for (const t of filtered_in_unshared_types) {
+            // Types unique to every form we want
+            const filtered_in_unshared_types = filtered_in_type_combos.map(e=>e.difference(all_shared_types)); // Unshared types among desired forms
+            if (filtered_in_unshared_types.every(e=>e.size == 1 && all_type_combos.reduce((acc, tc)=>(acc + (tc.has([...e][0]) ? 1 : 0)), 0) == 1)) { // Every desired form has an unshared type that is unique to them
+                str = str + "&!" + pkm_id;
+                for (const tc of filtered_in_unshared_types) {
+                    str = str + "," + [...tc][0];
+                }
+                continue;
+            }
+
+            // Types common to every form we want
+            const shared_types_among_filtered_in = IntersectAllSets(filtered_in_type_combos);
+            const shared_filtered_in_unshared_types = shared_types_among_filtered_in.difference(all_shared_types); // Ignore types that every possible form has anyway (because that doesn't filter anything)
+            for (const t of shared_filtered_in_unshared_types) {
                 str = str + "&!" + pkm_id + "," + t; // Either a different Pokemon, or you have the required type(s)
             }
 
+            // Types common to every form we don't want
             const filtered_out_forms = all_possible_forms.difference(filtered_in_forms); // Forms that we don't want
             const filtered_out_type_combos = Array.from(filtered_out_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
-            const filtered_out_type_combos_still_included = filtered_out_type_combos.filter(s=>!s.isDisjointFrom(filtered_in_unshared_types)); // Types held by forms we want to filter out
-            if (filtered_out_type_combos_still_included.size == 0)
-                continue;
-
-            const filtered_in_types = UnionAllSets(filtered_in_type_combos);
+            const filtered_out_type_combos_still_included = filtered_out_type_combos.filter(s=>s.isDisjointFrom(shared_filtered_in_unshared_types)); // Types held by forms we want to filter out
             const filtered_out_types = UnionAllSets(filtered_out_type_combos_still_included).difference(filtered_in_types); // Types held by forms we want to filter out, and not by forms we want to keep in
             for (const t of filtered_out_types) {
                 str = str + "&!" + pkm_id + ",!" + t;
@@ -509,4 +523,143 @@ function ApplySearchString(str) {
     }
 
     return arr;
+}
+
+
+
+
+
+
+
+
+function GetUnique(arr) { 
+	return Array.from((new Set(arr)).values()); 
+}
+function UnionAllSets(sets_arr) {
+	return sets_arr.reduce((accumulator, this_set)=>accumulator.union(this_set), new Set());
+}
+function IntersectAllSets(sets_arr) {
+	return sets_arr.reduce((accumulator, this_set)=>accumulator.intersection(this_set), sets_arr[0]);
+}
+function SetEquals(set1, set2) {
+	return set1.size === set2.size && Array.from(set1).every(x => set2.has(x));
+}
+function GetAllSubsets(arr) {
+    const subsets = [[]];
+    
+    for (const e of arr) {
+        const last = subsets.length-1;
+        for (let i = 0; i <= last; i++) {
+            subsets.push( [...subsets[i], e] );
+        }
+    }
+    
+    return subsets.slice(1, subsets.length-1);
+}
+function GetSearchStringTest(pkm_arr) {
+	let str = GetUnique(pkm_arr.map(e=>e.id)).join(",");
+
+	const has_alt_forms = GetUnique(pkm_arr.filter(e=>GetPokemonForms(e.id).filter(e=>e!="Mega"&&e!="MegaY").length > 1).map(e=>e.id));
+    for (let pkm_id of has_alt_forms) {
+        const all_possible_forms = new Set(GetPokemonForms(pkm_id).filter(f=>f!="Mega"&&f!="MegaY"&&jb_pkm.find(p=>p.id==pkm_id&&p.form==f)));
+        const filtered_in_forms = new Set(pkm_arr.filter(e=>e.id==pkm_id).map(e=>e.form).filter(e=>e!="Mega"&&e!="MegaY"));
+
+        // Check if we need to try filtering down more specifically than by id
+        if (filtered_in_forms.size < all_possible_forms.size) {
+            // Only regional filtering is needed
+            /* Remove regional-based filtering until Niantic fixes the broken keywords
+                if (all_possible_forms.difference(new Set(["Normal","Hisuian","Galarian","Alola","Paldea"])).size == 0) {
+                    str = str + "&!" + pkm_id + "," + Array.from(filtered_in_forms.keys()).map(e=>GetRegionalFormName(pkm_id, e)).join(",");
+                }
+            */ 
+
+            // Try type-based filtering
+            const all_type_combos = Array.from(all_possible_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
+            const filtered_in_type_combos = Array.from(filtered_in_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
+            const filtered_in_types = UnionAllSets(filtered_in_type_combos);
+
+            const all_shared_types = IntersectAllSets(all_type_combos); // Types that are common to every form
+            if (all_type_combos.every(tc=>SetEquals(all_shared_types, tc))) // If all forms have identical typing, we can't use this filtering
+                continue;
+
+            // Types unique to every form we want
+            const filtered_in_unshared_types = filtered_in_type_combos.map(e=>e.difference(all_shared_types)); // Unshared types among desired forms
+            if (filtered_in_unshared_types.every(e=>e.size >= 1 && all_type_combos.reduce((acc, tc)=>(acc + (tc.has([...e][0]) ? 1 : 0)), 0) == 1)) { // Every desired form has an unshared type that is unique to them
+                str = str + "&!" + pkm_id;
+                for (const tc of filtered_in_unshared_types) {
+                    str = str + "," + [...tc][0];
+                }
+                continue;
+            }
+
+            /*
+            // Types common to every form we want
+            const shared_types_among_filtered_in = IntersectAllSets(filtered_in_type_combos);
+            const shared_filtered_in_unshared_types = shared_types_among_filtered_in.difference(all_shared_types); // Ignore types that every possible form has anyway (because that doesn't filter anything)
+            for (const t of shared_filtered_in_unshared_types) {
+                str = str + "&!" + pkm_id + "," + t; // Either a different Pokemon, or you have the required type(s)
+            }
+
+            // Types common to every form we don't want
+            const filtered_out_forms = all_possible_forms.difference(filtered_in_forms); // Forms that we don't want
+            const filtered_out_type_combos = Array.from(filtered_out_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
+            const filtered_out_type_combos_still_included = filtered_out_type_combos.filter(s=>s.isSupersetOf(shared_filtered_in_unshared_types)); // Types held by forms we want to filter out
+            const filtered_out_types = UnionAllSets(filtered_out_type_combos_still_included).difference(filtered_in_types); // Types held by forms we want to filter out, and not by forms we want to keep in
+            for (const t of filtered_out_types) {
+                str = str + "&!" + pkm_id + ",!" + t;
+            }
+            */
+
+            // Instead of complicated set logic, just do Darmanitan manually
+            // because it's the only real exception not already handled above by "unique" typing per form
+            if (pkm_id == 555)
+                str = str + "&" + GetDarmanitanString(filtered_in_forms).map(t=>'!555,'+t).join("&");
+        }
+    }
+	
+	return str;
+}
+
+function GetDarmanitanString(filtered_in_forms) {
+    const form_bitstring = 
+        (filtered_in_forms.has("Galarian_zen") ? 8 : 0) +       // X: Fire/Ice
+        (filtered_in_forms.has("Zen") ? 4 : 0) +                // Z: Fire/Psychic
+        (filtered_in_forms.has("Galarian_standard") ? 2 : 0) +  // G: Ice
+        (filtered_in_forms.has("Standard") ? 1 : 0)             // S: Fire
+
+    return [
+        [],                         // 0: 
+        ['!Ice','!Psychic'],        // 1: S
+        ['!Fire'],                  // 2: G
+        ['!Psychic','!Ice,!Fire'],  // 3: SG
+        ['Psychic'],                // 4: Z
+        ['!Ice'],                   // 5: ZS
+        ['Psychic,!Fire'],          // 6: ZG
+        ['!Ice,!Fire'],             // 7: ZSG (!X)
+        ['Ice','Fire'],             // 8: X
+        ['Fire','!Psychic'],        // 9: XS
+        ['Ice'],                    // 10: XG
+        ['!Psychic'],               // 11: XSG (!Z)
+        ['Fire','Psychic,Ice'],     // 12: XZ
+        ['Fire'],                   // 13: XZS (!G)
+        ['Psychic,Ice'],            // 14: XZG (!S)
+        ['555'],                    // 15: XZSG
+    ][form_bitstring];
+}
+
+function CheckPkm(pkm_id) {
+	console.log(jb_pkm.find(p=>p.id==pkm_id).name);
+	const all_possible_forms = GetPokemonForms(pkm_id).map(f=>jb_pkm.find(p=>p.id==pkm_id&&p.form==f)).filter(p=>p&&p.form!="Mega"&&p.form!="MegaY");
+	
+	if (all_possible_forms.length < 5) {
+		for (const subs of GetAllSubsets(all_possible_forms)) {
+            console.log(subs.map(e=>e.form));
+            let ss = GetSearchStringTest(subs);
+			console.log(ss);
+            console.log(GetUnique(ApplySearchString(ss).map(p=>p.form)));
+		}
+	}
+	else {
+		console.log("Too many forms");
+	}
 }
