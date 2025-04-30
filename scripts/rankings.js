@@ -82,7 +82,7 @@ function LoadStrongest(type = "Any") {
         $("#strongest-title-suffix").text("of Each Type");
     }
     else {
-        $("#strongest-type-title").text(type + "-type");
+        $("#strongest-type-title").html(type + "<span class='desktop'>-type<span>");
     }
 
     // sets description
