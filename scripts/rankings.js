@@ -23,6 +23,53 @@ function BindRankings() {
 
         CheckURLAndAct();
     });
+
+    BindSearchStringDialog();
+}
+
+/**
+ * Bind event handlers for the search string generator popup
+ */
+function BindSearchStringDialog() {
+    function UpdateSearchString() {
+        const minTier = $('[name="min-tier"]:checked').val();
+
+        let pkm_arr;
+        if (minTier == "S") {
+            pkm_arr = str_pokemons.filter(e=>e.tier[0]=="S"||e.tier=="MRay");
+        }
+        else {
+            pkm_arr = str_pokemons.filter(e=>e.tier.charCodeAt(0)<=minTier.charCodeAt(0)||
+                e.tier[0]=="S"||e.tier=="MRay");
+        }
+
+        $("#search-string-result").text(GetSearchString(pkm_arr));
+    }
+
+    // Dialog Open/Close
+    $("#search-string-icon").click(function() {
+        $("#overlay").addClass("active");
+
+        UpdateSearchString();
+        $("#search-string-popup").get(0).show();
+    });
+    $("#search-string-popup").on("close", function(e) {
+        if (e.target === e.currentTarget) {// only apply to this, not children
+            $("#overlay").removeClass("active");
+        }
+    });
+
+    // Copy to Clipboard
+    $("#search-string-copy, #search-string-result").click(async function (e) {
+        try {
+            await navigator.clipboard.writeText($("#search-string-result").text());
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+        }
+    });
+
+    // Settings
+    $('[name="min-tier"], #chk-include-movesets').change(UpdateSearchString);
 }
 
 /**
