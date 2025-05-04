@@ -44,8 +44,9 @@ function BindSearchStringDialog() {
         }
 
         const check_movesets = $("#chk-include-movesets").prop("checked");
+        const check_elite_only = $('#chk-elite-movesets').prop("checked");
 
-        $("#search-string-result").text(GetSearchString(pkm_arr, check_movesets));
+        $("#search-string-result").text(GetSearchString(pkm_arr, check_movesets, check_elite_only));
     }
 
     // Dialog Open/Close
@@ -72,6 +73,14 @@ function BindSearchStringDialog() {
 
     // Settings
     $('[name="min-tier"], #chk-include-movesets').change(UpdateSearchString);
+    $('#chk-include-movesets').change(function (e) {
+        if ($('#chk-include-movesets').prop("checked")) {
+            $('#chk-elite-movesets').removeAttr("disabled");
+        }
+        else {
+            $('#chk-elite-movesets').prop("disabled", true);
+        }
+    });
 }
 
 /**

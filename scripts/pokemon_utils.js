@@ -387,7 +387,7 @@ function MapByID(arr) {
  * Take a list of pokemon (e.g. from rankings) and translate it into a reasonable, 
  * semi-optimized search string
  */
-function GetSearchString(pkm_arr, check_movesets = false) {
+function GetSearchString(pkm_arr, check_movesets = false, check_elite_only = true) {
     let str = "";
     
     // Allow all applicable mons by id
@@ -468,24 +468,34 @@ function GetSearchString(pkm_arr, check_movesets = false) {
     }
 
     if (check_movesets) {
-        const mons_by_id = MapByID(pkm_arr.map(e=>e)); // Filtered-in form map
+        const mons_by_id = MapByID(pkm_arr.filter(e=>e.fm_is_elite||e.cm_is_elite||!check_elite_only)); // Filtered-in form map
         
         for (const p of pkm_arr) {
             const all_ps = mons_by_id.get(p.id);
+            if (!all_ps) continue;
+
             if (all_ps.length > 1) { // Multiple filtered it, allow all movesets
-                str = str + "&!" + p.id;
-                for (const fm of GetUnique(all_ps.map(p=>p.fm))) {
+                const fms = GetUnique(all_ps.filter(e=>e.fm_is_elite||!check_elite_only).map(e=>e.fm));
+                if (fms.length > 0)
+                    str = str + "&!" + p.id;
+                for (const fm of fms) {
                     str = str + ",@" + fm;
                 }
-                str = str + "&!" + p.id;
-                for (const cm of GetUnique(all_ps.map(p=>p.cm))) {
-                    str = str + ",@" + cm.replace(" Plus", "");
+
+                const cms = GetUnique(all_ps.filter(e=>e.cm_is_elite||!check_elite_only).map(e=>e.cm.replace(" Plus", "")));
+                if (cms.length > 0)
+                    str = str + "&!" + p.id;
+                for (const cm of cms) {
+                    str = str + ",@" + cm;
                 }
 
                 all_ps.length = 0; // Prevent duplicating when we encounter the other forms
             }
             else if (all_ps.length == 1) { // Force exactly this moveset
-                str = str + "&!" + p.id + ",@" + p.fm + "&!" + p.id + ",@" + p.cm.replace(" Plus", ""); 
+                if (p.fm_is_elite||!check_elite_only)
+                    str = str + "&!" + p.id + ",@" + p.fm;
+                if (p.cm_is_elite||!check_elite_only)
+                    str = str + "&!" + p.id + ",@" + p.cm.replace(" Plus", ""); 
             }
             // else length == 0, which means we've seen it before
         }
