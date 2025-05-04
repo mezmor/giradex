@@ -404,7 +404,7 @@ function GetSearchString(pkm_arr, check_movesets = false, check_elite_only = tru
     }
 
     // Pure forms
-    if (pkm_arr.some(e=>e.shadow||e.form=="Mega"||e.form=="MegaY")) {
+    if (pkm_arr.some(e=>!(e.shadow||e.form=="Mega"||e.form=="MegaY"))) {
         str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&!e.shadow).map(e=>e.id)).join(",") + ",shadow,mega1-";
     }
 

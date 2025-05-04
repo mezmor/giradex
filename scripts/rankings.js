@@ -287,7 +287,7 @@ function ProcessAndGroup(str_pokemons, type, strongest_count) {
         }
         BuildTiers(str_pokemons, top_compare, type);
     
-        str_pokemons.length = Math.min(str_pokemons.length, strongest_count); // truncate late so all movesets could be evaluated
+        //str_pokemons.length = Math.min(str_pokemons.length, strongest_count); // truncate late so all movesets could be evaluated
     }
 }
 
