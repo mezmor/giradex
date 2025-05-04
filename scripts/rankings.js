@@ -43,7 +43,9 @@ function BindSearchStringDialog() {
                 e.tier[0]=="S"||e.tier=="MRay");
         }
 
-        $("#search-string-result").text(GetSearchString(pkm_arr));
+        const check_movesets = $("#chk-include-movesets").prop("checked");
+
+        $("#search-string-result").text(GetSearchString(pkm_arr, check_movesets));
     }
 
     // Dialog Open/Close

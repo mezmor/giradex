@@ -375,12 +375,19 @@ function IntersectAllSets(sets_arr) {
 function SetEquals(set1, set2) {
 	return set1.size === set2.size && Array.from(set1).every(x => set2.has(x));
 }
+function MapByID(arr) { 
+	return arr.reduce((acc, x) => {
+        if (!acc.has(x.id)) acc.set(x.id, []);
+        acc.get(x.id).push(x)
+        return acc;
+    }, new Map()); 
+}
 
 /**
  * Take a list of pokemon (e.g. from rankings) and translate it into a reasonable, 
  * semi-optimized search string
  */
-function GetSearchString(pkm_arr) {
+function GetSearchString(pkm_arr, check_movesets = false) {
     let str = "";
     
     // Allow all applicable mons by id
@@ -419,7 +426,7 @@ function GetSearchString(pkm_arr) {
             // Try type-based filtering
             const all_type_combos = Array.from(all_possible_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
             const filtered_in_type_combos = Array.from(filtered_in_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
-            const filtered_in_types = UnionAllSets(filtered_in_type_combos);
+            //const filtered_in_types = UnionAllSets(filtered_in_type_combos);
 
             const all_shared_types = IntersectAllSets(all_type_combos); // Types that are common to every form
             if (all_type_combos.every(tc=>SetEquals(all_shared_types, tc))) // If all forms have identical typing, we can't use this filtering
@@ -460,17 +467,29 @@ function GetSearchString(pkm_arr) {
         }
     }
 
-    // FM matches
-    /*
-    const fms = GetUnique(pkm_arr.map(e=>e.fm));
-    for (let fm of fms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.fm!=fm).map(e=>e.id)).join(",") + ",@" + fm;
+    if (check_movesets) {
+        const mons_by_id = MapByID(pkm_arr.map(e=>e)); // Filtered-in form map
+        
+        for (const p of pkm_arr) {
+            const all_ps = mons_by_id.get(p.id);
+            if (all_ps.length > 1) { // Multiple filtered it, allow all movesets
+                str = str + "&!" + p.id;
+                for (const fm of GetUnique(all_ps.map(p=>p.fm))) {
+                    str = str + ",@" + fm;
+                }
+                str = str + "&!" + p.id;
+                for (const cm of GetUnique(all_ps.map(p=>p.cm))) {
+                    str = str + ",@" + cm.replace(" Plus", "");
+                }
+
+                all_ps.length = 0; // Prevent duplicating when we encounter the other forms
+            }
+            else if (all_ps.length == 1) { // Force exactly this moveset
+                str = str + "&!" + p.id + ",@" + p.fm + "&!" + p.id + ",@" + p.cm.replace(" Plus", ""); 
+            }
+            // else length == 0, which means we've seen it before
+        }
     }
-    // CM matches
-    let cms = GetUnique(pkm_arr.map(e=>e.cm));
-    for (let cm of cms) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.cm!=cm).map(e=>e.id)).join(",") + ",@" + (cm == "Psychic" ? "Psychi" : cm);
-    }*/
     /*
     // Suboptimal movesets exist
     if ((GetUnique(pkm_arr.map(e=>GetUniqueIdentifier(e, true)))).length < pkm_arr.length) {
@@ -498,16 +517,16 @@ function GetSearchString(pkm_arr) {
  *     (in game this could be something like "mega1-" or "megaevolve" to find
  *     candidates that can become the desired mega form)
  */
-function ApplySearchString(str) {
+function ApplySearchString(str, separate_movesets = true) {
     let arr = [];
     
     // Build up all possible mons and movesets
     for (let pkm of jb_pkm) {
-        if (!pkm.fm || !pkm.cm) continue;
+        if (separate_movesets && !(pkm.fm && pkm.cm)) continue;
 
         const moves = GetPokemonMoves(pkm);
-        const fms = moves[0].concat(moves[2]);
-        const cms = moves[1].concat(moves[3]);
+        const fms = separate_movesets ? moves[0].concat(moves[2]) : [null];
+        const cms = separate_movesets ? moves[1].concat(moves[3]) : [null];
 
         for (let fm of fms) {
             for (let cm of cms) {
