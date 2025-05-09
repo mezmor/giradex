@@ -5,12 +5,12 @@ const POGO_PNGS_URL = JB_URL + "graphics/pogo-256/"
 const SHINY_POGO_PNGS_URL = JB_URL + "graphics/pogo-shiny-256/"
 const ICONS_URL = JB_URL + "graphics/pokemonicons-sheet.png";
 
-const LOADING_MAX_VAL = 5; // max number of files that need to be loaded
+const LOADING_MAX_VAL = 4; // max number of files that need to be loaded
 let loading_val = 0; // number of files loaded so far
 let finished_loading = false; // whether page finished loading all files
 
 // jb json objects
-let jb_names, jb_mega, jb_pkm, jb_max_id, jb_fm, jb_cm;
+let jb_names, jb_pkm, jb_max_id, jb_fm, jb_cm;
 
 /**
  * Load JSONs from resource repo
@@ -21,8 +21,8 @@ function LoadJSONData() {
         function(response) { 
             jb_names = JSON.parse(response); 
         });
-    HttpGetAsync(JB_URL + "mega_pokemon.json",
-        function(response) { jb_mega = JSON.parse(response); });
+    //HttpGetAsync(JB_URL + "mega_pokemon.json",
+    //    function(response) { jb_mega = JSON.parse(response); });
     HttpGetAsync(JB_URL + "pogo_pkm.json",
         function(response) {
             jb_pkm = JSON.parse(response);
