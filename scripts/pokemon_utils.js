@@ -451,6 +451,17 @@ function GetSearchString(pkm_arr,
                 continue;
             }
 
+            // Types unique to every form we want
+            const filtered_out_forms = all_possible_forms.difference(filtered_in_forms); // Forms that we don't want
+            const filtered_out_type_combos = Array.from(filtered_out_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
+            const filtered_out_unshared_types = filtered_out_type_combos.map(e=>e.difference(all_shared_types)); // Unshared types among undesired forms
+            if (filtered_out_unshared_types.every(e=>e.size >= 1 && all_type_combos.reduce((acc, tc)=>(acc + (tc.has([...e][0]) ? 1 : 0)), 0) == 1)) { // Every undesired form has an unshared type that is unique to them
+                for (const tc of filtered_out_unshared_types) {
+                    str = str + "&!" + pkm_id + ",!" + [...tc][0];
+                }
+                continue;
+            }
+
             /*
             // Types common to every form we want
             const shared_types_among_filtered_in = IntersectAllSets(filtered_in_type_combos);
