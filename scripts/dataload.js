@@ -26,34 +26,11 @@ function LoadJSONData() {
     HttpGetAsync(JB_URL + "pogo_pkm.json",
         function(response) {
             jb_pkm = JSON.parse(response);
-            jb_pkm = DeDuplicate(jb_pkm, (item) => {
-                return JSON.stringify(item, ['id','name','form']);
-            });
             jb_max_id = jb_pkm.at(-1).id;
 
             // Only use active forms
             jb_pkm = jb_pkm.filter((item) => {
                 return GetPokemonForms(item.id).includes(item.form);
-            });
-
-            // Add entries for megas
-            jb_pkm.filter(pkm_obj => 'mega' in pkm_obj).forEach(pkm_obj => {
-                pkm_obj.mega.forEach((megaEvo, i) => {
-                    const megaMon = structuredClone(pkm_obj);
-
-                    megaMon.megaID = i;
-                    megaMon.form = "Mega" + (i == 1 ? "Y" : "");
-                    megaMon.stats = megaEvo.stats;
-                    megaMon.types = megaEvo.types;
-                    megaMon.shadow = false;
-
-                    megaMon.name = (pkm_obj.id == 382 || pkm_obj.id == 383 ? "Primal" : "Mega") 
-                        + " " + megaMon.name;
-                    if (pkm_obj.id == 6 || pkm_obj.id == 150) // charizard and mewtwo
-                        megaMon.name = megaMon.name + " " + (i == 0 ? "X" : "Y");
-                    
-                    jb_pkm.push(megaMon);
-                });
             });
         });
     HttpGetAsync(JB_URL + "pogo_fm.json",
