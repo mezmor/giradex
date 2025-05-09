@@ -316,8 +316,7 @@ function SearchAll(search_params, f_process_pokemon) {
             f_process_pokemon(pkm_obj, false, level, search_params);
         
             // shadow (except not released when it shouldn't)
-            if (search_params.shadow && pkm_obj.shadow
-                && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
+            if (search_params.shadow && pkm_obj.shadow) {
                     f_process_pokemon(pkm_obj, true, level, search_params);
             }
         
@@ -334,8 +333,7 @@ function SearchAll(search_params, f_process_pokemon) {
         
                 f_process_pokemon(pkm_obj, false, level, search_params);                                                    
                 // other forms and shadow (except not released when it shouldn't)
-                if (search_params.shadow && pkm_obj.shadow
-                    && !(!search_params.unreleased && !pkm_obj.shadow_released)) {
+                if (search_params.shadow && pkm_obj.shadow) {
                         f_process_pokemon(pkm_obj, true, level, search_params);
                 }
             }
