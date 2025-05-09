@@ -95,7 +95,7 @@ function GetPokemonMoves(pkm_obj) {
 
     let shadow_only_cm = [];
     let pure_only_cm = [];
-    if (pkm_obj.shadow_released) {
+    if (pkm_obj.shadow) {
         //shadow_only_cm.push('Frustration'); // Ignore Frustration because BAD
         pure_only_cm.push('Return');
     }
@@ -103,7 +103,7 @@ function GetPokemonMoves(pkm_obj) {
         const def_form = GetPokemonForms(pkm_obj.id)[0];
         const def_pkm_obj = jb_pkm.find(e => e.id == pkm_obj.id && e.form == def_form);
 
-        if (def_pkm_obj.shadow_released)
+        if (def_pkm_obj.shadow)
             pure_only_cm.push('Return');
     }
 
@@ -207,7 +207,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     let can_be_shadow = false;
     if (poke_obj) {
         pokemon_name = poke_obj.name;
-        can_be_shadow = poke_obj.shadow && poke_obj.shadow_released;
+        can_be_shadow = poke_obj.shadow;
     }
     else {
         pokemon_name = jb_names[pokemon_id].name;
@@ -254,11 +254,9 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     if (is_selected && poke_obj && form != "Mega" && form != "MegaY") {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + "'></img>");
         shadow_icon.on('click', function(e) { 
-            let can_be_shadow = poke_obj.shadow && poke_obj.shadow_released;
-            poke_obj.shadow = !can_be_shadow;
-            poke_obj.shadow_released = !can_be_shadow;
-            shadow_icon.removeClass("filter-" + (can_be_shadow ? 'shadow' : 'noshadow'));
-            shadow_icon.addClass("filter-" + (can_be_shadow ? 'noshadow' : 'shadow'));
+            poke_obj.shadow = !poke_obj.shadow;
+            shadow_icon.removeClass("filter-" + (poke_obj.shadow ? 'shadow' : 'noshadow'));
+            shadow_icon.addClass("filter-" + (poke_obj.shadow ? 'noshadow' : 'shadow'));
             ClearTypeTiers();
             UpdatePokemonStatsAndURL();
             e.stopPropagation();
