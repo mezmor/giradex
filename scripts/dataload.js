@@ -46,7 +46,6 @@ function LoadJSONData() {
                     megaMon.stats = megaEvo.stats;
                     megaMon.types = megaEvo.types;
                     megaMon.shadow = false;
-                    megaMon.shadow_released = false;
 
                     megaMon.name = (pkm_obj.id == 382 || pkm_obj.id == 383 ? "Primal" : "Mega") 
                         + " " + megaMon.name;

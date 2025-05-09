@@ -205,7 +205,7 @@ function GetAdjustedAttStat(pkm_obj, move_name) {
     if (!move_obj) move_obj = jb_cm.find(e=>e.name==move_name);
 
     return pkm_obj.stats.baseAttack * 
-        (pkm_obj.shadow && pkm_obj.shadow_released ? 1.2 : 1) *
+        (pkm_obj.shadow ? 1.2 : 1) *
         (pkm_obj.types.includes(move_obj.type) ? 2 : 1); // STAB is 1.2, but really incentivize it here
 }
 
