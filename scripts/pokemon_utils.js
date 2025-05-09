@@ -387,7 +387,8 @@ function MapByID(arr) {
  * Take a list of pokemon (e.g. from rankings) and translate it into a reasonable, 
  * semi-optimized search string
  */
-function GetSearchString(pkm_arr, check_movesets = false, check_elite_only = true) {
+function GetSearchString(pkm_arr, 
+        check_movesets = false, check_elite_only = true) {
     let str = "";
     
     // Allow all applicable mons by id
@@ -422,6 +423,14 @@ function GetSearchString(pkm_arr, check_movesets = false, check_elite_only = tru
                     str = str + "&!" + pkm_id + "," + Array.from(filtered_in_forms.keys()).map(e=>GetRegionalFormName(pkm_id, e)).join(",");
                 }
             */ 
+
+            // Instead of complicated set logic, just do Darmanitan manually
+            // because it's the only real exception not already handled above by "unique" typing per form
+            if (pkm_id == 555) {
+                str = str + "&" + GetDarmanitanFilters(filtered_in_forms).map(filt=>'!555,'+filt).join("&");
+                continue;
+            }
+
 
             // Try type-based filtering
             const all_type_combos = Array.from(all_possible_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
@@ -459,11 +468,6 @@ function GetSearchString(pkm_arr, check_movesets = false, check_elite_only = tru
                 str = str + "&!" + pkm_id + ",!" + t;
             }
             */
-
-            // Instead of complicated set logic, just do Darmanitan manually
-            // because it's the only real exception not already handled above by "unique" typing per form
-            if (pkm_id == 555)
-                str = str + "&" + GetDarmanitanFilters(filtered_in_forms).map(filt=>'!555,'+filt).join("&");
         }
     }
 
@@ -482,11 +486,11 @@ function GetSearchString(pkm_arr, check_movesets = false, check_elite_only = tru
                     str = str + ",@" + fm;
                 }
 
-                const cms = GetUnique(all_ps.filter(e=>e.cm_is_elite||!check_elite_only).map(e=>e.cm.replace(" Plus", "")));
+                const cms = GetUnique(all_ps.filter(e=>e.cm_is_elite||!check_elite_only).map(e=>e.cm));
                 if (cms.length > 0)
                     str = str + "&!" + p.id;
                 for (const cm of cms) {
-                    str = str + ",@" + cm;
+                    str = str + ",@" + (cm == "Psychic" ? "Psychi" : cm.replace(" Plus", ""));
                 }
 
                 all_ps.length = 0; // Prevent duplicating when we encounter the other forms
@@ -527,20 +531,33 @@ function GetSearchString(pkm_arr, check_movesets = false, check_elite_only = tru
  *     (in game this could be something like "mega1-" or "megaevolve" to find
  *     candidates that can become the desired mega form)
  */
-function ApplySearchString(str, separate_movesets = true) {
-    let arr = [];
+function RunSearchString(str,
+        check_movesets = true, check_elite_only = false) {
+    let pkm_arr = [];
     
     // Build up all possible mons and movesets
     for (let pkm of jb_pkm) {
-        if (separate_movesets && !(pkm.fm && pkm.cm)) continue;
+        if (check_movesets && !(pkm.fm && pkm.cm)) continue;
 
         const moves = GetPokemonMoves(pkm);
-        const fms = separate_movesets ? moves[0].concat(moves[2]) : [null];
-        const cms = separate_movesets ? moves[1].concat(moves[3]) : [null];
+        let fms = [], cms = [];
+        if (check_movesets) {
+            fms = fms.concat(moves[2]); // elite_fm
+            cms = cms.concat(moves[3]); // elite_cm
+
+            if (!check_elite_only) {
+                fms = fms.concat(moves[0]); // fm
+                cms = cms.concat(moves[1]); // cm
+            }
+        }
+        else {
+            fms.push(null);
+            cms.push(null);
+        }
 
         for (let fm of fms) {
             for (let cm of cms) {
-                arr.push({
+                pkm_arr.push({
                     id: pkm.id,
                     name: pkm.name,
                     form: pkm.form,
@@ -551,8 +568,8 @@ function ApplySearchString(str, separate_movesets = true) {
                 });
 
                 // List Shadow as a separate mon
-                if (pkm.shadow && pkm.shadow_released) {
-                    arr.push({
+                if (pkm.shadow) {
+                    pkm_arr.push({
                         id: pkm.id,
                         name: "Shadow " + pkm.name,
                         form: pkm.form,
@@ -566,9 +583,16 @@ function ApplySearchString(str, separate_movesets = true) {
         }
     }
 
+    return ApplySearchString(str, pkm_arr);
+}
+
+/**
+ * Filters an input pkm_arr based on the provided search string
+ */
+function ApplySearchString(str, pkm_arr) {
     // Break into AND'd clauses and progressively filter down by each
     for (let clause of str.split(/[&|]/)) {
-        arr = arr.filter(p => {
+        pkm_arr = pkm_arr.filter(p => {
             let clause_val = false;
 
             // Break into OR'd tokens and return true as soon as we pass any of them
@@ -600,7 +624,25 @@ function ApplySearchString(str, separate_movesets = true) {
         });
     }
 
-    return arr;
+    return pkm_arr;
+}
+
+/**
+ * Compares an input list of Pokemon (as would be sent to GetSearchString)
+ * against an output list of matched Pokemon (as would be returned from RunSearchString)
+ * 
+ * Validates whether this a perfect mapping. Returns any possible issues with the string.
+ */
+function ValidateSearchString(input_arr, output_arr, 
+        check_movesets = true, check_elite_only = true) {
+    const all_inputs_uniq = new Set(input_arr.map(e=>GetUniqueIdentifier(e, true, false)));
+    const all_outputs_uniq = new Set(output_arr.map(e=>GetUniqueIdentifier(e, true, false)));
+
+    return [
+        all_inputs_uniq.difference(all_outputs_uniq), // not found
+        all_outputs_uniq.difference(all_inputs_uniq) // too many
+    ];
+
 }
 
 /**
