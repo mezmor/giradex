@@ -83,9 +83,11 @@ function BindSearchStringDialog() {
     });
 
     // Copy to Clipboard
-    $("#search-string-copy, #search-string-result").click(async function (e) {
+    $("#search-string-copy").click(async function (e) {
         try {
             await navigator.clipboard.writeText($("#search-string-result").text());
+            $("#search-string-copy").attr("value", "Copied!");
+            setTimeout(()=>{$("#search-string-copy").attr("value", "Copy")}, 1000);
         } catch (err) {
             console.error('Failed to copy text: ', err);
         }
