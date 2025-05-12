@@ -414,18 +414,29 @@ function GetSearchString(pkm_arr,
     str = str + GetUnique(pkm_arr.map(e=>e.id)).join(",");
 
     // Shadow forms
-    if (pkm_arr.some(e=>e.shadow)) {
+    const has_shadow_forms = pkm_arr.some(e=>e.shadow);
+    if (has_shadow_forms) {
         str = str + "&" + GetUnique(pkm_arr.filter(e=>!e.shadow).map(e=>e.id)).join(",") + ",shadow";
+    }
+    else {
+        str = str + "&!shadow"
     }
 
     // Mega forms
-    if (pkm_arr.some(e=>e.form=="Mega"||e.form=="MegaY")) {
+    const has_mega_forms = pkm_arr.some(e=>e.form=="Mega"||e.form=="MegaY");
+    if (has_mega_forms) {
         str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY").map(e=>e.id)).join(",") + ",mega1-";
     }
+    /* Disabled - If we set filters to remove megas, still include the base pokemon
+    else {
+        str = str + "&!mega1-"
+    }*/
 
     // Pure forms
-    if (pkm_arr.some(e=>!(e.shadow||e.form=="Mega"||e.form=="MegaY"))) {
-        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&!e.shadow).map(e=>e.id)).join(",") + ",shadow,mega1-";
+    //const has_pure_forms = pkm_arr.some(e=>!(e.shadow||e.form=="Mega"||e.form=="MegaY"));
+    if (has_shadow_forms && has_mega_forms) {
+        str = str + "&" + GetUnique(pkm_arr.filter(e=>e.form!="Mega"&&e.form!="MegaY"&!e.shadow).map(e=>e.id)).join(",") 
+            + ",shadow,mega1-";
     }
 
     // Alternate (non-Mega) forms
@@ -435,7 +446,7 @@ function GetSearchString(pkm_arr,
         const filtered_in_forms = new Set(pkm_arr.filter(e=>e.id==pkm_id).map(e=>e.form).filter(e=>e!="Mega"&&e!="MegaY"));
 
         // Check if we need to try filtering down more specifically than by id
-        if (filtered_in_forms.size < all_possible_forms.size) {
+        if (filtered_in_forms.size < all_possible_forms.size && filtered_in_forms.size > 0) {
             // Only regional filtering is needed
             /* Remove regional-based filtering until Niantic fixes the broken keywords
                 if (all_possible_forms.difference(new Set(["Normal","Hisuian","Galarian","Alola","Paldea"])).size == 0) {
@@ -579,6 +590,10 @@ function RunSearchString(str,
                 fms = fms.concat(moves[0]); // fm
                 cms = cms.concat(moves[1]); // cm
             }
+
+            // make sure we're not empty so movesets are actually checked
+            if (fms.length == 0) fms.push(null); 
+            if (cms.length == 0) cms.push(null); 
         }
         else {
             fms.push(null);
