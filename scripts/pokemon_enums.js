@@ -540,9 +540,8 @@ function GetFormText(pokemon_id, form) {
         case "Normal":
             switch (pokemon_id) {
                 case 351: // Castform
-                    return "Normal Form";
                 case 386: // Deoxys
-                    return "Normal Forme";
+                return "Normal Form";
                 case 479: // Rotom
                     return "Rotom";
                 case 592: // Frillish
@@ -552,8 +551,6 @@ function GetFormText(pokemon_id, form) {
                 case 902: // Basculegion
                 case 916: // Oinkologne
                     return "Male";
-                case 646: // Kyurem
-                    return "Kyurem";
                 case 649: // Genesect
                     return "Normal";
                 case 890: // Eternatus
@@ -627,11 +624,11 @@ function GetFormText(pokemon_id, form) {
         case "Therian":
         case "Aria":
         case "Pirouette":
-            return form + " Forme";
+            return form + " Form";
         case "White":
             switch (pokemon_id) {
                 case 646: // Kyurem
-                    return "White Kyurem";
+                    return "White";
                 case 669: // Flabebe
                 case 670: // Floette
                 case 671: // Florges
@@ -639,7 +636,7 @@ function GetFormText(pokemon_id, form) {
             }
             break;
         case "Black":
-            return "Black Kyurem";
+            return "Black";
         case "Shock":
         case "Burn":
         case "Chill":
@@ -651,14 +648,14 @@ function GetFormText(pokemon_id, form) {
             return "Blue-Striped Form";
         case "White_striped":
             return "White-Striped Form";
-        case "Standard":
-            return "Standard Mode";
+        //case "Standard":
+        //    return "Standard Mode";
         case "Zen":
-            return "Zen Mode";
+            return "Zen";
         case "Galarian_standard":
-            return "Galarian Standard Mode";
+            return "Galarian";
         case "Galarian_zen":
-            return "Galarian Zen Mode";
+            return "Galarian Zen";
         case "Archipelago":
         case "Continental":
         case "Elegant":
@@ -705,14 +702,15 @@ function GetFormText(pokemon_id, form) {
         case "Super":
             return form + " Size";
         case "Fifty_percent":
-            return "50% Forme";
+            return "50% Form";
         case "Ten_percent":
-            return "10% Forme";
+            return "10% Form";
         case "Complete":
-            return "Complete Forme";
+            return "Complete Form";
         case "Confined":
+            return "Confined";
         case "Unbound":
-            return "Hoopa " + form;
+            return "Unbound";
         case "Baile":
             return "Baile Style";
         case "Pompom":
@@ -755,9 +753,9 @@ function GetFormText(pokemon_id, form) {
         case "Eternamax":
             return "Eternamax Eternatus";
         case "Single_strike":
-            return "Single Strike Style";
+            return "Single Strike";
         case "Rapid_strike":
-            return "Rapid Strike Style";
+            return "Rapid Strike";
         case "Ice_rider":
             return "Ice Rider";
         case "Shadow_rider":
