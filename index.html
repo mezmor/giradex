@@ -40,8 +40,8 @@
 <body class="darkmode">
 <div id=loading-bar-c><div id=loading-bar></div></div>
 <div id=overlay></div>
-<dialog class="card" id="moveset-edit" style="white-space: nowrap;">
-    <form autocomplete=off>
+<form autocomplete=off>
+    <dialog class="card" id="moveset-edit" style="white-space: nowrap;">
     <div class="card-header">
         <div class="card-title">Edit Moveset</div>
     </div>
@@ -69,10 +69,10 @@
         <input type="button" value="Reset" id="move-reset">
         <input type="submit" value="Apply" autofocus formmethod="dialog">
     </div>
-    </form>
 </dialog>
-<dialog class="card" id="search-string-popup" style="white-space: nowrap;">
-    <form autocomplete=off>
+</form>
+<form autocomplete=off>
+    <dialog class="card" id="search-string-popup" style="white-space: nowrap;">
     <div class="card-header">
         <div class="card-title">Generate Search String</div>
     </div>
@@ -110,16 +110,29 @@
             </div>
             <div class="column-r col">
                 <h3>Search String</h3>
-                <textarea id=search-string-result readonly autofocus></textarea>
+                <textarea id=search-string-result readonly></textarea>
             </div>
         </div>
+        <details id="search-string-issues">
+            <summary><h3>Possible Issues</h3></summary>
+            <div class="row">
+                <div class="column-l col">
+                    <h4>Incorrectly Included</h4>
+                    <ul class="pkm-list" id="search-string-included"></ul>
+                </div>
+                <div class="column-r col">
+                    <h4>Incorrectly Excluded</h4>
+                    <ul class="pkm-list" id="search-string-excluded"></ul>
+                </div>
+            </div>
+        </details>
     </div>
     <div class="card-footer buttons">
-        <input type="button" value="Copy" id="search-string-copy">
+        <input type="button" value="Copy" id="search-string-copy" autofocus>
         <input type="submit" value="Close" formmethod="dialog">
     </div>
-    </form>
 </dialog>
+</form>
 <header>
     <div class="site-size" id="header-content">
         <a id="header-left" href="/">

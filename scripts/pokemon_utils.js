@@ -159,6 +159,29 @@ function GetUniqueIdentifier(pkm_obj, unique_shadow = true, unique_level = true)
             "-" + (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]) : "");
 }
 
+/**
+ * Converts a UniqueIdentifier back to the original pkm_obj
+ */
+function ParseUniqueIdentifier(uniq_id, unique_shadow = true, unique_level = true) {
+    const fields = uniq_id.split("-").values(); // get iterator
+
+    let pkm_obj = {};
+    pkm_obj.id = parseInt(fields.next().value);
+    pkm_obj.form = fields.next().value;
+    if (unique_shadow)
+        pkm_obj.shadow = (fields.next().value === "true");
+    if (unique_level)
+        pkm_obj.level = parseInt(fields.next().value);
+
+    const base_pkm_obj = jb_pkm.find(e=>e.id==pkm_obj.id&&e.form==pkm_obj.form);
+    pkm_obj.name = base_pkm_obj.name;
+    pkm_obj.released = base_pkm_obj.released;
+    pkm_obj.stats = {...base_pkm_obj.stats};
+    pkm_obj.types = base_pkm_obj.types.slice();
+    
+    return pkm_obj;
+}
+
 
 /**
 * Gets the pokemon id from a clean input (lowercase alphanumeric).

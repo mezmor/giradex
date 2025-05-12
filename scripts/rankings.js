@@ -46,7 +46,27 @@ function BindSearchStringDialog() {
         const check_movesets = $("#chk-include-movesets").prop("checked");
         const check_elite_only = $('#chk-elite-movesets').prop("checked");
 
-        $("#search-string-result").text(GetSearchString(pkm_arr, check_movesets, check_elite_only));
+        const search_str = GetSearchString(pkm_arr, check_movesets, check_elite_only)
+        $("#search-string-result").text(search_str);
+
+        const result_arr = RunSearchString(search_str, check_movesets, check_elite_only);
+        const result_compare = ValidateSearchString(pkm_arr, result_arr, check_movesets, check_elite_only);
+
+        if (result_compare[0].size > 0 || result_compare[1].size > 0) {
+            $("#search-string-issues").css("display", "block");
+
+            $("#search-string-excluded").empty();
+            $("#search-string-included").empty();
+
+            for (const missed_mon of result_compare[0]) {
+                $("#search-string-excluded").append(GetMonLi(ParseUniqueIdentifier(missed_mon, true, false)));
+            }
+            for (const included_mon of result_compare[1])
+                $("#search-string-included").append(GetMonLi(ParseUniqueIdentifier(included_mon, true, false)));
+        }
+        else {
+            $("#search-string-issues").css("display", "none");
+        }
     }
 
     // Dialog Open/Close
@@ -81,6 +101,32 @@ function BindSearchStringDialog() {
             $('#chk-elite-movesets').prop("disabled", true);
         }
     });
+}
+
+/**
+ * Constructs Li element representing a pkm_obj
+ * 
+ * TODO: Probably can generalize this and use it for search results, table results
+ */
+function GetMonLi(pkm_obj) {
+    const li = $("<li></li>");
+
+    const coords = GetPokemonIconCoords(pkm_obj.id, pkm_obj.form);
+    const form_text = GetFormText(pkm_obj.id, pkm_obj.form).replace(/\s+Forme?/,"");
+
+    li.append("<span class=pokemon-icon style='background-image:url("
+        + ICONS_URL + ");background-position:" + coords.x + "px "
+        + coords.y + "px'></span>");
+    li.append(" <span class='strongest-name'>"
+        + ((pkm_obj.shadow)
+            ? "<span class=shadow-text>Shadow</span> " : "")
+        + pkm_obj.name
+        +"</span>");
+    
+    if (form_text.length > 0)
+        li.append("<span class=poke-form-name> (" + form_text + ")</span>");
+
+    return li;
 }
 
 /**
