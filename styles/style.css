@@ -474,8 +474,9 @@ dialog.card {
     max-width: calc(var(--site-width) - 2 * var(--site-margin));
     min-width: calc(var(--site-width)/2);
     max-height: 80%;
-
     padding: 0;
+    margin: 0;
+
     color: var(--col-text);
     background-color: var(--col-alt-bg);
 }    
@@ -483,7 +484,8 @@ dialog.card {
 dialog.card .card-body {
     padding: 1em;
     overflow-x: hidden;
-    overflow-y: clip;
+    overflow-y: auto;
+    max-height: calc(80vh - 8rem);
 }
 
 /*
@@ -505,20 +507,14 @@ li.move-select-move {
     margin: 0.1em 0;
     position: relative;
 }
-ul.pkm-list::-webkit-scrollbar,
-ul.move-select::-webkit-scrollbar,
-#search-string-result::-webkit-scrollbar { 
+:is(ul,textarea,div)::-webkit-scrollbar { 
     width: 0.5em; 
 }
-ul.pkm-list::-webkit-scrollbar-track,
-ul.move-select::-webkit-scrollbar-track,
-#search-string-result::-webkit-scrollbar-track { 
+:is(ul,textarea,div)::-webkit-scrollbar-track { 
     border: none; 
     background-color: var(--col-widget-back-hover); 
 }
-ul.pkm-list::-webkit-scrollbar-thumb,
-ul.move-select::-webkit-scrollbar-thumb,
-#search-string-result::-webkit-scrollbar-thumb { 
+:is(ul,textarea,div)::-webkit-scrollbar-thumb { 
     background-color: var(--col-widget); 
 }
 

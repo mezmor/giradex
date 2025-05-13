@@ -462,7 +462,8 @@ dialog.card .card-body {
         font-size: 0;
     }
 
-    .settings-list {
+    #filter-settings .settings-list,
+    #settings .settings-list {
         font-size: 0.8em;
     }
 
