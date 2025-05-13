@@ -151,18 +151,22 @@ function GetPokemonMoves(pkm_obj) {
  * 
  * If unique_shadow is false, shadows will hash to the same as their pure form.
  */
-function GetUniqueIdentifier(pkm_obj, unique_shadow = true, unique_level = true) {
+function GetUniqueIdentifier(pkm_obj, 
+        unique_shadow = true, unique_level = true, 
+        unique_moves = false, elite_moves_only = false) {
     return pkm_obj.id + 
         "-" + pkm_obj.form + 
         (unique_shadow ? "-" + pkm_obj.shadow : "") + 
-        (unique_level ? 
-            "-" + (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]) : "");
+        (unique_level ? "-" + (pkm_obj.level !== undefined ? pkm_obj.level : settings_default_level[0]) : "") + 
+        (unique_moves ? "-" + (pkm_obj.fm_is_elite || !elite_moves_only ? pkm_obj.fm : "null") 
+            + "-" + (pkm_obj.cm_is_elite || !elite_moves_only ? pkm_obj.cm : "null") : "");
 }
 
 /**
  * Converts a UniqueIdentifier back to the original pkm_obj
  */
-function ParseUniqueIdentifier(uniq_id, unique_shadow = true, unique_level = true) {
+function ParseUniqueIdentifier(uniq_id, 
+    unique_shadow = true, unique_level = true, unique_moves = false) {
     const fields = uniq_id.split("-").values(); // get iterator
 
     let pkm_obj = {};
@@ -172,6 +176,10 @@ function ParseUniqueIdentifier(uniq_id, unique_shadow = true, unique_level = tru
         pkm_obj.shadow = (fields.next().value === "true");
     if (unique_level)
         pkm_obj.level = parseInt(fields.next().value);
+    if (unique_moves) {
+        pkm_obj.fm = fields.next().value;
+        pkm_obj.cm = fields.next().value;
+    }
 
     const base_pkm_obj = jb_pkm.find(e=>e.id==pkm_obj.id&&e.form==pkm_obj.form);
     pkm_obj.name = base_pkm_obj.name;
@@ -572,32 +580,23 @@ function GetSearchString(pkm_arr,
  *     (in game this could be something like "mega1-" or "megaevolve" to find
  *     candidates that can become the desired mega form)
  */
-function RunSearchString(str,
-        check_movesets = true, check_elite_only = false) {
+function RunSearchString(str, check_movesets = true) {
     let pkm_arr = [];
     
+    // Run first check to pre-filter jb_pkm (prevents generating pointless movesets)
+    const search_space = ApplySearchString(str, jb_pkm);
+
     // Build up all possible mons and movesets
-    for (let pkm of jb_pkm) {
+    for (let pkm of search_space) {
         if (check_movesets && !(pkm.fm && pkm.cm)) continue;
 
         const moves = GetPokemonMoves(pkm);
-        let fms = [], cms = [];
+        let fms = [{name: null, elite: false}], cms = [{name: null, elite: false}];
         if (check_movesets) {
-            fms = fms.concat(moves[2]); // elite_fm
-            cms = cms.concat(moves[3]); // elite_cm
-
-            if (!check_elite_only) {
-                fms = fms.concat(moves[0]); // fm
-                cms = cms.concat(moves[1]); // cm
-            }
-
-            // make sure we're not empty so movesets are actually checked
-            if (fms.length == 0) fms.push(null); 
-            if (cms.length == 0) cms.push(null); 
-        }
-        else {
-            fms.push(null);
-            cms.push(null);
+            moves[0].forEach(fm=>fms.push({name: fm, elite: false}));
+            moves[1].forEach(cm=>cms.push({name: cm, elite: false}));
+            moves[2].forEach(elite_fm=>fms.push({name: elite_fm, elite: true}));
+            moves[3].forEach(elite_cm=>cms.push({name: elite_cm, elite: true}));
         }
 
         for (let fm of fms) {
@@ -607,8 +606,10 @@ function RunSearchString(str,
                     name: pkm.name,
                     form: pkm.form,
                     shadow: false,
-                    fm: fm,
-                    cm: cm,
+                    fm: fm.name,
+                    fm_is_elite: fm.elite,
+                    cm: cm.name,
+                    cm_is_elite: cm.elite,
                     types: pkm.types
                 });
 
@@ -619,8 +620,10 @@ function RunSearchString(str,
                         name: "Shadow " + pkm.name,
                         form: pkm.form,
                         shadow: true,
-                        fm: fm,
-                        cm: cm,
+                        fm: fm.name,
+                        fm_is_elite: fm.elite,
+                        cm: cm.name,
+                        cm_is_elite: cm.elite,
                         types: pkm.types
                     });
                 }
@@ -655,8 +658,13 @@ function ApplySearchString(str, pkm_arr) {
                 if (!isNaN(tok)) // id
                     clause_val = clause_val || ((p.id==tok) ^ invert);
                 if (tok[0]=="@") { // has attack
-                    let move_name = tok.slice(1);
-                    clause_val = clause_val || ((p.fm==move_name||p.cm==move_name) ^ invert);
+                    if (Array.isArray(p.fm) || Array.isArray(p.cm)) { // passthrough (pre-filtering)
+                        clause_val = true;
+                    }
+                    else {
+                        let move_name = tok.slice(1);
+                        clause_val = clause_val || ((!!p.fm&&p.fm.substring(0,move_name.length)==move_name || !!p.cm&&p.cm.substring(0,move_name.length)==move_name) ^ invert);
+                    }
                 }
                 if (POKEMON_TYPES.has(tok)) { // type
                     clause_val = clause_val || (p.types.includes(tok) ^ invert);
@@ -680,14 +688,20 @@ function ApplySearchString(str, pkm_arr) {
  */
 function ValidateSearchString(input_arr, output_arr, 
         check_movesets = true, check_elite_only = true) {
-    const all_inputs_uniq = new Set(input_arr.map(e=>GetUniqueIdentifier(e, true, false)));
-    const all_outputs_uniq = new Set(output_arr.map(e=>GetUniqueIdentifier(e, true, false)));
+    const all_inputs_uniq = new Set(input_arr.map(e=>GetUniqueIdentifier(e, true, false, check_movesets, check_elite_only)));
+
+    if (check_elite_only)
+        output_arr = output_arr.filter(o=>input_arr.some(
+            i=>i.id==o.id //&&i.form==o.form
+            &&(i.fm==o.fm||(o.fm===null&&!i.fm_is_elite))
+            &&(i.cm==o.cm||(o.cm===null&&!i.cm_is_elite))));
+    
+    const all_outputs_uniq = new Set(output_arr.map(e=>GetUniqueIdentifier(e, true, false, check_movesets, check_elite_only)));
 
     return [
         all_inputs_uniq.difference(all_outputs_uniq), // not found
         all_outputs_uniq.difference(all_inputs_uniq) // too many
     ];
-
 }
 
 /**

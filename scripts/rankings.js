@@ -44,7 +44,7 @@ function BindSearchStringDialog() {
         }
 
         const check_movesets = $("#chk-include-movesets").prop("checked");
-        const check_elite_only = $('#chk-elite-movesets').prop("checked");
+        const check_elite_only = $('#chk-elite-movesets').prop("checked") && check_movesets;
 
         const search_str = GetSearchString(pkm_arr, check_movesets, check_elite_only)
         $("#search-string-result").text(search_str);
@@ -59,10 +59,10 @@ function BindSearchStringDialog() {
             $("#search-string-included").empty();
 
             for (const missed_mon of result_compare[0]) {
-                $("#search-string-excluded").append(GetMonLi(ParseUniqueIdentifier(missed_mon, true, false)));
+                $("#search-string-excluded").append(GetMonLi(ParseUniqueIdentifier(missed_mon, true, false, check_movesets)));
             }
             for (const included_mon of result_compare[1])
-                $("#search-string-included").append(GetMonLi(ParseUniqueIdentifier(included_mon, true, false)));
+                $("#search-string-included").append(GetMonLi(ParseUniqueIdentifier(included_mon, true, false, check_movesets)));
         }
         else {
             $("#search-string-issues").css("display", "none");
@@ -94,7 +94,7 @@ function BindSearchStringDialog() {
     });
 
     // Settings
-    $('[name="min-tier"], #chk-include-movesets').change(UpdateSearchString);
+    $('[name="min-tier"], #chk-include-movesets, #chk-elite-movesets').change(UpdateSearchString);
     $('#chk-include-movesets').change(function (e) {
         if ($('#chk-include-movesets').prop("checked")) {
             $('#chk-elite-movesets').removeAttr("disabled");
@@ -103,6 +103,19 @@ function BindSearchStringDialog() {
             $('#chk-elite-movesets').prop("disabled", true);
         }
     });
+}
+
+/**
+ *  Enable/Disable Search String dialog button based on current settings
+ */ 
+function ShowHideSearchStringIcon() {
+    let visible = true;
+    if ($('#chk-suboptimal').is(":checked"))
+        visible = false;
+    if ($('#each-type-strongest-link').is('.selected'))
+        visible = false;
+
+    $('#search-string-icon').css('display', (visible ? '' : 'none'));
 }
 
 /**
@@ -227,6 +240,9 @@ function LoadStrongest(type = "Any") {
     //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
     $("#footnote-typed-ranking").css('display', search_params.type != "Any" ? 'block' : 'none');
     $("#footnote-versus").css('display', search_params.versus ? 'block' : 'none');
+
+    // Update Icon
+    ShowHideSearchStringIcon();
 }
 
 
