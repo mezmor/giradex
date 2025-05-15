@@ -584,7 +584,7 @@ function RunSearchString(str, check_movesets = true) {
     let pkm_arr = [];
     
     // Run first check to pre-filter jb_pkm (prevents generating pointless movesets)
-    const search_space = ApplySearchString(str, jb_pkm);
+    const search_space = ApplySearchString(str, jb_pkm, true);
 
     // Build up all possible mons and movesets
     for (let pkm of search_space) {
@@ -637,7 +637,7 @@ function RunSearchString(str, check_movesets = true) {
 /**
  * Filters an input pkm_arr based on the provided search string
  */
-function ApplySearchString(str, pkm_arr) {
+function ApplySearchString(str, pkm_arr, id_filter_only = false) {
     // Break into AND'd clauses and progressively filter down by each
     for (let clause of str.split(/[&|]/)) {
         pkm_arr = pkm_arr.filter(p => {
@@ -650,16 +650,20 @@ function ApplySearchString(str, pkm_arr) {
                     invert = true; // negation, to be XOR'd with the token's filter criteria
                     tok = tok.slice(1);
                 }
+                
+                if (!isNaN(tok)) // id
+                    clause_val = clause_val || ((p.id==tok) ^ invert);
+                else if (id_filter_only) {
+                    return true;
+                }
 
                 if (tok=="shadow") // shadow
                     clause_val = clause_val || (p.shadow ^ invert);
                 if (tok.slice(0,4)=="mega") // mega/primal
                     clause_val = clause_val || ((p.form=="Mega"||p.form=="MegaY") ^ invert);
-                if (!isNaN(tok)) // id
-                    clause_val = clause_val || ((p.id==tok) ^ invert);
                 if (tok[0]=="@") { // has attack
                     if (Array.isArray(p.fm) || Array.isArray(p.cm)) { // passthrough (pre-filtering)
-                        clause_val = true;
+                        return true;
                     }
                     else {
                         let move_name = tok.slice(1);
