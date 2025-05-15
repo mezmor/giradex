@@ -23,6 +23,125 @@ function BindRankings() {
 
         CheckURLAndAct();
     });
+
+    BindSearchStringDialog();
+}
+
+/**
+ * Bind event handlers for the search string generator popup
+ */
+function BindSearchStringDialog() {
+    function UpdateSearchString() {
+        const minTier = $('[name="min-tier"]:checked').val();
+
+        let pkm_arr;
+        if (minTier == "S") {
+            pkm_arr = str_pokemons.filter(e=>e.tier[0]=="S"||e.tier=="MRay");
+        }
+        else {
+            pkm_arr = str_pokemons.filter(e=>e.tier.charCodeAt(0)<=minTier.charCodeAt(0)||
+                e.tier[0]=="S"||e.tier=="MRay");
+        }
+
+        const check_movesets = $("#chk-include-movesets").prop("checked");
+        const check_elite_only = $('#chk-elite-movesets').prop("checked") && check_movesets;
+
+        const search_str = GetSearchString(pkm_arr, check_movesets, check_elite_only)
+        $("#search-string-result").text(search_str);
+
+        const result_arr = RunSearchString(search_str, check_movesets, check_elite_only);
+        const result_compare = ValidateSearchString(pkm_arr, result_arr, check_movesets, check_elite_only);
+
+        if (result_compare[0].size > 0 || result_compare[1].size > 0) {
+            $("#search-string-issues").css("display", "block");
+
+            $("#search-string-excluded").empty();
+            $("#search-string-included").empty();
+
+            for (const missed_mon of result_compare[0]) {
+                $("#search-string-excluded").append(GetMonLi(ParseUniqueIdentifier(missed_mon, true, false, check_movesets)));
+            }
+            for (const included_mon of result_compare[1])
+                $("#search-string-included").append(GetMonLi(ParseUniqueIdentifier(included_mon, true, false, check_movesets)));
+        }
+        else {
+            $("#search-string-issues").css("display", "none");
+        }
+    }
+
+    // Dialog Open/Close
+    $("#search-string-icon").click(function() {
+        $("#overlay").addClass("active");
+
+        UpdateSearchString();
+        $("#search-string-popup").get(0).show();
+    });
+    $("#search-string-popup").on("close", function(e) {
+        if (e.target === e.currentTarget) {// only apply to this, not children
+            $("#overlay").removeClass("active");
+        }
+    });
+
+    // Copy to Clipboard
+    $("#search-string-copy").click(async function (e) {
+        try {
+            await navigator.clipboard.writeText($("#search-string-result").text());
+            $("#search-string-copy").attr("value", "Copied!");
+            setTimeout(()=>{$("#search-string-copy").attr("value", "Copy")}, 1000);
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+        }
+    });
+
+    // Settings
+    $('[name="min-tier"], #chk-include-movesets, #chk-elite-movesets').change(UpdateSearchString);
+    $('#chk-include-movesets').change(function (e) {
+        if ($('#chk-include-movesets').prop("checked")) {
+            $('#chk-elite-movesets').removeAttr("disabled");
+        }
+        else {
+            $('#chk-elite-movesets').prop("disabled", true);
+        }
+    });
+}
+
+/**
+ *  Enable/Disable Search String dialog button based on current settings
+ */ 
+function ShowHideSearchStringIcon() {
+    let visible = true;
+    if ($('#chk-suboptimal').is(":checked"))
+        visible = false;
+    if ($('#each-type-strongest-link').is('.selected'))
+        visible = false;
+
+    $('#search-string-icon').css('display', (visible ? '' : 'none'));
+}
+
+/**
+ * Constructs Li element representing a pkm_obj
+ * 
+ * TODO: Probably can generalize this and use it for search results, table results
+ */
+function GetMonLi(pkm_obj) {
+    const li = $("<li></li>");
+
+    const coords = GetPokemonIconCoords(pkm_obj.id, pkm_obj.form);
+    const form_text = GetFormText(pkm_obj.id, pkm_obj.form).replace(/\s+Forme?/,"");
+
+    li.append("<span class=pokemon-icon style='background-image:url("
+        + ICONS_URL + ");background-position:" + coords.x + "px "
+        + coords.y + "px'></span>");
+    li.append(" <span class='strongest-name'>"
+        + ((pkm_obj.shadow)
+            ? "<span class=shadow-text>Shadow</span> " : "")
+        + pkm_obj.name
+        +"</span>");
+    
+    if (form_text.length > 0)
+        li.append("<span class=poke-form-name> (" + form_text + ")</span>");
+
+    return li;
 }
 
 /**
@@ -121,6 +240,9 @@ function LoadStrongest(type = "Any") {
     //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
     $("#footnote-typed-ranking").css('display', search_params.type != "Any" ? 'block' : 'none');
     $("#footnote-versus").css('display', search_params.versus ? 'block' : 'none');
+
+    // Update Icon
+    ShowHideSearchStringIcon();
 }
 
 
@@ -229,7 +351,7 @@ function ProcessAndGroup(str_pokemons, type, strongest_count) {
         }
         BuildTiers(str_pokemons, top_compare, type);
     
-        str_pokemons.length = Math.min(str_pokemons.length, strongest_count); // truncate late so all movesets could be evaluated
+        //str_pokemons.length = Math.min(str_pokemons.length, strongest_count); // truncate late so all movesets could be evaluated
     }
 }
 

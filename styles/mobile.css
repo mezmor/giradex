@@ -116,9 +116,12 @@ body {
     margin: 1rem 0;
 }
 
-dialog.card {
+dialog.card, #search-string-popup {
     max-width: calc(100vw - 2 * var(--site-margin));
     min-width: calc(100vw - 2 * var(--site-margin));
+}
+dialog.card .card-body {
+    font-size: 0.8em;
 }
 
 @media screen and (max-width:800px) { 
@@ -299,7 +302,7 @@ dialog.card {
     #strongest-table tr > *:nth-child(1) {
         width: 10px;
     }
-    .tier-label {
+    #strongest-table .tier-label {
         font-size: 8px;
         writing-mode: vertical-lr;
         transform: scale(-1);
@@ -455,11 +458,12 @@ dialog.card {
     #strongest-header .card-title { font-size: 0.9em; }
     #strongest-header .drawer-icon { font-size: 0.8em; }
 
-    .tier-label {
+    #strongest-table .tier-label {
         font-size: 0;
     }
 
-    .settings-list {
+    #filter-settings .settings-list,
+    #settings .settings-list {
         font-size: 0.8em;
     }
 
