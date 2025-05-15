@@ -5,12 +5,12 @@ const POGO_PNGS_URL = JB_URL + "graphics/pogo-256/"
 const SHINY_POGO_PNGS_URL = JB_URL + "graphics/pogo-shiny-256/"
 const ICONS_URL = JB_URL + "graphics/pokemonicons-sheet.png";
 
-const LOADING_MAX_VAL = 4; // max number of files that need to be loaded
+const LOADING_MAX_VAL = 5; // max number of files that need to be loaded
 let loading_val = 0; // number of files loaded so far
 let finished_loading = false; // whether page finished loading all files
 
 // jb json objects
-let jb_names, jb_pkm, jb_max_id, jb_fm, jb_cm;
+let jb_names, jb_pkm, jb_max_id, jb_fm, jb_cm, jb_spec, jb_unpatch;
 
 /**
  * Load JSONs from resource repo
@@ -20,6 +20,7 @@ function LoadJSONData() {
     HttpGetAsync(JB_URL + "pogo_pkm_names.json",
         function(response) { 
             jb_names = JSON.parse(response); 
+            IncreaseLoadingVal();
         });
     //HttpGetAsync(JB_URL + "mega_pokemon.json",
     //    function(response) { jb_mega = JSON.parse(response); });
@@ -32,14 +33,24 @@ function LoadJSONData() {
             jb_pkm = jb_pkm.filter((item) => {
                 return GetPokemonForms(item.id).includes(item.form);
             });
+            IncreaseLoadingVal();
         });
     HttpGetAsync(JB_URL + "pogo_fm.json",
         function(response) { 
             jb_fm = JSON.parse(response); 
             jb_fm.find(e => e.name=="Hidden Power").type = "None"; // Make non-specific Hidden Power typeless
+            IncreaseLoadingVal();
         });
     HttpGetAsync(JB_URL + "pogo_cm.json",
-        function(response) { jb_cm = JSON.parse(response); });
+        function(response) { 
+            jb_cm = JSON.parse(response); 
+            IncreaseLoadingVal();
+        });
+    HttpGetAsync(JB_URL + "pogo_pkm_manual_announced.json",
+        function(response) { 
+            jb_spec = JSON.parse(response);
+            IncreaseLoadingVal();
+        });
 }
 
 /**
@@ -65,7 +76,6 @@ function HttpGetAsync(url, callback) {
     xml_http.onreadystatechange = function() { 
         if (xml_http.readyState == 4 && xml_http.status == 200) {
             callback(xml_http.response);
-            IncreaseLoadingVal();
         }
     }
     xml_http.open("GET", url, true); // true for asynchronous 
@@ -88,6 +98,11 @@ function IncreaseLoadingVal() {
         setTimeout(function() {
             $("#loading-bar").css("display", "none");
         }, 100);
+
+        if (settings_speculative) {
+            PatchSpeculative(settings_speculative);
+        }
+
         CheckURLAndAct();
 
         InitializePokemonSearch();
@@ -175,4 +190,47 @@ function SwapShiny(element) {
     }
 
     $(element).attr("src", src);
+}
+
+/**
+ * Modifies jb_pkm either direction (applying or un-applying patches)
+ */
+function PatchSpeculative(useUpcoming) {
+    if (useUpcoming && jb_spec) {
+        jb_unpatch = [];
+
+        for (const patch of jb_spec) {
+            const pkm_obj = jb_pkm.find(e=>e.id==patch.id&&e.form==patch.form);
+            if (!pkm_obj)
+                continue;
+
+            let unpatch_obj = {
+                id: pkm_obj.id,
+                name: pkm_obj.name,
+                form: pkm_obj.form
+            };
+
+            for (const k of Object.keys(patch)) {
+                if (!["id", "name", "form"].includes(k)) {
+                    unpatch_obj[k] = pkm_obj[k];
+                    pkm_obj[k] = patch[k];
+                }
+            }
+
+            jb_unpatch.push(unpatch_obj);
+        }
+    }
+    else if (!useUpcoming && jb_unpatch) {
+        for (const unpatch of jb_unpatch) {
+            const pkm_obj = jb_pkm.find(e=>e.id==unpatch.id&&e.form==unpatch.form);
+            if (!pkm_obj)
+                continue;
+            
+            for (const k of Object.keys(unpatch)) {
+                if (!["id", "name", "form"].includes(k)) {
+                    pkm_obj[k] = unpatch[k];
+                }
+            }
+        }
+    }
 }

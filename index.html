@@ -118,28 +118,33 @@
                                     <span id=pp-3 class="settings-opt unselectable">3</span>
                                     <span id=pp-4 class="settings-opt unselectable">4</span>
                                 </div>
-                            <span class="tooltip tooltip-left">Raid Team Size
+                            <span class="tooltip tooltip-left" id="settings-teamsize-header">Raid Team Size
                                 <span class="tooltiptext">
                                     <p>Size of battle team for computing eDPS</p>
                                     <p><i>Computes eDPS as if N identical copies of the Pokémon were in a battle team, and relobbying only occurred after each Nth death</i></p></span>
                             </span>
-                                <div class="col">
+                                <div class="col" id="settings-teamsize">
                                     <span id=rt-6 class="settings-opt settings-opt-sel unselectable">6-Stack</span>
                                     <span id=rt-1 class="settings-opt unselectable">Solo</span>
                                     <span id=rt-m1 class="settings-opt unselectable tooltip">MegaSolo
                                         <span class="tooltiptext">
                                         <p>Use a 6-mon team for everything but Megas, which fight solo</p></span></span>
                                 </div>
-                            <span class="tooltip tooltip-left">Relobby Time
+                            <span class="tooltip tooltip-left" id="settings-relobby-header">Relobby Time
                                 <span class="tooltiptext">Time spent max reviving a full raid team and rejoining the battle</span>
                             </span>
                                 <input type="number" id=relobby-time class="settings-num" value="10" min="0" max="300" step="1">
-                            <div class=settings-subtitle>Display Settings</div>
-                            <span>Color Scheme</span>
-                                <div class=setting-value>
-                                    <span id=opt-darkmode class="settings-opt settings-opt-sel unselectable">Dark</span>
-                                    <span id=opt-lightmode class="settings-opt unselectable">Light</span>
-                                </div>
+                            <div class=settings-subtitle>Site Settings</div>
+                            <span>Data Preview</span>
+                                <label class="switch">
+                                    <input type="checkbox" value="speculative" id="settings-speculative" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            <span>Dark Mode</span>
+                                <label class="switch">
+                                    <input type="checkbox" value="theme" id="settings-darkmode" checked>
+                                    <span class="slider"></span>
+                                </label>
                         </div>
                     </div>
                 </div>

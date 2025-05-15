@@ -19,6 +19,7 @@ let settings_relobbytime = 10;
 let settings_team_size_normal = 6;
 let settings_team_size_mega = 6;
 let settings_theme = "darkmode";
+let settings_speculative = true;
 
 // inaccessible
 let settings_metric_exp = 0.225;
@@ -40,8 +41,12 @@ function BindSettings() {
     });
 
     // Dark Mode
-    $("#opt-darkmode").click(function() { SetTheme("darkmode"); });
-    $("#opt-lightmode").click(function() { SetTheme("lightmode"); });
+    $("#settings-darkmode").change(function() { 
+        if ($("#settings-darkmode").is(":checked"))
+            SetTheme("darkmode"); 
+        else 
+            SetTheme("lightmode"); 
+    });
 
     // Expand/Shrink Dev Note
     $("#note-icon").click(function() { ToggleNote(); });
@@ -98,6 +103,11 @@ function BindSettings() {
     $("#tier-broad").click(function() { SetTierMethod("broad"); });
     $("#tier-espace").click(function() { SetTierMethod("ESpace"); });
     $("#tier-abs").click(function() { SetTierMethod("absolute"); });
+
+    // Speculative Data
+    $("#settings-speculative").change(function() { 
+        SetSpeculative($("#settings-speculative").is(":checked")); 
+    });
 }
 
 /**
@@ -145,6 +155,17 @@ function SetMetric(metric) {
                 break;
         }
     }
+
+    // show/hide eDPS parameters
+    if (metric == "eDPS") {
+        $("#settings-teamsize-header, #settings-teamsize").css("display", "");
+        $("#settings-relobby-header, #relobby-time").css("display", "");
+    }
+    else {
+        $("#settings-teamsize-header, #settings-teamsize").css("display", "none");
+        $("#settings-relobby-header, #relobby-time").css("display", "none");
+    }
+
     // sets settings options selected class
     /*$("#metric-er").removeClass("settings-opt-sel");
     $("#metric-eer").removeClass("settings-opt-sel");
@@ -400,10 +421,22 @@ function SetTheme(theme = "darkmode") {
     $("body").removeClass();
     $("body").addClass(theme);
     settings_theme = theme;
+}
 
-    $("#opt-darkmode").removeClass("settings-opt-sel");
-    $("#opt-lightmode").removeClass("settings-opt-sel");
-    $("#opt-"+theme).addClass("settings-opt-sel");
+/**
+ * Modifies the jb_pkm array based on announced upcoming changes
+ */
+function SetSpeculative(useUpcoming) {
+    settings_speculative = useUpcoming;
+
+    PatchSpeculative(settings_speculative);
+    
+    // Reset caches
+    ClearTypeTiers();
+    ClearMoveUserMap()
+    
+    // reload page
+    CheckURLAndAct();
 }
 
 /**
