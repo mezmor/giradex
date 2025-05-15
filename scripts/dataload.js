@@ -17,13 +17,13 @@ let jb_names, jb_pkm, jb_max_id, jb_fm, jb_cm;
  */
 function LoadJSONData() {
     // jb
-    HttpGetAsync(JB_URL + "pokemon_names.json",
+    HttpGetAsync(JB_URL + "pogo_pkm_names.json",
         function(response) { 
             jb_names = JSON.parse(response); 
         });
     //HttpGetAsync(JB_URL + "mega_pokemon.json",
     //    function(response) { jb_mega = JSON.parse(response); });
-    HttpGetAsync(JB_URL + "pogo_pkm.json",
+    HttpGetAsync(JB_URL + "pogo_pkm.min.json",
         function(response) {
             jb_pkm = JSON.parse(response);
             jb_max_id = jb_pkm.at(-1).id;

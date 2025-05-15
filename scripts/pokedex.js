@@ -8,11 +8,13 @@ function LoadPokedex(pokedex_mon) {
     if (!finished_loading || loading_pogo_moves || loading_counters)
         return;
 
-    if (pokedex_mon.pokemon_id == 0)
+    if (!pokedex_mon || pokedex_mon.pokemon_id == 0) {
+        LoadPokedexAndUpdateURL(GetPokeDexMon(1, "Normal", null, null));
         return;
+    }
 
     // sets the page title
-    const pokemon_name = jb_names[pokedex_mon.pokemon_id].name;
+    const pokemon_name = jb_names[pokedex_mon.pokemon_id];
     document.title = "#" + pokedex_mon.pokemon_id + " " + pokemon_name
             + " - DialgaDex";
 

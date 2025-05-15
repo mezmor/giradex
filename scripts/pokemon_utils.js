@@ -161,36 +161,23 @@ function GetUniqueIdentifier(pkm_obj, unique_shadow = true, unique_level = true)
 
 
 /**
-* Gets the pokemon id from a clean input (lowercase alphanumeric).
+* Gets the pokemon id from a url parameter.
 * The input could be the id itself or the pokemon name.
 * Returns 0 if it doesn't find it.
 */
-function GetPokemonId(clean_input) {
-
+function GetPokemonId(in_str) {
     // checks for an id
-    if (/^\d+$/.test(clean_input)) { // if input is an integer
-        if (clean_input >= 1 && clean_input <= jb_max_id)
-            return parseInt(clean_input);
+    if (/^\d+$/.test(in_str)) { // if input is an integer
+        if (in_str >= 1 && in_str <= jb_max_id)
+            return parseInt(in_str);
     }
+
+    const clean_input = CleanPokeName(in_str);
 
     // checks for a name
-    let pokemon_id = 0;
-    Object.keys(jb_names).forEach(function (key) {
-        if (CleanPokeName(jb_names[key].name) == clean_input)
-            pokemon_id = key;
-    });
+    let pokemon_id = jb_names.findIndex(e=>CleanPokeName(e) == clean_input);
 
-    // if still didn't find anything
-    if (pokemon_id == 0) {
-
-        // checks for stupid nidoran
-        if (clean_input == "nidoranf")
-            return 29;
-        else if (clean_input == "nidoranm")
-            return 32;
-    }
-
-    if (pokemon_id > jb_max_id)
+    if (pokemon_id > jb_max_id || pokemon_id < 1)
         return 0;
 
     return parseInt(pokemon_id);
@@ -210,7 +197,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
         can_be_shadow = poke_obj.shadow;
     }
     else {
-        pokemon_name = jb_names[pokemon_id].name;
+        pokemon_name = jb_names[pokemon_id];
     }
     
     const img_src_name = GetPokemonImgSrcName(pokemon_id, form);

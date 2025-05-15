@@ -335,8 +335,9 @@ function InitializePokemonSearch() {
 
     // Add entries for mons completely missing from game data
     const all_names = search_values.map(e => e.name);
-    Object.values(jb_names).filter(e => !all_names.includes(e.name) && e.id <= jb_max_id).forEach(e => {
-        search_values.push({id: e.id, name: e.name, form: 'Normal', types: []});
+    jb_names.forEach((e, idx) => {
+        if (!all_names.includes(e) && idx <= jb_max_id && idx >= 1)
+            search_values.push({id: idx, name: e, form: 'Normal', types: []});
     });
 
     const pokemonSearch = new autoComplete({
