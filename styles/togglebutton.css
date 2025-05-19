@@ -38,6 +38,7 @@ input.toggling + label.togglebutton .action {
     position: relative;
     overflow: hidden;
     display: grid;
+    text-align: center;
 }
 
 input.toggling + label.togglebutton .action span {

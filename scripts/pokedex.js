@@ -1110,84 +1110,28 @@ function UpdateMovesetEditor() {
         $("#cm-select").append(GetEditableMove(cm, "cm", true));
     }
 
-    if (!move_searchs_loaded) {
-        InitMoveInput("fm");
-        InitMoveInput("cm");
-        move_searchs_loaded = true;
-    }
+    LoadMoveInputs();
 }
 
-let move_searchs_loaded = false;
 /**
- * Creates and displays an input field to easily enter a new move for addition
- * to the currently displayed Pokemon's moveset.
+ * Add a move to a Pokemon and refresh dialog
  */
-function InitMoveInput(moveType) {
-    let moveList = [];
-    if (moveType == "fm" || moveType == "any")
-        jb_fm.forEach(e => moveList.push(e.name));
-    if (moveType == "cm" || moveType == "any")
-        jb_cm.forEach(e => moveList.push(e.name));
-    moveList = moveList.sort();
+function AddPokemonMove(pkm_obj, move_name, moveType) {
+    if (move_name == "")
+        return;
 
-    const moveSearch = new autoComplete({
-        selector: "#" + moveType + "-search-box",
-        data: {
-            src: moveList
-        },
-        resultsList: {
-            class: "suggestions move-suggestions",
-            maxResults: 5
-        },
-        resultItem: {
-            highlight: true,
-            element: (item, data) => {
-                let type = 'any-type';
-                let move = jb_fm.find(e => e.name == data.value);
-                if (!move) move = jb_cm.find(e => e.name == data.value);
-                if (move) type = move.type;
-
-                const moveTag = $('<span></span>');
-                moveTag.html($(item).html().replaceAll(" Plus", "+"));
-                $(item).html('');
-                moveTag.addClass('type-text');
-                moveTag.addClass('bg-' + type);
-                $(item).append(moveTag);
-                $(item).addClass('move-search-result');
-            }
-        },
-        events: {
-            input: {
-                focus() {
-                    const inputValue = moveSearch.input.value;
-
-                    if (inputValue.length) moveSearch.start();
-                },
-            },
-        },
-    })
-    $(moveSearch.wrapper).addClass("move-input-popup");
-    moveSearch.input.addEventListener("render", function(e) {
-        if (moveSearch.cursor == -1) { moveSearch.goTo(0); }
-    });
-    moveSearch.input.addEventListener("selection", function(e) {
-        const newMove = e.detail.selection.value;
-        if (moveSearch.input.value == "")
-            return;
-
-        if (moveType == "fm" || (moveType == "any" && jb_fm.map(e => e.name).includes(newMove))) {
-            if (!current_pkm_obj.fm_add) 
-                current_pkm_obj.fm_add = [];
-            current_pkm_obj.fm_add.push(newMove);
-            UpdateMovesetEditor();
-        }
-        else if (moveType == "cm" || (moveType == "any" && jb_cm.map(e => e.name).includes(newMove))) {
-            if (!current_pkm_obj.cm_add) 
-                current_pkm_obj.cm_add = [];
-            current_pkm_obj.cm_add.push(newMove);
-            UpdateMovesetEditor();
-        }
-    });
+    if (moveType == "fm" || (moveType == "any" && jb_fm.map(e => e.name).includes(move_name))) {
+        if (!pkm_obj.fm_add) 
+            pkm_obj.fm_add = [];
+        pkm_obj.fm_add.push(move_name);
+        UpdateMovesetEditor();
+    }
+    else if (moveType == "cm" || (moveType == "any" && jb_cm.map(e => e.name).includes(move_name))) {
+        if (!pkm_obj.cm_add) 
+            pkm_obj.cm_add = [];
+        pkm_obj.cm_add.push(move_name);
+        UpdateMovesetEditor();
+    }
 }
 
 /**

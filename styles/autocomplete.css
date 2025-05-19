@@ -101,7 +101,7 @@
     background-color: rgba(#ffffff, 0);
 }
 
-.autoComplete_wrapper > table > tr:hover, .autoComplete_wrapper > ul:hover {
+.autoComplete_wrapper > table > tr:hover, .autoComplete_wrapper > ul li:hover {
     cursor: pointer;
     background-color: rgba(123, 123, 123, 0.1);
 }

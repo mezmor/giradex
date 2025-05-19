@@ -168,6 +168,9 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="button"], button {
     cursor: pointer;
 }
+input.invalid {
+    border: 1px solid var(--col-red) !important;
+}
 
 sup { vertical-align: top; }
 
@@ -588,7 +591,6 @@ dialog.card h3, dialog.card h4 {
     margin: 0;
 }
 
-
 ul.pkm-list {
     width: 100%;
     height: calc(92px + 1em); /* 3*30px rows + 2px border + 1em pad */
@@ -603,6 +605,92 @@ ul.pkm-list {
 
     color: var(--col-text);
     font-weight: bold;
+}
+
+#move-edit-type {
+    height: 100%;
+    width: 9em;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 5px;
+    font-size: 1em;
+    text-align: center;
+    box-shadow: none;
+    cursor: pointer;
+}
+label[for="move-edit-kind"] {
+    width: 5em;
+    box-sizing: border-box;
+}
+
+.move-form {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    column-gap: 1em;
+    row-gap: 0.5em;
+    height: max-content;
+    line-height: 1.6em;
+}
+.move-form > *:nth-child(odd) {
+    justify-self: end;
+    text-align: right;
+}
+.move-form input {
+    line-height: 1.6em;
+    width: 15em;
+    box-sizing: border-box;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+.move-form div.num-input-group {
+    width: 15em;
+}
+div.num-input-group {
+    display: flex;
+    flex-flow: row nowrap;
+}
+div.num-input-group > input[type=number] {
+    flex: 1 0 0;
+    border-radius: 0;
+    width: auto;
+    text-align: center;
+}
+input.minus, input.plus {
+    width: 2em;
+    font-weight: bold;
+    border-radius: 0;
+    background-color: var(--col-widget);
+}
+input.minus:hover, input.plus:hover {
+    box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.5), 
+        inset 0 0 1em 5px rgba(255, 255, 255, 0.25);
+}
+input.minus {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-right: none;
+}
+input.plus {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-left: none;
+}
+.move-form .bar-bg {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 5px;
+    width: 15em;
+    margin: 0;
+    border: 0px;
+    background-color: transparent;
+
+    cursor: pointer;
+}
+.move-form .bar-fg {
+    flex: 1 0 0;
+    border-radius: 5px;
+    height: 1.6em;
+    padding: 2px 0;
 }
 
 /* 

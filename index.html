@@ -76,6 +76,78 @@
     </div>
 </form>
 </dialog>
+<dialog class="card" id="move-edit" style="white-space: nowrap;">
+<form autocomplete=off>
+    <div class="card-header">
+        <div class="card-title" id="move-edit-title">Edit Move Data</div>
+    </div>
+    <div class="card-body">
+        <div class="move-form">
+            <span>Name:</span>
+                <div style="position: relative;">
+                    <input type=text class=search-box name="name" id="any-search-box" autofocus>
+                    <img class="inlaid-icon search-icon" src="imgs/search.svg" />
+                </div>
+            <span>Type:</span>
+                <div class="row" style="gap: 1em; white-space-collapse: collapse;">
+                    <select type="select" class="type-text bg-Normal" name="type" id="move-edit-type">
+                        <option value="Normal" class="bg-Normal">Normal</option>
+                        <option value="Fire" class="bg-Fire">Fire</option>
+                        <option value="Water" class="bg-Water">Water</option>
+                        <option value="Grass" class="bg-Grass">Grass</option>
+                        <option value="Electric" class="bg-Electric">Electric</option>
+                        <option value="Ice" class="bg-Ice">Ice</option>
+                        <option value="Fighting" class="bg-Fighting">Fighting</option>
+                        <option value="Poison" class="bg-Poison">Poison</option>
+                        <option value="Ground" class="bg-Ground">Ground</option>
+                        <option value="Flying" class="bg-Flying">Flying</option>
+                        <option value="Psychic" class="bg-Psychic">Psychic</option>
+                        <option value="Bug" class="bg-Bug">Bug</option>
+                        <option value="Rock" class="bg-Rock">Rock</option>
+                        <option value="Ghost" class="bg-Ghost">Ghost</option>
+                        <option value="Dragon" class="bg-Dragon">Dragon</option>
+                        <option value="Dark" class="bg-Dark">Dark</option>
+                        <option value="Steel" class="bg-Steel">Steel</option>
+                        <option value="Fairy" class="bg-Fairy">Fairy</option>
+                    </select>
+                    <input type="checkbox" class="toggling" value="fast" name="kind" id="move-edit-kind">
+                    <label class="togglebutton" for="move-edit-kind" tabindex="0">
+                        <div class="action">
+                            <span class="option-1">Fast</span>
+                            <span class="option-2">Charged</span>
+                        </div>
+                    </label>
+                </div>
+            <span>Power:</span>
+                <div class="num-input-group">
+                    <input type="button" data-id="move-edit-power" class="minus" value="–" />
+                    <input type=number name="power" id="move-edit-power" min=0 max=50 step=1 >
+                    <input type="button" data-id="move-edit-power" class="plus" value="+" />
+                </div>
+            <span>Energy:</span>
+                <div>
+                    <div class="bar-bg unselectable" id="move-edit-energybar"></div>
+                    <div class="num-input-group" id="move-edit-energygroup">
+                        <input type="button" data-id="move-edit-energy" class="minus" value="–" />
+                        <input type=number name="energy" id="move-edit-energy" min=0 max=100 step=1 >
+                        <input type="button" data-id="move-edit-energy" class="plus" value="+" />
+                    </div>
+                </div>
+            <span>Duration:</span>
+                <div class="num-input-group">
+                    <input type="button" data-id="move-edit-duration" class="minus" value="–" />
+                    <input type=number name="duration" id="move-edit-duration" min=0.5 max=5 step=0.5 >
+                    <input type="button" data-id="move-edit-duration" class="plus" value="+" />
+                </div>
+        </div>
+    </div>
+    <div class="card-footer buttons">
+        <input type="button" value="Clear" id="move-edit-clear">
+        <input type="button" value="Apply" id="move-edit-apply" style="background-color: var(--col-widget);">
+        <input type="button" value="Delete" id="move-edit-delete" style="background-color: var(--col-red);" hidden>
+    </div>
+</form>
+</dialog>
 <dialog class="card" id="search-string-popup" style="white-space: nowrap;">
 <form autocomplete=off>
     <div class="card-header">
@@ -803,6 +875,9 @@
                         </div>
                     </label>
                     <span> Move Data</span>
+                </div>
+                <div class="drawer absolute-right v-middle" id="move-edit-icon">
+                    <img class="drawer-icon" src="imgs/edit.svg"/>
                 </div>
             </div>
             <div class="card-body">
