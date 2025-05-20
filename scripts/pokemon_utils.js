@@ -232,7 +232,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     }
     
     const img_src_name = GetPokemonImgSrcName(pokemon_id, form);
-    let img_src = GIFS_URL + img_src_name + ".gif";
+    let img_src = JB_URL + GIFS_PATH + img_src_name + ".gif";
     const form_text = GetFormText(pokemon_id, form);
 
     // container div

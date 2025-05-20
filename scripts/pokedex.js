@@ -486,7 +486,7 @@ function ProcessAndSetCountersFromArray(counters,
         // sets counter's image
         let img = $("<img onload='HideLoading(this)' onerror='TryNextSrc(this)'></img>");
         let img_src_name = GetPokemonImgSrcName(counter_0.id, counter_0.form);
-        let img_src = GIFS_URL + img_src_name + ".gif";
+        let img_src = JB_URL + GIFS_PATH + img_src_name + ".gif";
         img.attr("src", img_src);
         const div = $("<div></div>");
 
