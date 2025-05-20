@@ -49,6 +49,9 @@
 <form autocomplete=off>
     <div class="card-header">
         <div class="card-title">Edit Moveset</div>
+        <div class="drawer absolute-right v-middle dialog-close">
+            <img class="drawer-icon" src="imgs/close.svg"/>
+        </div>
     </div>
     <div class="card-body">
         <div class="row">
@@ -80,6 +83,9 @@
 <form autocomplete=off>
     <div class="card-header">
         <div class="card-title" id="move-edit-title">Edit Move Data</div>
+        <div class="drawer absolute-right v-middle dialog-close">
+            <img class="drawer-icon" src="imgs/close.svg"/>
+        </div>
     </div>
     <div class="card-body">
         <div class="move-form">
@@ -152,6 +158,9 @@
 <form autocomplete=off>
     <div class="card-header">
         <div class="card-title">Generate Search String</div>
+        <div class="drawer absolute-right v-middle dialog-close">
+            <img class="drawer-icon" src="imgs/close.svg"/>
+        </div>
     </div>
     <div class="card-body">
         <div class="row">
@@ -205,8 +214,7 @@
         </details>
     </div>
     <div class="card-footer buttons">
-        <input type="button" value="Copy" id="search-string-copy" autofocus>
-        <input type="submit" value="Close" formmethod="dialog">
+        <input type="button" value="Copy" id="search-string-copy" style="background-color: var(--col-widget);" autofocus>
     </div>
 </dialog>
 </form>

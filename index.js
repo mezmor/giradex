@@ -49,8 +49,8 @@ function BindAll() {
     // Passthrough clicks for touchscreens
     $(document).click(function(event) { OnDocumentClick(event); });
 
-    // Close dialog by clicking away
-    $("#overlay").click(function(e) {
+    // Close dialog by clicking away or clicking X
+    $("#overlay, .dialog-close").click(function(e) {
         $("#overlay").removeClass("active");
         $("dialog").toArray().forEach(e=>e.close());
     });
