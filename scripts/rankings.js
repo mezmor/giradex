@@ -624,11 +624,11 @@ function SetRankingTable(str_pokemons, num_rows = null,
             const td_fm =
                 "<td><a class='type-text bg-"
                 + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
-                + "onclick=LoadMovesAndUpdateURL('" + p.fm_type + "','Fast')>"
+                + "onclick=\"OpenMoveEditor('" + p.fm + "')\">"
                 + p.fm + ((p.fm_is_elite) ? "*" : "") + "</a></td>";
             const td_cm =
                 "<td><a class='type-text bg-" + p.cm_type + "' "
-                + "onclick=LoadMovesAndUpdateURL('" + p.cm_type + "','Charged')>"
+                + "onclick=\"OpenMoveEditor('" + p.cm + "')\">"
                 + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</a></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";

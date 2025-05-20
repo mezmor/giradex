@@ -410,10 +410,11 @@ function SetMoveTable(sort_info) {
         const tr = $("<tr></tr>");
         
         const td_move_name ="<td" + (sort_info.sort_by=="name" ? " class='selected'" : "") + ">" + 
-                "<span class='type-text bg-" +
-                ((md.name == "Hidden Power") ? "any-type" : md.type) + "'>" +
+                "<a class='type-text bg-" +
+                ((md.name == "Hidden Power") ? "any-type" : md.type) + "'" +
+                " onclick=\"OpenMoveEditor('" + md.name + "')\">" +
                 md.name.replaceAll(" Plus", "+") + 
-            "</span></td>";
+            "</a></td>";
 
         const td_power = MoveDataTD(FormatDecimal(md.power,3,0), 
             sort_info.sort_by=="power");
