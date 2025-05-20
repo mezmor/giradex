@@ -26,15 +26,20 @@ function BindMoveData() {
     
     // Move Editor
     $("#move-edit-icon").click(function() {
-        $("#overlay").addClass("active");
-
-        UpdateMoveEditor();
-        $("#move-edit").get(0).show();
+        OpenMoveEditor();
     });
     $("#move-edit").on("close", function(e) {
         if (e.target === e.currentTarget) {// only apply to this, not children
             $("#overlay").removeClass("active");
-            CheckURLAndAct();
+
+            if (made_edits) {
+                ClearTypeTiers();
+                ClearMoveUserMap();
+                ClearMoveData();
+
+                CheckURLAndAct();
+                made_edits = false;
+            }
         }
     });
 
@@ -341,7 +346,13 @@ function BuildMoveUserMap(force_reload = false) {
  * Clear move user cache (can rebuild later as needed)
  */
 function ClearMoveUserMap() {
-    delete top_move_users;
+    top_move_users = null;
+}
+/**
+ * Clear move data cache (can rebuild later as needed)
+ */
+function ClearMoveData() {
+    all_move_data = null;
 }
 
 /** 
@@ -496,12 +507,12 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
         $("#any-search-box").val(move_obj.name);
         $("#move-edit-type").val(move_obj.type);
         $("#move-edit-kind").prop("checked", move_kind == "cm");
+        $("#move-edit-type").trigger("change");
+        $("#move-edit-kind").trigger("change");
+
         $("#move-edit-power").val(move_obj.power);
         $("#move-edit-energy").val(move_obj.energy_delta);
         $("#move-edit-duration").val(ProcessDuration(move_obj.duration));
-
-        $("#move-edit-type").trigger("change");
-        $("#move-edit-kind").trigger("change");
 
         $("#move-edit-apply").val("Edit");
         if (move_obj.custom)
@@ -519,16 +530,31 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
             $("#move-edit-power").val(10);
             $("#move-edit-energy").val(10);
             $("#move-edit-duration").val(1.0);
+
+            $("#move-edit-type").trigger("change");
+            $("#move-edit-kind").trigger("change");
         }
         
         $("#move-edit-apply").val("Add");
         $("#move-edit-delete").attr("hidden", true)
     }
     
-    $("#move-edit-type").trigger("change");
-    $("#move-edit-kind").trigger("change");
 
     LoadMoveInputs();
+}
+
+
+let made_edits = false;
+/**
+ * Opens the dialog to the specified move (including showing the dialog)
+ */
+function OpenMoveEditor(move_name) {
+    $("#overlay").addClass("active");
+
+    UpdateMoveEditor(move_name);
+    $("#move-edit").get(0).show();
+
+    made_edits = false;
 }
 
 let move_searchs_loaded = false;
@@ -628,8 +654,7 @@ function AddEditMove() {
             jb_cm.push(dest_move_obj);
     }
 
-    ClearTypeTiers();
-    ClearMoveUserMap();
+    made_edits = true;
 }
 
 /**
@@ -639,8 +664,7 @@ function DeleteMove(move_name) {
     jb_fm = jb_fm.filter(e=>e.name != move_name);
     jb_cm = jb_cm.filter(e=>e.name != move_name);
 
-    ClearTypeTiers();
-    ClearMoveUserMap();
+    made_edits = true;
 }
 
 /**

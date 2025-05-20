@@ -227,7 +227,7 @@ function CheckURLAndAct() {
             return;
         }
 
-        // loads strongest (default)
+        // loads moves (default)
         LoadMoves();
 
         return;
