@@ -28,13 +28,17 @@ function GetPokemonStats(pkm_obj, level = null, ivs = null) {
 function GetRaidStats(pkm_obj, tier = null) {
 
     if (!tier) {
-        tier = 3;
-        if (pkm_obj.class)
-            tier = 5;
-        if (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")
-            tier = 4;
-        if (pkm_obj.class && pkm_obj.form == "Mega")
-            tier = 6;
+        if (pkm_obj.raid_tier)
+            tier = pkm_obj.raid_tier;
+        else {
+            tier = 3;
+            if (pkm_obj.class)
+                tier = 5;
+            if (pkm_obj.form == "Mega" || pkm_obj.form == "MegaY")
+                tier = 4;
+            if (pkm_obj.class && pkm_obj.form == "Mega")
+                tier = 6;
+        }
     }
     
     const ivs = { atk: 15, def: 15, hp: 15 };
@@ -372,7 +376,29 @@ function GetEnemyParams(enemy_pkm_obj) {
     };
 }
 
+/**
+* Find relevant raid bosses (tier 4+) based on type matchup
+*/
+function GetRaidBosses(has_type = null, weak_to_type = null) {
+    let raid_bosses = [];
+    for (const pkm_obj of jb_pkm) {
+        if (!pkm_obj.raid_tier || pkm_obj.raid_tier < 4) // Not a high-tier boss
+            continue;
+        
+        if (has_type) { // Find Pokemon with this type
+            if (!pkm_obj.types.includes(has_type))
+                continue;            
+        }
+        if (weak_to_type) { // Find Pokemon weak to this type
+            if (GetEffectivenessMultAgainst(weak_to_type, pkm_obj.types) <= 1.01) // Not exactly 1.0 because effective*resisted>1
+                continue;
+        }
 
+        raid_bosses.push(pkm_obj);
+    }
+
+    return raid_bosses
+}
 
 /**
  * Some utils functions for working with arrays of sets
