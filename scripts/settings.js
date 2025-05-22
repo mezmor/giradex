@@ -18,6 +18,7 @@ let settings_party_size = 1;
 let settings_relobbytime = 10;
 let settings_team_size_normal = 6;
 let settings_team_size_mega = 6;
+let settings_type_affinity = true;
 let settings_theme = "darkmode";
 let settings_speculative = true;
 
@@ -91,6 +92,9 @@ function BindSettings() {
     });
     $("#relobby-time").change(function() { 
         SetRelobbyPenalty(this.value); 
+    });
+    $("#settings-affinity").change(function() { 
+        SetAffinity($("#settings-affinity").is(":checked")); 
     });
     
     // Comparison baseline
@@ -421,6 +425,20 @@ function SetTheme(theme = "darkmode") {
     $("body").removeClass();
     $("body").addClass(theme);
     settings_theme = theme;
+}
+
+/**
+ * Sets the pokemon used for comparison in "percentage" bars
+ */
+function SetAffinity(useAffinity) {
+    // sets global variable
+    settings_type_affinity = useAffinity;
+
+    // Reset any cached tier rankings
+    ClearTypeTiers();
+    
+    // reload page
+    CheckURLAndAct();
 }
 
 /**

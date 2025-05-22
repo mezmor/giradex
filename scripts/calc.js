@@ -6,6 +6,8 @@ let estimated_y_numerator = 1340;
 // estimated incoming charged move power (basically atk*move power*modifiers, w/o def)
 const estimated_cm_power = 11670;
 
+// Note: type affinity calc yield values ~1500 and ~12000
+
 
 /**
  * Gets the comprehensive DPS of a pokemon of some type(s) and with some
@@ -26,12 +28,12 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         return 0;
 
     if (!enemy_y)
-        enemy_y = {y: null, cm_dmg: null}
+        enemy_y = {y_num: null, cm_num: null}
 
     if (!enemy_def)
         enemy_def = 180;
-    const y = (enemy_y.y) ? enemy_y.y : estimated_y_numerator / def;
-    const in_cm_dmg = (enemy_y.cm_dmg) ? enemy_y.cm_dmg : estimated_cm_power / def;
+    const y = (enemy_y.y_num ? enemy_y.y_num : estimated_y_numerator) / def;
+    const in_cm_dmg = (enemy_y.cm_num ? enemy_y.cm_num : estimated_cm_power) / def;
 
     let tof = hp / y;
 
@@ -95,7 +97,7 @@ function GetDPS(types, atk, def, hp, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
  * https://gamepress.gg/pokemongo/how-calculate-comprehensive-dps
  */
 function GetTDO(dps, hp, def, enemy_y) {
-    const y = (enemy_y && enemy_y.y) ? enemy_y.y : estimated_y_numerator / def;
+    const y = (enemy_y && enemy_y.y_num ? enemy_y.y_num : estimated_y_numerator) / def;
 
     let tof = hp / y;
 
@@ -139,8 +141,8 @@ function GetPartyBoost(f_to_c_ratio) {
 * Use altered timings between moves
 * Better estimate of ratio between charged and fast moves
 */
-function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
-    enemy_def = 160, total_incoming_dps = 50) {
+function GetSpecificY(types, atk, fm_obj, cm_obj, 
+    total_incoming_dps = 50) {
 
     if (!fm_obj || !cm_obj)
         return 0;
@@ -151,17 +153,16 @@ function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
     const CM_DELAY = 0.5;
 
     // fast move variables
-    const fm_dmg_mult = fm_mult
-        * ((types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? Math.fround(1.2) : 1);
-    const fm_dmg = CalcDamage(atk, enemy_def, ProcessPower(fm_obj), fm_dmg_mult, true);
+    const fm_stab = (types.includes(fm_obj.type) && fm_obj.name != "Hidden Power") ? Math.fround(1.2) : 1;
+    const fm_num = 0.5 * ProcessPower(fm_obj) * fm_stab * atk;
+    let fm_dur = ProcessDuration(fm_obj.duration);
 
     // charged move variables
-    const cm_dmg_mult = cm_mult * ((types.includes(cm_obj.type)) ? Math.fround(1.2) : 1);
-    const cm_dmg = CalcDamage(atk, enemy_def, ProcessPower(cm_obj), cm_dmg_mult, true);
+    const cm_stab = (types.includes(cm_obj.type)) ? Math.fround(1.2) : 1;
+    const cm_num = 0.5 * ProcessPower(cm_obj) * cm_stab * atk;
+    let cm_dur = ProcessDuration(cm_obj.duration);
 
     let fms_per_cm = 1;
-    let fm_dur = ProcessDuration(fm_obj.duration);
-    let cm_dur = ProcessDuration(cm_obj.duration);
     if (settings_newdps) {
         const eps_for_damage = ENERGY_PER_HP * total_incoming_dps;
         fm_dur = fm_dur + FM_DELAY;
@@ -190,14 +191,97 @@ function GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult = 1, cm_mult = 1,
         cm_dur += 2;
     }
 
+    const cycle_dur = fms_per_cm * fm_dur + cm_dur;
+
     // specific y
-    const y = (fms_per_cm * fm_dmg + cm_dmg)
-        / (fms_per_cm * fm_dur + cm_dur);
+    const type_ys = {"Any": {
+        y_num: (fms_per_cm * fm_num + cm_num) / cycle_dur,
+        cm_num: cm_num
+    }};
+
+    if (fm_obj.type == cm_obj.type) {
+        type_ys[fm_obj.type] = type_ys["Any"];
+    }
+    else {
+        type_ys[fm_obj.type] = {
+            y_num: (fms_per_cm * fm_num) / cycle_dur,
+            cm_num: 0
+        };
+        type_ys[cm_obj.type] = {
+            y_num: cm_num / cycle_dur,
+            cm_num: cm_num
+        }
+    }
+
+    return type_ys;
+}
+
+/**
+* 
+*/
+function GetTypeAffinity(type, versus = false) {
+    // Get list of bosses
+    let raid_bosses;
+    if (type=="Any")
+        raid_bosses = GetRaidBosses();
+    else if (versus)
+        raid_bosses = GetRaidBosses(null, type);
+    else 
+        raid_bosses = GetRaidBosses(type, null);
+
+    if (raid_bosses.length == 0) // e.g. when looking for things weak to "Normal"
+        raid_bosses = GetRaidBosses();
+
+    // Initialize to 0s
+    const avg_effectiveness = new Map();
+    const avg_ys = {};
+    const avg_stats = {atk: 0, def: 0, hp: 0};
+    for (const t of POKEMON_TYPES) {
+        avg_effectiveness.set(t, 0);
+        avg_ys[t] = {y_num: 0, cm_num: 0};
+    }
+    avg_ys["Any"] = {y_num: 0, cm_num: 0};
+    avg_ys["None"] = {y_num: 0, cm_num: 0};
+
+    // Sum across bosses
+    for (const boss of raid_bosses) {
+        const effectiveness = GetTypesEffectivenessAgainstTypes(boss.types);
+        for (const t of POKEMON_TYPES) {
+            avg_effectiveness.set(t, avg_effectiveness.get(t) + GetEffectivenessMultOfType(effectiveness, t));
+        }
+
+        const stats = GetRaidStats(boss);
+        avg_stats.atk += stats.atk;
+        avg_stats.def += stats.def;
+        avg_stats.hp += stats.hp;
+
+        const moves = GetPokemonMoves(boss);
+
+        const boss_ys = GetMovesetYs(boss.types, stats.atk, moves[0], moves[1]);
+        const boss_avg_y = GetAvgY(boss_ys);
+
+        for (const t of Object.keys(boss_avg_y)) {
+            avg_ys[t].y_num += boss_avg_y[t].y_num;
+            avg_ys[t].cm_num += boss_avg_y[t].cm_num;
+        }
+    }
+
+    // Divide by total
+    for (const t of POKEMON_TYPES) {
+        avg_effectiveness.set(t, avg_effectiveness.get(t) / raid_bosses.length);
+    }
+    for (const t of Object.keys(avg_ys)) {
+        avg_ys[t].y_num /= raid_bosses.length;
+        avg_ys[t].cm_num /= raid_bosses.length;
+    }
+    avg_stats.atk /= raid_bosses.length;
+    avg_stats.def /= raid_bosses.length;
+    avg_stats.hp /= raid_bosses.length;
 
     return {
-        y: ((y < 0) ? 0 : y), 
-        cm_dmg: cm_dmg,
-        time_to_cm: fms_per_cm * fm_dur
+        weakness: avg_effectiveness,
+        enemy_ys: [avg_ys],
+        stats: avg_stats
     };
 }
 
@@ -304,10 +388,8 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
         const enemy_elite_cms = []; //enemy_moves[3];
         const enemy_all_fms = enemy_fms.concat(enemy_elite_fms);
         const enemy_all_cms = enemy_cms.concat(enemy_elite_cms);
-        //avg_y = GetMovesetsAvgY(enemy_types, enemy_stats.atk,
-        //        enemy_all_fms, enemy_all_cms, effectiveness, def);
-        enemy_moveset_ys = GetMovesetYs(enemy_types, enemy_stats.atk,
-            enemy_all_fms, enemy_all_cms, effectiveness, def);
+        enemy_moveset_ys = GetMovesetYs(enemy_types, enemy_stats.atk, enemy_all_fms, enemy_all_cms);
+        //avg_y = GetAvgY(enemy_moveset_ys);
     }
 
     // searches for the movesets
@@ -366,10 +448,21 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
             
             let all_ratings = [];
             for (enemy_y of enemy_moveset_ys) {
+                let y = {
+                    y_num: 0,
+                    cm_num: 0
+                };
+                for (const t of Object.keys(enemy_y)) {
+                    if (t == "Any") continue;
+                    let mult = GetEffectivenessMultOfType(effectiveness, t);
+                    if (isNaN(mult)) mult = 1;
+                    y.y_num += enemy_y[t].y_num * mult;
+                    y.cm_num += enemy_y[t].cm_num * mult;
+                }
                 // calculates the data
                 const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
-                    fm_mult, cm_mult, enemy_def, enemy_y, search_params.real_damage);
-                const tdo = GetTDO(dps, hp, def, enemy_y);
+                    fm_mult, cm_mult, enemy_def, y, search_params.real_damage);
+                const tdo = GetTDO(dps, hp, def, y);
                 // metrics from Reddit user u/Elastic_Space
                 const rat = GetMetric(dps, tdo, pkm_obj, enemy_params);
                 all_ratings.push({rat: rat, dps: dps, tdo: tdo});
@@ -415,44 +508,51 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
 }
 
 /**
-* Gets the average y (dps) of all the movesets of a specific pokemon attacking
-* a specific enemy.
+* Gets the average of all the moveset ys
 */
-function GetMovesetsAvgY(types, atk, fms, cms, enemy_effectiveness, enemy_def = null) {
-    const all_ys = GetMovesetYs(types, atk, fms, cms, enemy_effectiveness, enemy_def);
+function GetAvgY(all_ys) {
+    // Sum all the ys
+    const avg_ys = all_ys.reduce((acc, this_y) => {
+        for (const type of Object.keys(this_y)) {
+            if (!(type in acc))
+                acc[type] = {y_num: 0, cm_num: 0};
 
-    if (all_ys.length == 0) {
-        return null;
-    }
+            acc[type].y_num = acc[type].y_num + this_y[type].y_num;
+            acc[type].cm_num = acc[type].cm_num + this_y[type].cm_num;
+        }
 
-    return all_ys.reduce((a, b) => a+b.y, 0) / all_ys.length;
+        return acc;
+    }, {});
+    
+    // Divide to calculate avgs
+    Object.keys(avg_ys).forEach(type=>{
+        avg_ys[type].y_num /= all_ys.length;
+        avg_ys[type].cm_num /= all_ys.length;
+    });
+
+    return avg_ys;
 }
 
 /**
-* Gets the y (dps) of all the movesets of a specific pokemon attacking
+* Gets the y_num of all the movesets of a specific pokemon attacking
 * a specific enemy.
 */
-function GetMovesetYs(types, atk, fms, cms, enemy_effectiveness, enemy_def = null) {
-
+function GetMovesetYs(types, atk, fms, cms) {
     let all_ys = [];
 
     for (let fm of fms) {
-
         // gets the fast move object
         const fm_obj = jb_fm.find(entry => entry.name == fm);
         if (!fm_obj)
             continue;
-        const fm_mult = GetEffectivenessMultOfType(enemy_effectiveness, fm_obj.type);
 
         for (let cm of cms) {
-
             // gets the charged move object
             const cm_obj = jb_cm.find(entry => entry.name == cm);
             if (!cm_obj)
                 continue;
-            const cm_mult = GetEffectivenessMultOfType(enemy_effectiveness, cm_obj.type);
 
-            all_ys.push(GetSpecificY(types, atk, fm_obj, cm_obj, fm_mult, cm_mult, enemy_def));
+            all_ys.push(GetSpecificY(types, atk, fm_obj, cm_obj));
         }
     }
 
@@ -470,7 +570,7 @@ function GetStrongestOfEachType(search_params) {
     // build a basic enemy to "sim" against
     let enemy_params = {
         weakness: null,
-        enemy_ys: [{y: null, cm_dmg: null, time_to_cm: null}], // use defaults
+        enemy_ys: [{"Any": {y_num: null, cm_num: null} }], // use defaults
         stats: {atk: null, def: 180, hp: 1000000000} // Use huge HP to approach "theoretical" eDPS
     };
 
@@ -498,13 +598,19 @@ function GetStrongestOfEachType(search_params) {
 function GetStrongestOfOneType(search_params) {
 
     // build a basic enemy to "sim" against
-    let enemy_params = {
-        weakness: (search_params.versus ? 
-            GetTypesEffectivenessAgainstTypes([search_params.type]) : 
-            GetTypesEffectivenessSingleBoost(search_params.type)),
-        enemy_ys: [{y: null, cm_dmg: null, time_to_cm: null}], // use defaults
-        stats: {atk: null, def: 180, hp: 1000000000} // Use huge HP to approach "theoretical" eDPS
-    };
+    let enemy_params;
+    if (settings_type_affinity) {
+        enemy_params = GetTypeAffinity(search_params.type, !search_params.versus);
+    }
+    else {
+        enemy_params = {
+            weakness: (search_params.versus ? 
+                GetTypesEffectivenessAgainstTypes([search_params.type]) : 
+                GetTypesEffectivenessSingleBoost(search_params.type)),
+            enemy_ys: [{"Any": {y_num: null, cm_num: null} }], // use defaults
+            stats: {atk: null, def: 180, hp: 1000000000} // Use huge HP to approach "theoretical" eDPS
+        };
+    }
 
     // array of strongest pokemon and moveset found so far
     let str_pokemons = GetStrongestVersus(enemy_params, search_params);
