@@ -116,18 +116,8 @@ POKEMON_TYPES_EFFECT.set("Fairy", [
 function GetTypesEffectivenessAgainstTypes(types) {
     let effectiveness = new Map();
 
-    for (let attacker_type of POKEMON_TYPES) {
-        const type_effect = POKEMON_TYPES_EFFECT.get(attacker_type);
-        let mult = 1;
-        for (let type of types) {
-            if (type_effect[0].includes(type))
-                mult *= 0.390625;
-            else if (type_effect[1].includes(type))
-                mult *= 0.625;
-            else if (type_effect[2].includes(type))
-                mult *= Math.fround(1.60); // not exact, make it float
-        }
-        effectiveness.set(attacker_type, mult);
+    for (let attack_type of POKEMON_TYPES) {
+        effectiveness.set(attack_type, GetEffectivenessMultAgainst(attack_type, types));
     }
 
     return effectiveness;
@@ -151,11 +141,43 @@ function GetTypesEffectivenessSingleBoost(type) {
 }
 
 /**
+ * Gets a map of effectiveness of all types, where everything has the same multiplier 
+ */
+function GetConstantEffectiveness(mult) {
+    let effectiveness = new Map();
+
+    for (let attacker_type of POKEMON_TYPES) {
+        effectiveness.set(attacker_type, mult);
+    }
+
+    return effectiveness;
+}
+
+/**
  * Gets the multiplier value of a single type against a specific map of
  * types effectiveness.
  */
 function GetEffectivenessMultOfType(effectiveness, type) {
     return effectiveness.get(type);
+}
+
+/**
+ * Gets the multiplier value of a single type against a specific combination
+ * of enemy types (without calculating the whole effectiveness map)
+ */
+function GetEffectivenessMultAgainst(attack_type, enemy_types) {
+    const type_effect = POKEMON_TYPES_EFFECT.get(attack_type);
+    let mult = 1;
+    for (let type of enemy_types) {
+        if (type_effect[0].includes(type))
+            mult *= 0.390625;
+        else if (type_effect[1].includes(type))
+            mult *= 0.625;
+        else if (type_effect[2].includes(type))
+            mult *= Math.fround(1.60); // not exact, make it float
+    }
+
+    return mult;
 }
 
 const CPM_Map = new Map();
