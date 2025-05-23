@@ -180,6 +180,25 @@ function GetEffectivenessMultAgainst(attack_type, enemy_types) {
     return mult;
 }
 
+/**
+ * Gets a filtered list of Hidden-Power eligible types based on the scenario
+ */
+function GetHiddenPowerTypes(hidden_power_filter = "Type-Match", pkm_obj = null) {
+    switch (hidden_power_filter) {
+        case "None":
+            return [];
+        case "Raid Boss":
+            return ["Fighting"];
+        case "Type-Match":
+            if (pkm_obj && pkm_obj.types) {
+                return pkm_obj.types.filter(t=>t!="Fairy"&&t!="Normal");
+            }
+        case "All":
+        default:
+            return Array.from(POKEMON_TYPES).filter(t=>t!="Fairy"&&t!="Normal");
+    }
+}
+
 const CPM_Map = new Map();
 const CPM = [ // From Game Master
     0,

@@ -255,7 +255,7 @@ function GetTypeAffinity(type, versus = false) {
         avg_stats.def += stats.def;
         avg_stats.hp += stats.hp;
 
-        const moves = GetPokemonMoves(boss);
+        const moves = GetPokemonMoves(boss, "Raid Boss");
 
         const boss_ys = GetMovesetYs(boss.types, stats.atk, moves[0], moves[1]);
         const boss_avg_y = GetAvgY(boss_ys);
@@ -357,7 +357,7 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
     const atk = (shadow) ? (stats.atk * Math.fround(1.2)) : stats.atk;
     const def = (shadow) ? (stats.def * Math.fround(0.8333333)) : stats.def;
     const hp = stats.hp;
-    const moves = GetPokemonMoves(pkm_obj);
+    const moves = GetPokemonMoves(pkm_obj, "All");
     if (moves.length != 6)
         return movesets;
     const fms = moves[0];

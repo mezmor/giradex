@@ -657,6 +657,7 @@ function SetRankingTable(str_pokemons, num_rows = null,
  * Look up a pokemon's tier ranking for a specific type
  */
 function GetTypeTier(type, pkm_obj) {
+    if (!POKEMON_TYPES.has(type)) return {pure: "F", shadow: "F"};
     BuildTypeTier(type);
 
     let tiers = {

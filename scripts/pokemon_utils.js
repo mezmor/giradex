@@ -71,8 +71,7 @@ function GetPokemonCP(stats) {
  * charged moves, elite charged moves,
  * pure-only charged moves, and shadow-only charged moves.
  */
-function GetPokemonMoves(pkm_obj) {
-
+function GetPokemonMoves(pkm_obj, hidden_power_filter = "Type-Match") {
     if (!pkm_obj.fm && !pkm_obj.cm)
         return [];
 
@@ -87,13 +86,11 @@ function GetPokemonMoves(pkm_obj) {
 
     // checks for hidden power
     if (fm.includes("Hidden Power") || elite_fm.includes("Hidden Power")) {
-        for (let type of POKEMON_TYPES) {
-            if (!["Normal", "Fairy"].includes(type) && pkm_obj.types.includes(type)) {
-                if (fm.includes("Hidden Power"))
-                    fm.push("Hidden Power " + type);
-                if (elite_fm.includes("Hidden Power"))
-                    elite_fm.push("Hidden Power " + type)
-            }
+        for (let t of GetHiddenPowerTypes(hidden_power_filter, pkm_obj)) {
+            if (fm.includes("Hidden Power"))
+                fm.push("Hidden Power " + t);
+            if (elite_fm.includes("Hidden Power"))
+                elite_fm.push("Hidden Power " + t)
         }
     }
 
@@ -369,7 +366,7 @@ function SearchAll(search_params, f_process_pokemon) {
  */
 function GetEnemyParams(enemy_pkm_obj) {
     return {
-        moves: GetPokemonMoves(enemy_pkm_obj),
+        moves: GetPokemonMoves(enemy_pkm_obj, "Raid Boss"),
         types: enemy_pkm_obj.types,
         weakness: GetTypesEffectivenessAgainstTypes(enemy_pkm_obj.types),
         stats: GetRaidStats(enemy_pkm_obj)
@@ -603,7 +600,7 @@ function RunSearchString(str, check_movesets = true) {
     for (let pkm of search_space) {
         if (check_movesets && !(pkm.fm && pkm.cm)) continue;
 
-        const moves = GetPokemonMoves(pkm);
+        const moves = GetPokemonMoves(pkm, "None");
         let fms = [{name: null, elite: false}], cms = [{name: null, elite: false}];
         if (check_movesets) {
             moves[0].forEach(fm=>fms.push({name: fm, elite: false}));

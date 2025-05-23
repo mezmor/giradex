@@ -320,7 +320,7 @@ function BuildMoveUserMap(force_reload = false) {
     for (const pkm of jb_pkm) {
         if (!pkm.released) continue;
 
-        let moves = GetPokemonMoves(pkm);
+        let moves = GetPokemonMoves(pkm, "Type-Match");
         moves = moves.reduce((agg,e)=>agg.concat(e),[]);
 
         for (const m of moves) {

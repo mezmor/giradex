@@ -609,7 +609,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     // removes previous table rows
     $("#pokedex-move-table tbody tr").remove();
 
-    const moves = GetPokemonMoves(pkm_obj);
+    const moves = GetPokemonMoves(pkm_obj, "Type-Match");
     if (moves.length != 6)
         return;
 
@@ -667,6 +667,13 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
 
         const fm_type = fm_obj.type;
         GetPokemonTypeTier(fm_type);
+        if (fm_obj.name == "Hidden Power") {
+            for (let t of POKEMON_TYPES) {
+                if (!["Normal", "Fairy"].includes(t)) {
+                    GetPokemonTypeTier(t);
+                }
+            }
+        }
 
         for (let cm of all_cms) {
 
@@ -786,7 +793,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     // appends the first fast move chunk
     AppendFMChunk(0, function() {
         SortPokedexTable(6, 7);
-        BuildTypeTiers(pkm_obj.name, attackTiers);
+        BuildTypeTiers(attackTiers);
         loading_pogo_moves = false;
     });
 }
@@ -794,7 +801,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
 /**
  * Builds the tier ranking elements based on the lookups
  */
-function BuildTypeTiers(name, attackTiers) {
+function BuildTypeTiers(attackTiers) {
     const types = Object.entries(attackTiers)
         .filter(e=>e[1].pure!="F"||(e[1].shadow&&e[1].shadow!="F"))
         .map(e=>e[0])
@@ -805,8 +812,6 @@ function BuildTypeTiers(name, attackTiers) {
 
     if (types.length > 0) {
         $("#attack-tiers").css("display", "");
-        //$("#attack-tiers-title").html(`<b>${name}'s</b> tier ranking by attack type`);
-
         $("#attack-tier-results .dex-layout-content").empty();
         $("#attack-tier-results-shadow .dex-layout-content").empty();
         $("#attack-tier-shadow-header").css("display", "none");
@@ -1071,7 +1076,7 @@ function UpdateMovesetEditor() {
         const move_obj = (move_type == "fm" ? jb_fm : jb_cm).find(e=>e.name==move_name);
         if (!move_obj) return;
 
-        const li = $("<li class='move-select-move'><span class='type-text bg-"+move_obj.type+"'>"
+        const li = $("<li class='move-select-move'><span class='type-text bg-"+(move_obj.name=="Hidden Power" ? "any-type" : move_obj.type)+"'>"
             +move_name+(is_elite ? "*" : "")+"</span></li>");
         const img = $("<img class='absolute-right delete-icon' src='imgs/delete.svg' />");
         img.click(function(e) {
@@ -1095,7 +1100,7 @@ function UpdateMovesetEditor() {
         return li;
     }
 
-    const moves = GetPokemonMoves(current_pkm_obj);
+    const moves = GetPokemonMoves(current_pkm_obj, "None");
 
     for (const fm of moves[0]) {
         $("#fm-select").append(GetEditableMove(fm, "fm", false));
