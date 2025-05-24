@@ -6,7 +6,7 @@ let estimated_y_numerator = 1340;
 // estimated incoming charged move power (basically atk*move power*modifiers, w/o def)
 const estimated_cm_power = 11670;
 
-// Note: type affinity calc yield values ~1500 and ~12000
+// Note: type affinity calc yield values ~1480 and ~12000
 
 
 /**
@@ -256,8 +256,9 @@ function GetTypeAffinity(type, versus = false) {
         avg_stats.hp += stats.hp;
 
         const moves = GetPokemonMoves(boss, "Raid Boss");
+        const win_dps = stats.hp / (boss.raid_tier >= 4 ? 300 : 180);
 
-        const boss_ys = GetMovesetYs(boss.types, stats.atk, moves[0], moves[1]);
+        const boss_ys = GetMovesetYs(boss.types, stats.atk, moves[0], moves[1], win_dps);
         const boss_avg_y = GetAvgY(boss_ys);
 
         for (const t of Object.keys(boss_avg_y)) {
@@ -388,7 +389,8 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
         const enemy_elite_cms = []; //enemy_moves[3];
         const enemy_all_fms = enemy_fms.concat(enemy_elite_fms);
         const enemy_all_cms = enemy_cms.concat(enemy_elite_cms);
-        enemy_moveset_ys = GetMovesetYs(enemy_types, enemy_stats.atk, enemy_all_fms, enemy_all_cms);
+        const incoming_dps = enemy_params.win_dps ?? 50;
+        enemy_moveset_ys = GetMovesetYs(enemy_types, enemy_stats.atk, enemy_all_fms, enemy_all_cms, incoming_dps);
         //avg_y = GetAvgY(enemy_moveset_ys);
     }
 
@@ -537,7 +539,7 @@ function GetAvgY(all_ys) {
 * Gets the y_num of all the movesets of a specific pokemon attacking
 * a specific enemy.
 */
-function GetMovesetYs(types, atk, fms, cms) {
+function GetMovesetYs(types, atk, fms, cms, total_incoming_dps = 50) {
     let all_ys = [];
 
     for (let fm of fms) {
@@ -552,7 +554,7 @@ function GetMovesetYs(types, atk, fms, cms) {
             if (!cm_obj)
                 continue;
 
-            all_ys.push(GetSpecificY(types, atk, fm_obj, cm_obj));
+            all_ys.push(GetSpecificY(types, atk, fm_obj, cm_obj, total_incoming_dps));
         }
     }
 
