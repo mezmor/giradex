@@ -469,7 +469,8 @@ function GetDefaultSearchParams() {
         legendary: true,
         elite: true,
         suboptimal: false,
-        mixed: true
+        mixed: true,
+        offtype: false
     };
 }
 
@@ -485,7 +486,8 @@ function IsDefaultSearchParams(search_params) {
         search_params.legendary===true &&
         search_params.elite===true &&
         search_params.suboptimal===false &&
-        search_params.mixed===true;
+        search_params.mixed===true &&
+        search_params.offtype===false;
 }
 
 /**
@@ -511,6 +513,8 @@ function GetSearchParms(type, versus) {
         $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
     search_params.mixed =
         $("#filter-settings input[value='mixed']:checkbox").is(":checked");
+    search_params.offtype =
+        $("#filter-settings input[value='offtype']:checkbox").is(":checked");
     return search_params;
 }
 

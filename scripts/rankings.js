@@ -160,9 +160,9 @@ function LoadStrongest(type = "Any") {
 
     // Only enable suboptimal filters if we're searching a specific type (not "Each")
     if (type == null || type == "Each")
-        $("#chk-suboptimal, #chk-grouped").prop("disabled", true);
+        $("#chk-suboptimal").prop("disabled", true);
     else 
-        $("#chk-suboptimal, #chk-mixed").prop("disabled", false);
+        $("#chk-suboptimal").prop("disabled", false);
 
     // sets selected link
     $("#strongest-links li").removeClass("selected");

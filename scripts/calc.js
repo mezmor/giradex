@@ -437,7 +437,8 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
                 continue;
 
             // ensure at least one type matches if mixing
-            if (search_params.type && search_params.type != "Any" && !search_params.versus &&
+            // or that off-types are allowed
+            if (search_params.type && search_params.type != "Any" && !search_params.versus && !search_params.offtype &&
                 search_params.mixed && fm_obj.type != search_params.type && cm_obj.type != search_params.type)
                 continue;
 
