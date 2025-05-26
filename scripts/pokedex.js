@@ -597,7 +597,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
 
     const atk = stats.atk;
     const def = stats.def;
-    const hp = stats.hp;
+    const hp = Math.floor(stats.hp);
 
     // cache attack tiers
     const attackTiers = {};
@@ -628,6 +628,17 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
     let rat_pcts_vs_max = 0;
     let rat_sh_pcts_vs_max = 0;
     let num_movesets = 0;
+
+    let fm_mult = 1, cm_mult = 1, enemy_def = 180, y = estimated_y_numerator;
+    let enemy_params = {};
+
+    if (settings_type_affinity) {
+        enemy_params = GetTypeAffinity("Any");
+        enemy_def = enemy_params.stats.def;
+        
+        const effectiveness = GetTypesEffectivenessAgainstTypes(types);
+        y = AvgYAgainst(enemy_params.enemy_ys[0], effectiveness);
+    }
 
     /**
      * Lookup the tier ranking for this mon for the given type (only once each)
@@ -674,6 +685,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
                 }
             }
         }
+        if (settings_type_affinity) fm_mult = GetEffectivenessMultOfType(enemy_params.weakness, fm_obj.type);
 
         for (let cm of all_cms) {
 
@@ -687,21 +699,25 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             const cm_type = cm_obj.type;
             GetPokemonTypeTier(cm_type);
 
+            if (settings_type_affinity) cm_mult = GetEffectivenessMultOfType(enemy_params.weakness, cm_obj.type);
+
             // calculates the data
 
-            const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj);
-            const dps_sh = GetDPS(types, atk_sh, def_sh, hp, fm_obj, cm_obj);
-            const tdo = GetTDO(dps, hp, def);
-            const tdo_sh = GetTDO(dps_sh, hp, def_sh);
-            const rat = GetMetric(dps, tdo, pkm_obj);
-            const rat_sh = GetMetric(dps_sh, tdo_sh, pkm_obj);
+            const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
+                    fm_mult, cm_mult, enemy_def, y);
+            const dps_sh = GetDPS(types, atk_sh, def_sh, hp, fm_obj, cm_obj,
+                    fm_mult, cm_mult, enemy_def, y);
+            const tdo = GetTDO(dps, hp, def, y);
+            const tdo_sh = GetTDO(dps_sh, hp, def_sh, y);
+            const rat = GetMetric(dps, tdo, pkm_obj, enemy_params);
+            const rat_sh = GetMetric(dps_sh, tdo_sh, pkm_obj, enemy_params);
 
             // calculates average rating percentages against max stats
             if (max_stats) {
-                const max_dps = GetDPS(types, max_stats.atk, max_stats.def,
-                    max_stats.hp, fm_obj, cm_obj);
-                const max_tdo = GetTDO(max_dps, max_stats.hp, max_stats.def);
-                const max_rat = GetMetric(max_dps, max_tdo, pkm_obj);
+                const max_dps = GetDPS(types, max_stats.atk, max_stats.def, max_stats.hp, fm_obj, cm_obj,
+                     fm_mult, cm_mult, enemy_def, y);
+                const max_tdo = GetTDO(max_dps, max_stats.hp, max_stats.def, y);
+                const max_rat = GetMetric(max_dps, max_tdo, pkm_obj, enemy_params);
 
                 rat_pcts_vs_max += rat / max_rat;
                 rat_sh_pcts_vs_max += rat_sh / max_rat;

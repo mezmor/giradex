@@ -1,12 +1,11 @@
 // magic numbers for incoming damage calc
 
 // estimated incoming average DPS (usually ~900)
-// tuned to a more recent estimate of ~1340 for T4+ eligible mons (using real "neutral" sims)
+// Note: type affinity calcs yield values ~1480 and ~12000
 let estimated_y_numerator = 1340; 
 // estimated incoming charged move power (basically atk*move power*modifiers, w/o def)
 const estimated_cm_power = 11670;
 
-// Note: type affinity calc yield values ~1480 and ~12000
 
 
 /**
@@ -451,17 +450,8 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
             
             let all_ratings = [];
             for (enemy_y of enemy_moveset_ys) {
-                let y = {
-                    y_num: 0,
-                    cm_num: 0
-                };
-                for (const t of Object.keys(enemy_y)) {
-                    if (t == "Any") continue;
-                    let mult = GetEffectivenessMultOfType(effectiveness, t);
-                    if (isNaN(mult)) mult = 1;
-                    y.y_num += enemy_y[t].y_num * mult;
-                    y.cm_num += enemy_y[t].cm_num * mult;
-                }
+                const y = AvgYAgainst(enemy_y, effectiveness);
+
                 // calculates the data
                 const dps = GetDPS(types, atk, def, hp, fm_obj, cm_obj,
                     fm_mult, cm_mult, enemy_def, y, search_params.real_damage);
@@ -571,15 +561,20 @@ function GetStrongestOfEachType(search_params) {
     let str_pokemons = new Map();
 
     // build a basic enemy to "sim" against
-    let enemy_params = {
-        weakness: null,
-        enemy_ys: [{"Any": {y_num: null, cm_num: null} }], // use defaults
-        stats: {atk: null, def: 180, hp: 1000000000} // Use huge HP to approach "theoretical" eDPS
-    };
+    let enemy_params;
 
     for (const type of POKEMON_TYPES) {
         search_params.type = type; // Find strongest movesets regardless of type
-        enemy_params.weakness = GetTypesEffectivenessSingleBoost(search_params.type);
+        if (settings_type_affinity) {
+            enemy_params = GetTypeAffinity(search_params.type, true);
+        }
+        else {
+            enemy_params = {
+                weakness: GetTypesEffectivenessSingleBoost(search_params.type),
+                enemy_ys: [{"Any": {y_num: null, cm_num: null} }], // use defaults
+                stats: {atk: null, def: 180, hp: 1000000000} // Use huge HP to approach "theoretical" eDPS
+            };
+        }
 
         const str_pok = GetStrongestVersus(enemy_params, search_params, 1)[0];
         str_pokemons.set(type, str_pok);
@@ -604,6 +599,7 @@ function GetStrongestOfOneType(search_params) {
     let enemy_params;
     if (settings_type_affinity) {
         enemy_params = GetTypeAffinity(search_params.type, !search_params.versus);
+        UpdateAffinityTooltip(enemy_params);
     }
     else {
         enemy_params = {
@@ -719,6 +715,25 @@ function GetMetric(dps, tdo, pkm_obj = null, enemy_params = null) {
             // metrics from Reddit user u/Elastic_Space
             return Math.pow(dps, 1-settings_metric_exp) * Math.pow(tdo, settings_metric_exp);
     }
+}
+
+/**
+ * Apply a type-separated enemy_y across a target's weakness multipliers
+ */
+function AvgYAgainst(enemy_y, effectiveness) {
+    let y = {
+        y_num: 0,
+        cm_num: 0
+    };
+    for (const t of Object.keys(enemy_y)) {
+        if (t == "Any") continue;
+        let mult = GetEffectivenessMultOfType(effectiveness, t);
+        if (isNaN(mult)) mult = 1;
+        y.y_num += enemy_y[t].y_num * mult;
+        y.cm_num += enemy_y[t].cm_num * mult;
+    }
+
+    return y;
 }
 
 // Calculate attributes of the array according to Gaussian distribution
