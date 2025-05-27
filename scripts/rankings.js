@@ -238,7 +238,8 @@ function LoadStrongest(type = "Any") {
 
     // Display relevant footnotes
     //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
-    $("#footnote-typed-ranking").css('display', search_params.type != "Any" ? 'block' : 'none');
+    $("#footnote-typed-ranking").css('display', type != "Any" && !settings_type_affinity ? 'block' : 'none');
+    $("#footnote-affinity-ranking").css('display', type != "Each" && settings_type_affinity ? 'block' : 'none');
     $("#footnote-versus").css('display', search_params.versus ? 'block' : 'none');
 
     // Update Icon
@@ -652,6 +653,32 @@ function SetRankingTable(str_pokemons, num_rows = null,
                 "<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>"
             $("#strongest-table tbody").append(empty_row);
         }
+    }
+}
+
+function UpdateAffinityTooltip(enemy_params) {
+    const tbl = $("#affinity-table tbody");
+    tbl.empty();
+    
+    const total_damage = enemy_params.enemy_ys[0]["Any"].y_num ?? estimated_y_numerator;
+
+    for (const t of POKEMON_TYPES) {
+        const t_weakness = GetEffectivenessMultOfType(enemy_params.weakness, t);
+        const t_damage = enemy_params.enemy_ys[0][t] ? enemy_params.enemy_ys[0][t].y_num : 0;
+
+        const tr = $("<tr></tr>");
+        tr.append(`<td><span class='type-text bg-${t}'>${t}</span></td>`);
+        tr.append(`<td><div style="width: 50px">
+                <div class="bar-fg" style="width: ${t_weakness*50}px">
+                    <span class="bar-txt">${t_weakness.toFixed(2)}</span>
+                </div>
+            </div></td>`);
+        tr.append(`<td><div style="width: 100px">
+                <div class="bar-fg" style="width: ${(t_damage/total_damage*100*2)}px">
+                    <span class="bar-txt">${(t_damage/total_damage*100).toFixed(1)}%</span>
+                </div>
+            </div></td>`);
+        tbl.append(tr);
     }
 }
 

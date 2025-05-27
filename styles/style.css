@@ -1354,6 +1354,29 @@ th.vertical a.type-text {
 }
 
 /*
+ * Type Affinities
+ */
+#affinity-table {
+    table-layout: fixed;
+}
+#affinity-table td {
+    text-align: left;
+    padding: 3px 5px;
+}
+#affinity-table span.type-text {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+}
+#type-affinity-link {
+    color: var(--col-sitename-contrast);
+    font-weight: bold;
+}
+#type-affinity-tooltip {
+    max-width: none;
+}
+
+/*
  * Settings Window
  */
 .settings-list {
