@@ -273,9 +273,9 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     if (is_selected && poke_obj && form != "Mega" && form != "MegaY") {
         const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + "'></img>");
         shadow_icon.on('click', function(e) { 
-            poke_obj.shadow = !poke_obj.shadow;
             shadow_icon.removeClass("filter-" + (poke_obj.shadow ? 'shadow' : 'noshadow'));
             shadow_icon.addClass("filter-" + (poke_obj.shadow ? 'noshadow' : 'shadow'));
+            poke_obj.shadow = !poke_obj.shadow;
             ClearTypeTiers();
             UpdatePokemonStatsAndURL();
             e.stopPropagation();
