@@ -191,6 +191,7 @@ sup { vertical-align: top; }
     text-align: center;
     font-size: 0.6rem;
     color: var(--col-text-lowkey);
+    display: none;
 }
 #footer-links {
     width: min-content;

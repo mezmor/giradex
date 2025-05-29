@@ -316,9 +316,8 @@ function LoadPage(pageName) {
         $("#"+page).css("display", (page==pageName ? "revert" : "none"));
     });
 
-    // If we're loading any page, we're not on the landing/homepage
-    // So show the footer
-    //$("#footer").css("display", (!!pageName ? "revert" : "none"));
+    // If we're loading any page, show the footer
+    $("#footer").css("display", (!!pageName ? "revert" : "none"));
 
     window.scrollTo({
         top: 0,
