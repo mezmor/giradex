@@ -506,13 +506,14 @@ function UpdateMoveEditor(move_name, clear_fields = true) {
         
         $("#any-search-box").val(move_obj.name);
         $("#move-edit-type").val(move_obj.type);
-        $("#move-edit-kind").prop("checked", move_kind == "cm");
         $("#move-edit-type").trigger("change");
-        $("#move-edit-kind").trigger("change");
 
         $("#move-edit-power").val(move_obj.power);
         $("#move-edit-energy").val(move_obj.energy_delta);
         $("#move-edit-duration").val(ProcessDuration(move_obj.duration));
+        
+        $("#move-edit-kind").prop("checked", move_kind == "cm");
+        $("#move-edit-kind").trigger("change");
 
         $("#move-edit-apply").val("Edit");
         if (move_obj.custom)
