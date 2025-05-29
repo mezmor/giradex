@@ -50,8 +50,8 @@ function BindSettings() {
     });
 
     // Expand/Shrink Dev Note
-    $("#note-icon").click(function() { ToggleNote(); });
-    $("#note-title").click(function() { ToggleNote(); });
+    //$("#note-icon").click(function() { ToggleNote(); });
+    //$("#note-title").click(function() { ToggleNote(); });
 
     // Metrics
     /*$("#metric-er").click(function() { SetMetric("ER"); });
