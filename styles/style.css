@@ -783,6 +783,12 @@ input.plus {
     visibility: hidden;
 }
 
+#strongest-table span.type-text, 
+#pokedex-move-table span.type-text,
+#move-data-table span.type-text {
+    cursor: pointer;
+}
+
 .a-poke-name {
     display: block;
     width: fit-content;

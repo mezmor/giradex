@@ -651,27 +651,27 @@
         <div id=strongest-links class="unselectable type-links">
             <ul id="strongest-links-types">
                 <li>&nbsp;</li>
-                <li id="any-type-strongest-link"><a class="type-text" onclick="LoadStrongestAndUpdateURL('Any')">All types</a></li>
-                <li id="each-type-strongest-link"><a class="type-text" onclick="LoadStrongestAndUpdateURL('Each')">Each type</a></li>
+                <li id="any-type-strongest-link"><a class="type-text" href="/?strongest" onclick="return LoadStrongestAndUpdateURL('Any')">All types</a></li>
+                <li id="each-type-strongest-link"><a class="type-text" href="/?strongest&t=Each" onclick="return LoadStrongestAndUpdateURL('Each')">Each type</a></li>
                 <li>&nbsp;</li>
-                <li><a class="type-text bg-Normal" onclick="LoadStrongestAndUpdateURL('Normal')">Normal</a></li>
-                <li><a class="type-text bg-Fire" onclick="LoadStrongestAndUpdateURL('Fire')">Fire</a></li>
-                <li><a class="type-text bg-Water" onclick="LoadStrongestAndUpdateURL('Water')">Water</a></li>
-                <li><a class="type-text bg-Grass" onclick="LoadStrongestAndUpdateURL('Grass')">Grass</a></li>
-                <li><a class="type-text bg-Electric" onclick="LoadStrongestAndUpdateURL('Electric')">Electric</a></li>
-                <li><a class="type-text bg-Ice" onclick="LoadStrongestAndUpdateURL('Ice')">Ice</a></li>
-                <li><a class="type-text bg-Fighting" onclick="LoadStrongestAndUpdateURL('Fighting')">Fighting</a></li>
-                <li><a class="type-text bg-Poison" onclick="LoadStrongestAndUpdateURL('Poison')">Poison</a></li>
-                <li><a class="type-text bg-Ground" onclick="LoadStrongestAndUpdateURL('Ground')">Ground</a></li>
-                <li><a class="type-text bg-Flying" onclick="LoadStrongestAndUpdateURL('Flying')">Flying</a></li>
-                <li><a class="type-text bg-Psychic" onclick="LoadStrongestAndUpdateURL('Psychic')">Psychic</a></li>
-                <li><a class="type-text bg-Bug" onclick="LoadStrongestAndUpdateURL('Bug')">Bug</a></li>
-                <li><a class="type-text bg-Rock" onclick="LoadStrongestAndUpdateURL('Rock')">Rock</a></li>
-                <li><a class="type-text bg-Ghost" onclick="LoadStrongestAndUpdateURL('Ghost')">Ghost</a></li>
-                <li><a class="type-text bg-Dragon" onclick="LoadStrongestAndUpdateURL('Dragon')">Dragon</a></li>
-                <li><a class="type-text bg-Dark" onclick="LoadStrongestAndUpdateURL('Dark')">Dark</a></li>
-                <li><a class="type-text bg-Steel" onclick="LoadStrongestAndUpdateURL('Steel')">Steel</a></li>
-                <li><a class="type-text bg-Fairy" onclick="LoadStrongestAndUpdateURL('Fairy')">Fairy</a></li>
+                <li><a class="type-text bg-Normal" href="/?strongest&t=Normal" onclick="return LoadStrongestAndUpdateURL('Normal')">Normal</a></li>
+                <li><a class="type-text bg-Fire" href="/?strongest&t=Fire" onclick="return LoadStrongestAndUpdateURL('Fire')">Fire</a></li>
+                <li><a class="type-text bg-Water" href="/?strongest&t=Water" onclick="return LoadStrongestAndUpdateURL('Water')">Water</a></li>
+                <li><a class="type-text bg-Grass" href="/?strongest&t=Grass" onclick="return LoadStrongestAndUpdateURL('Grass')">Grass</a></li>
+                <li><a class="type-text bg-Electric" href="/?strongest&t=Electric" onclick="return LoadStrongestAndUpdateURL('Electric')">Electric</a></li>
+                <li><a class="type-text bg-Ice" href="/?strongest&t=Ice" onclick="return LoadStrongestAndUpdateURL('Ice')">Ice</a></li>
+                <li><a class="type-text bg-Fighting" href="/?strongest&t=Fighting" onclick="return LoadStrongestAndUpdateURL('Fighting')">Fighting</a></li>
+                <li><a class="type-text bg-Poison" href="/?strongest&t=Poison" onclick="return LoadStrongestAndUpdateURL('Poison')">Poison</a></li>
+                <li><a class="type-text bg-Ground" href="/?strongest&t=Ground" onclick="return LoadStrongestAndUpdateURL('Ground')">Ground</a></li>
+                <li><a class="type-text bg-Flying" href="/?strongest&t=Flying" onclick="return LoadStrongestAndUpdateURL('Flying')">Flying</a></li>
+                <li><a class="type-text bg-Psychic" href="/?strongest&t=Psychic" onclick="return LoadStrongestAndUpdateURL('Psychic')">Psychic</a></li>
+                <li><a class="type-text bg-Bug" href="/?strongest&t=Bug" onclick="return LoadStrongestAndUpdateURL('Bug')">Bug</a></li>
+                <li><a class="type-text bg-Rock" href="/?strongest&t=Rock" onclick="return LoadStrongestAndUpdateURL('Rock')">Rock</a></li>
+                <li><a class="type-text bg-Ghost" href="/?strongest&t=Ghost" onclick="return LoadStrongestAndUpdateURL('Ghost')">Ghost</a></li>
+                <li><a class="type-text bg-Dragon" href="/?strongest&t=Dragon" onclick="return LoadStrongestAndUpdateURL('Dragon')">Dragon</a></li>
+                <li><a class="type-text bg-Dark" href="/?strongest&t=Dark" onclick="return LoadStrongestAndUpdateURL('Dark')">Dark</a></li>
+                <li><a class="type-text bg-Steel" href="/?strongest&t=Steel" onclick="return LoadStrongestAndUpdateURL('Steel')">Steel</a></li>
+                <li><a class="type-text bg-Fairy" href="/?strongest&t=Fairy" onclick="return LoadStrongestAndUpdateURL('Fairy')">Fairy</a></li>
             </ul>
         </div>
         <div class="card">
@@ -841,7 +841,7 @@
                         <!--<br />Versus rankings also assume incoming damage is of the chosen type, and apply relevant defensive multipliers.-->
                     </li>
                     <li id=footnote-affinity-ranking>Rankings are calculated based on an 
-                        <a class="tooltip tooltip-top" id="type-affinity-link">average of all raid bosses
+                        <a href="#" class="tooltip tooltip-top" id="type-affinity-link">average of all raid bosses
                             <div class="tooltiptext" id="type-affinity-tooltip">
                                 <table id="affinity-table">
                                     <thead><tr><th></th><th style='width: 100px'>Boss Weakness</th><th  style='width: 100px'>Boss Damage</th></tr></thead>
@@ -861,27 +861,27 @@
             <ul id=move-type-links-bytype>
                 <li>&nbsp;</li>
                 <li>&nbsp;</li>
-                <li id="any-type-move-link"><a class="type-text" onclick="LoadMovesAndUpdateURL('Any')">All types</a></li>
+                <li id="any-type-move-link"><a class="type-text" href="/?moves" onclick="return LoadMovesAndUpdateURL('Any')">All types</a></li>
                 <li>&nbsp;</li>
                 <li>&nbsp;</li>
-                <li><a class="type-text bg-Normal" onclick="LoadMovesAndUpdateURL('Normal')">Normal</a></li>
-                <li><a class="type-text bg-Fire" onclick="LoadMovesAndUpdateURL('Fire')">Fire</a></li>
-                <li><a class="type-text bg-Water" onclick="LoadMovesAndUpdateURL('Water')">Water</a></li>
-                <li><a class="type-text bg-Grass" onclick="LoadMovesAndUpdateURL('Grass')">Grass</a></li>
-                <li><a class="type-text bg-Electric" onclick="LoadMovesAndUpdateURL('Electric')">Electric</a></li>
-                <li><a class="type-text bg-Ice" onclick="LoadMovesAndUpdateURL('Ice')">Ice</a></li>
-                <li><a class="type-text bg-Fighting" onclick="LoadMovesAndUpdateURL('Fighting')">Fighting</a></li>
-                <li><a class="type-text bg-Poison" onclick="LoadMovesAndUpdateURL('Poison')">Poison</a></li>
-                <li><a class="type-text bg-Ground" onclick="LoadMovesAndUpdateURL('Ground')">Ground</a></li>
-                <li><a class="type-text bg-Flying" onclick="LoadMovesAndUpdateURL('Flying')">Flying</a></li>
-                <li><a class="type-text bg-Psychic" onclick="LoadMovesAndUpdateURL('Psychic')">Psychic</a></li>
-                <li><a class="type-text bg-Bug" onclick="LoadMovesAndUpdateURL('Bug')">Bug</a></li>
-                <li><a class="type-text bg-Rock" onclick="LoadMovesAndUpdateURL('Rock')">Rock</a></li>
-                <li><a class="type-text bg-Ghost" onclick="LoadMovesAndUpdateURL('Ghost')">Ghost</a></li>
-                <li><a class="type-text bg-Dragon" onclick="LoadMovesAndUpdateURL('Dragon')">Dragon</a></li>
-                <li><a class="type-text bg-Dark" onclick="LoadMovesAndUpdateURL('Dark')">Dark</a></li>
-                <li><a class="type-text bg-Steel" onclick="LoadMovesAndUpdateURL('Steel')">Steel</a></li>
-                <li><a class="type-text bg-Fairy" onclick="LoadMovesAndUpdateURL('Fairy')">Fairy</a></li>
+                <li><a class="type-text bg-Normal" href="/?moves&t=Normal" onclick="return LoadMovesAndUpdateURL('Normal')">Normal</a></li>
+                <li><a class="type-text bg-Fire" href="/?moves&t=Fire" onclick="return LoadMovesAndUpdateURL('Fire')">Fire</a></li>
+                <li><a class="type-text bg-Water" href="/?moves&t=Water" onclick="return LoadMovesAndUpdateURL('Water')">Water</a></li>
+                <li><a class="type-text bg-Grass" href="/?moves&t=Grass" onclick="return LoadMovesAndUpdateURL('Grass')">Grass</a></li>
+                <li><a class="type-text bg-Electric" href="/?moves&t=Electric" onclick="return LoadMovesAndUpdateURL('Electric')">Electric</a></li>
+                <li><a class="type-text bg-Ice" href="/?moves&t=Ice" onclick="return LoadMovesAndUpdateURL('Ice')">Ice</a></li>
+                <li><a class="type-text bg-Fighting" href="/?moves&t=Fighting" onclick="return LoadMovesAndUpdateURL('Fighting')">Fighting</a></li>
+                <li><a class="type-text bg-Poison" href="/?moves&t=Poison" onclick="return LoadMovesAndUpdateURL('Poison')">Poison</a></li>
+                <li><a class="type-text bg-Ground" href="/?moves&t=Ground" onclick="return LoadMovesAndUpdateURL('Ground')">Ground</a></li>
+                <li><a class="type-text bg-Flying" href="/?moves&t=Flying" onclick="return LoadMovesAndUpdateURL('Flying')">Flying</a></li>
+                <li><a class="type-text bg-Psychic" href="/?moves&t=Psychic" onclick="return LoadMovesAndUpdateURL('Psychic')">Psychic</a></li>
+                <li><a class="type-text bg-Bug" href="/?moves&t=Bug" onclick="return LoadMovesAndUpdateURL('Bug')">Bug</a></li>
+                <li><a class="type-text bg-Rock" href="/?moves&t=Rock" onclick="return LoadMovesAndUpdateURL('Rock')">Rock</a></li>
+                <li><a class="type-text bg-Ghost" href="/?moves&t=Ghost" onclick="return LoadMovesAndUpdateURL('Ghost')">Ghost</a></li>
+                <li><a class="type-text bg-Dragon" href="/?moves&t=Dragon" onclick="return LoadMovesAndUpdateURL('Dragon')">Dragon</a></li>
+                <li><a class="type-text bg-Dark" href="/?moves&t=Dark" onclick="return LoadMovesAndUpdateURL('Dark')">Dark</a></li>
+                <li><a class="type-text bg-Steel" href="/?moves&t=Steel" onclick="return LoadMovesAndUpdateURL('Steel')">Steel</a></li>
+                <li><a class="type-text bg-Fairy" href="/?moves&t=Fairy" onclick="return LoadMovesAndUpdateURL('Fairy')">Fairy</a></li>
             </ul>
         </div>
         <div class="card">
@@ -905,41 +905,41 @@
                 <table class="table-bg move-table" id=move-data-table>
                     <thead>
                         <tr class=table-header>
-                            <th id=move-name><a class=sortable onclick="MoveSort('name')">Move</a></th>
-                            <th id=move-power><a class=sortable onclick="MoveSort('power')">
+                            <th id=move-name><a href="#" class=sortable onclick="MoveSort('name')">Move</a></th>
+                            <th id=move-power><a href="#" class=sortable onclick="MoveSort('power')">
                                 <span class="desktop">Power</span><span class="mobile">PWR</span>
                             </a></th>
-                            <th id=move-energy><a class=sortable onclick="MoveSort('energy')">
+                            <th id=move-energy><a href="#" class=sortable onclick="MoveSort('energy')">
                                 <span class="desktop">Energy</span><span class="mobile">ENG</span>
                             </a></th>
-                            <th id=move-duration><a class=sortable onclick="MoveSort('duration')">
+                            <th id=move-duration><a href="#" class=sortable onclick="MoveSort('duration')">
                                 <span class="desktop">Duration</span><span class="mobile">DUR</span>
                             </a></th>
-                            <th id=move-pps><a class="tooltip tooltip-top sortable" onclick="MoveSort('pps')">P/S
+                            <th id=move-pps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('pps')">P/S
                                 <span class="tooltiptext">
                                     <div class="tooltip-title">Power per Second (DPS)</div>
                                     <p>How effective a move is at dealing damage</p>
                                 </span>
                             </a></th>
-                            <th id=move-eps><a class="tooltip tooltip-top sortable" onclick="MoveSort('eps')">E/S
+                            <th id=move-eps><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('eps')">E/S
                                 <span class="tooltiptext">
                                     <div class="tooltip-title">Energy per Second (EPS)</div>
                                     <p>How effective a fast move is at building up charged move energy</p>
                                 </span>
                             </a></th>
-                            <th id=move-ppe> <a class="tooltip tooltip-top sortable" onclick="MoveSort('ppe')">P/E
+                            <th id=move-ppe><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('ppe')">P/E
                                 <span class="tooltiptext">
                                     <div class="tooltip-title">Power per Energy (DPE)</div>
                                     <p>How efficiently a charged move converts energy into damage</p>
                                 </span>
                             </a></th>
-                            <th id=move-p2pes> <a class="tooltip tooltip-top sortable" onclick="MoveSort('p2pes')">P<sup class='small-text'>2</sup>/ES
+                            <th id=move-p2pes><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('p2pes')">P<sup class='small-text'>2</sup>/ES
                                 <span class="tooltiptext">
                                     <div class="tooltip-title">P/S * P/E</div>
                                     <p>How well a charged move both uses charged energy <em>and</em> deals damage</p>
                                 </span>
                             </a></th>
-                            <th id=move-peps2> <a class="tooltip tooltip-top sortable" onclick="MoveSort('peps2')">PE/S<sup class="small-text">2</sup>
+                            <th id=move-peps2><a href="#" class="tooltip tooltip-top sortable" onclick="MoveSort('peps2')">PE/S<sup class="small-text">2</sup>
                                 <span class="tooltiptext">
                                     <div class="tooltip-title">P/S * E/S</div>
                                     <p>How well a fast move accomplishes both building charged energy <em>and</em> dealing damage on its own</p>
@@ -998,79 +998,79 @@
                                         <span>Attacker</span><span>Defender</span>
                                     </div>
                                 </th>
-                                <th class="vertical"><a class="type-text bg-Normal" onclick="LoadStrongestAndUpdateURL('Normal', true)">Normal</a></th>
-                                <th class="vertical"><a class="type-text bg-Fire" onclick="LoadStrongestAndUpdateURL('Fire', true)">Fire</a></th>
-                                <th class="vertical"><a class="type-text bg-Water" onclick="LoadStrongestAndUpdateURL('Water', true)">Water</a></th>
-                                <th class="vertical"><a class="type-text bg-Grass" onclick="LoadStrongestAndUpdateURL('Grass', true)">Grass</a></th>
-                                <th class="vertical"><a class="type-text bg-Electric" onclick="LoadStrongestAndUpdateURL('Electric', true)">Electric</a></th>
-                                <th class="vertical"><a class="type-text bg-Ice" onclick="LoadStrongestAndUpdateURL('Ice', true)">Ice</a></th>
-                                <th class="vertical"><a class="type-text bg-Fighting" onclick="LoadStrongestAndUpdateURL('Fighting', true)">Fighting</a></th>
-                                <th class="vertical"><a class="type-text bg-Poison" onclick="LoadStrongestAndUpdateURL('Poison', true)">Poison</a></th>
-                                <th class="vertical"><a class="type-text bg-Ground" onclick="LoadStrongestAndUpdateURL('Ground', true)">Ground</a></th>
-                                <th class="vertical"><a class="type-text bg-Flying" onclick="LoadStrongestAndUpdateURL('Flying', true)">Flying</a></th>
-                                <th class="vertical"><a class="type-text bg-Psychic" onclick="LoadStrongestAndUpdateURL('Psychic', true)">Psychic</a></th>
-                                <th class="vertical"><a class="type-text bg-Bug" onclick="LoadStrongestAndUpdateURL('Bug', true)">Bug</a></th>
-                                <th class="vertical"><a class="type-text bg-Rock" onclick="LoadStrongestAndUpdateURL('Rock', true)">Rock</a></th>
-                                <th class="vertical"><a class="type-text bg-Ghost" onclick="LoadStrongestAndUpdateURL('Ghost', true)">Ghost</a></th>
-                                <th class="vertical"><a class="type-text bg-Dragon" onclick="LoadStrongestAndUpdateURL('Dragon', true)">Dragon</a></th>
-                                <th class="vertical"><a class="type-text bg-Dark" onclick="LoadStrongestAndUpdateURL('Dark', true)">Dark</a></th>
-                                <th class="vertical"><a class="type-text bg-Steel" onclick="LoadStrongestAndUpdateURL('Steel', true)">Steel</a></th>
-                                <th class="vertical"><a class="type-text bg-Fairy" onclick="LoadStrongestAndUpdateURL('Fairy', true)">Fairy</a></th>
+                                <th class="vertical"><a class="type-text bg-Normal" href="/?strongest&t=Normal&v" onclick="return LoadStrongestAndUpdateURL('Normal', true)">Normal</a></th>
+                                <th class="vertical"><a class="type-text bg-Fire" href="/?strongest&t=Fire&v" onclick="return LoadStrongestAndUpdateURL('Fire', true)">Fire</a></th>
+                                <th class="vertical"><a class="type-text bg-Water" href="/?strongest&t=Water&v" onclick="return LoadStrongestAndUpdateURL('Water', true)">Water</a></th>
+                                <th class="vertical"><a class="type-text bg-Grass" href="/?strongest&t=Grass&v" onclick="return LoadStrongestAndUpdateURL('Grass', true)">Grass</a></th>
+                                <th class="vertical"><a class="type-text bg-Electric" href="/?strongest&t=Electric&v" onclick="return LoadStrongestAndUpdateURL('Electric', true)">Electric</a></th>
+                                <th class="vertical"><a class="type-text bg-Ice" href="/?strongest&t=Ice&v" onclick="return LoadStrongestAndUpdateURL('Ice', true)">Ice</a></th>
+                                <th class="vertical"><a class="type-text bg-Fighting" href="/?strongest&t=Fighting&v" onclick="return LoadStrongestAndUpdateURL('Fighting', true)">Fighting</a></th>
+                                <th class="vertical"><a class="type-text bg-Poison" href="/?strongest&t=Poison&v" onclick="return LoadStrongestAndUpdateURL('Poison', true)">Poison</a></th>
+                                <th class="vertical"><a class="type-text bg-Ground" href="/?strongest&t=Ground&v" onclick="return LoadStrongestAndUpdateURL('Ground', true)">Ground</a></th>
+                                <th class="vertical"><a class="type-text bg-Flying" href="/?strongest&t=Flying&v" onclick="return LoadStrongestAndUpdateURL('Flying', true)">Flying</a></th>
+                                <th class="vertical"><a class="type-text bg-Psychic" href="/?strongest&t=Psychic&v" onclick="return LoadStrongestAndUpdateURL('Psychic', true)">Psychic</a></th>
+                                <th class="vertical"><a class="type-text bg-Bug" href="/?strongest&t=Bug&v" onclick="return LoadStrongestAndUpdateURL('Bug', true)">Bug</a></th>
+                                <th class="vertical"><a class="type-text bg-Rock" href="/?strongest&t=Rock&v" onclick="return LoadStrongestAndUpdateURL('Rock', true)">Rock</a></th>
+                                <th class="vertical"><a class="type-text bg-Ghost" href="/?strongest&t=Ghost&v" onclick="return LoadStrongestAndUpdateURL('Ghost', true)">Ghost</a></th>
+                                <th class="vertical"><a class="type-text bg-Dragon" href="/?strongest&t=Dragon&v" onclick="return LoadStrongestAndUpdateURL('Dragon', true)">Dragon</a></th>
+                                <th class="vertical"><a class="type-text bg-Dark" href="/?strongest&t=Dark&v" onclick="return LoadStrongestAndUpdateURL('Dark', true)">Dark</a></th>
+                                <th class="vertical"><a class="type-text bg-Steel" href="/?strongest&t=Steel&v" onclick="return LoadStrongestAndUpdateURL('Steel', true)">Steel</a></th>
+                                <th class="vertical"><a class="type-text bg-Fairy" href="/?strongest&t=Fairy&v" onclick="return LoadStrongestAndUpdateURL('Fairy', true)">Fairy</a></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td><a class="type-text bg-Normal" onclick="LoadStrongestAndUpdateURL('Normal', false)">Normal</a></td>
+                            <tr><td><a class="type-text bg-Normal" href="/?strongest&t=Normal" onclick="return LoadStrongestAndUpdateURL('Normal', false)">Normal</a></td>
                                 <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Fire" onclick="LoadStrongestAndUpdateURL('Fire', false)">Fire</a></td>
+                            <tr><td><a class="type-text bg-Fire" href="/?strongest&t=Fire" onclick="return LoadStrongestAndUpdateURL('Fire', false)">Fire</a></td>
                                 <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Water" onclick="LoadStrongestAndUpdateURL('Water', false)">Water</a></td>
+                            <tr><td><a class="type-text bg-Water" href="/?strongest&t=Water" onclick="return LoadStrongestAndUpdateURL('Water', false)">Water</a></td>
                                 <td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Grass" onclick="LoadStrongestAndUpdateURL('Grass', false)">Grass</a></td>
+                            <tr><td><a class="type-text bg-Grass" href="/?strongest&t=Grass" onclick="return LoadStrongestAndUpdateURL('Grass', false)">Grass</a></td>
                                 <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Electric" onclick="LoadStrongestAndUpdateURL('Electric', false)">Electric</a></td>
+                            <tr><td><a class="type-text bg-Electric" href="/?strongest&t=Electric" onclick="return LoadStrongestAndUpdateURL('Electric', false)">Electric</a></td>
                                 <td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Ice" onclick="LoadStrongestAndUpdateURL('Ice', false)">Ice</a></td>
+                            <tr><td><a class="type-text bg-Ice" href="/?strongest&t=Ice" onclick="return LoadStrongestAndUpdateURL('Ice', false)">Ice</a></td>
                                 <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Fighting" onclick="LoadStrongestAndUpdateURL('Fighting', false)">Fighting</a></td>
+                            <tr><td><a class="type-text bg-Fighting" href="/?strongest&t=Fighting" onclick="return LoadStrongestAndUpdateURL('Fighting', false)">Fighting</a></td>
                                 <td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Poison" onclick="LoadStrongestAndUpdateURL('Poison', false)">Poison</a></td>
+                            <tr><td><a class="type-text bg-Poison" href="/?strongest&t=Poison" onclick="return LoadStrongestAndUpdateURL('Poison', false)">Poison</a></td>
                                 <td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Ground" onclick="LoadStrongestAndUpdateURL('Ground', false)">Ground</a></td>
+                            <tr><td><a class="type-text bg-Ground" href="/?strongest&t=Ground" onclick="return LoadStrongestAndUpdateURL('Ground', false)">Ground</a></td>
                                 <td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Flying" onclick="LoadStrongestAndUpdateURL('Flying', false)">Flying</a></td>
+                            <tr><td><a class="type-text bg-Flying" href="/?strongest&t=Flying" onclick="return LoadStrongestAndUpdateURL('Flying', false)">Flying</a></td>
                                 <td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Psychic" onclick="LoadStrongestAndUpdateURL('Psychic', false)">Psychic</a></td>
+                            <tr><td><a class="type-text bg-Psychic" href="/?strongest&t=Psychic" onclick="return LoadStrongestAndUpdateURL('Psychic', false)">Psychic</a></td>
                                 <td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Bug" onclick="LoadStrongestAndUpdateURL('Bug', false)">Bug</a></td>
+                            <tr><td><a class="type-text bg-Bug" href="/?strongest&t=Bug" onclick="return LoadStrongestAndUpdateURL('Bug', false)">Bug</a></td>
                                 <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Rock" onclick="LoadStrongestAndUpdateURL('Rock', false)">Rock</a></td>
+                            <tr><td><a class="type-text bg-Rock" href="/?strongest&t=Rock" onclick="return LoadStrongestAndUpdateURL('Rock', false)">Rock</a></td>
                                 <td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Ghost" onclick="LoadStrongestAndUpdateURL('Ghost', false)">Ghost</a></td>
+                            <tr><td><a class="type-text bg-Ghost" href="/?strongest&t=Ghost" onclick="return LoadStrongestAndUpdateURL('Ghost', false)">Ghost</a></td>
                                 <td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Dragon" onclick="LoadStrongestAndUpdateURL('Dragon', false)">Dragon</a></td>
+                            <tr><td><a class="type-text bg-Dragon" href="/?strongest&t=Dragon" onclick="return LoadStrongestAndUpdateURL('Dragon', false)">Dragon</a></td>
                                 <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Dark" onclick="LoadStrongestAndUpdateURL('Dark', false)">Dark</a></td>
+                            <tr><td><a class="type-text bg-Dark" href="/?strongest&t=Dark" onclick="return LoadStrongestAndUpdateURL('Dark', false)">Dark</a></td>
                                 <td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Steel" onclick="LoadStrongestAndUpdateURL('Steel', false)">Steel</a></td>
+                            <tr><td><a class="type-text bg-Steel" href="/?strongest&t=Steel" onclick="return LoadStrongestAndUpdateURL('Steel', false)">Steel</a></td>
                                 <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td>
                             </tr>
-                            <tr><td><a class="type-text bg-Fairy" onclick="LoadStrongestAndUpdateURL('Fairy', false)">Fairy</a></td>
+                            <tr><td><a class="type-text bg-Fairy" href="/?strongest&t=Fairy" onclick="return LoadStrongestAndUpdateURL('Fairy', false)">Fairy</a></td>
                                 <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
                         </tbody>

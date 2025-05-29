@@ -87,6 +87,9 @@ function LoadPokedex(pokedex_mon) {
     LoadPage("pokedex-page");
 
     LoadPokedexData(pokedex_mon);
+
+    // Prevent Link
+    return false;
 }
 
 
@@ -102,6 +105,7 @@ function LoadPokedexAndUpdateURL(pokedex_mon) {
     LoadPokedex(pokedex_mon);
     UpdatePokedexURL(pokedex_mon);
 
+    // Prevent Link
     return false;
 }
 
@@ -303,7 +307,8 @@ function LoadPokedexEffectiveness(pkm_obj) {
     let effectiveness_0244_html = "";
     for (let type of effectiveness_0244) {
         effectiveness_0244_html += "<a class='type-text bg-" + type
-                + "' onclick='LoadStrongestAndUpdateURL(\"" + type
+                + "' href='/?strongest&t=" + type
+                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
                 + "\", false)'>" + type + "</a> ";
     }
     $("#effectiveness-0244").html(effectiveness_0244_html);
@@ -312,7 +317,8 @@ function LoadPokedexEffectiveness(pkm_obj) {
     let effectiveness_0391_html = "";
     for (let type of effectiveness_0391) {
         effectiveness_0391_html += "<a class='type-text bg-" + type
-                + "' onclick='LoadStrongestAndUpdateURL(\"" + type
+                + "' href='/?strongest&t=" + type
+                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
                 + "\", false)'>" + type + "</a> ";
     }
     $("#effectiveness-0391").html(effectiveness_0391_html);
@@ -320,7 +326,8 @@ function LoadPokedexEffectiveness(pkm_obj) {
     let effectiveness_0625_html = "";
     for (let type of effectiveness_0625) {
         effectiveness_0625_html += "<a class='type-text bg-" + type
-                + "' onclick='LoadStrongestAndUpdateURL(\"" + type
+                + "' href='/?strongest&t=" + type
+                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
                 + "\", false)'>" + type + "</a> ";
     }
     $("#effectiveness-0625").html(effectiveness_0625_html);
@@ -328,7 +335,8 @@ function LoadPokedexEffectiveness(pkm_obj) {
     let effectiveness_160_html = "";
     for (let type of effectiveness_160) {
         effectiveness_160_html += "<a class='type-text bg-" + type
-                + "' onclick='LoadStrongestAndUpdateURL(\"" + type
+                + "' href='/?strongest&t=" + type
+                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
                 + "\", false)'>" + type + "</a> ";
     }
     $("#effectiveness-160").html(effectiveness_160_html);
@@ -336,7 +344,8 @@ function LoadPokedexEffectiveness(pkm_obj) {
     let effectiveness_256_html = "";
     for (let type of effectiveness_256) {
         effectiveness_256_html += "<a class='type-text bg-" + type
-                + "' onclick='LoadStrongestAndUpdateURL(\"" + type
+                + "' href='/?strongest&t=" + type
+                + "' onclick='return LoadStrongestAndUpdateURL(\"" + type
                 + "\", false)'>" + type + "</a> ";
     }
     $("#effectiveness-256").html(effectiveness_256_html);
@@ -732,15 +741,15 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             // creates one row
 
             const tr = $("<tr></tr>");
-            const td_fm = $("<td><a class='type-text bg-"
+            const td_fm = $("<td><span class='type-text bg-"
                 + ((fm == "Hidden Power") ? "any-type" : fm_type)
                 + "' onclick=\"OpenMoveEditor('" + fm + "')\">"
                 + fm + ((fm_is_elite) ? "*" : "")
-                + "</a></td>");
-            let td_cm = $("<td><a class='type-text bg-" + cm_type
+                + "</span></td>");
+            let td_cm = $("<td><span class='type-text bg-" + cm_type
                 + "' onclick=\"OpenMoveEditor('" + cm + "')\">"
                 + cm.replaceAll(" Plus", "+") + ((cm_is_elite) ? "*" : "")
-                + "</a></td>");
+                + "</span></td>");
             let td_dps = $("<td>" + dps.toFixed(3) + "</td>");
             let td_dps_sh = $("<td>"
                 + ((can_be_shadow) ? dps_sh.toFixed(3) : "-")
@@ -861,7 +870,9 @@ function BuildTypeTiers(attackTiers) {
  * Builds the tier icon for a type-tier
  */
 function BuildTypeTierLabel(type) {
-    return $(`<a class='type-text bg-${type}' onclick='LoadStrongestAndUpdateURL("${type}", false)'>${type}</a>`);
+    return $(`<a class='type-text bg-${type}' 
+        href='/?strongest&t=${type}'
+        onclick='return LoadStrongestAndUpdateURL("${type}", false)'>${type}</a>`);
 }
 
 /**

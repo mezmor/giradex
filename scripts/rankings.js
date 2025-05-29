@@ -150,7 +150,7 @@ function GetMonLi(pkm_obj) {
  */
 function LoadStrongest(type = "Any") {
     if (!finished_loading)
-        return;
+        return false;
 
     // Move filters for display
     MoveFilterPopup("#strongest-filters");
@@ -244,6 +244,9 @@ function LoadStrongest(type = "Any") {
 
     // Update Icon
     ShowHideSearchStringIcon();
+
+    // Prevent Link
+    return false;
 }
 
 
@@ -264,7 +267,7 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
 
     window.history.pushState({}, "", url);
     
-    LoadStrongest(type);
+    return LoadStrongest(type);
 }
 
 /**
@@ -609,7 +612,8 @@ function SetRankingTable(str_pokemons, num_rows = null,
                         ? p.grouped_rat : row_i) + 1) : "")
                 +"</td>";
             const td_name = "<td class='td-poke-name'>"
-                + "<a class='a-poke-name' onclick='LoadPokedexAndUpdateURL(GetPokeDexMon(" + p.id
+                + "<a class='a-poke-name' href='/?p=" + p.id + "&f=" + p.form 
+                + "' onclick='return LoadPokedexAndUpdateURL(GetPokeDexMon(" + p.id
                     + ",\"" + p.form + "\"))'>"
                 + "<span class=pokemon-icon style='background-image:url("
                 + ICONS_URL + ");background-position:" + coords.x + "px "
@@ -625,14 +629,14 @@ function SetRankingTable(str_pokemons, num_rows = null,
                     : "")
                 + "</a></td>";
             const td_fm =
-                "<td><a class='type-text bg-"
+                "<td><span class='type-text bg-"
                 + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
                 + "onclick=\"OpenMoveEditor('" + p.fm + "')\">"
-                + p.fm + ((p.fm_is_elite) ? "*" : "") + "</a></td>";
+                + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
             const td_cm =
-                "<td><a class='type-text bg-" + p.cm_type + "' "
+                "<td><span class='type-text bg-" + p.cm_type + "' "
                 + "onclick=\"OpenMoveEditor('" + p.cm + "')\">"
-                + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</a></td>";
+                + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
             const td_rat = "<td>" + settings_metric + " <b>"
                 + p.rat.toFixed(2) + "</b></td>";
             const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
