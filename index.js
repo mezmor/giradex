@@ -427,8 +427,8 @@ function InitializePokemonSearch() {
                 // Add types
                 for (type of data.value.types) {
                     $(item).append($("<td><img src='imgs/types/"
-                        + type.toLowerCase() 
-                        + ".gif'></img></td>"));
+                        + type.toLowerCase() + ".gif' alt='"
+                        + type + "'></img></td>"));
                 }
                 if (data.value.types.length == 1) $(item).append("<td></td>");
             }

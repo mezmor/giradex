@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 
 <head>
     <meta charset=UTF-8>
@@ -50,7 +50,7 @@
     <div class="card-header">
         <div class="card-title">Edit Moveset</div>
         <div class="drawer absolute-right v-middle dialog-close">
-            <img class="drawer-icon" src="imgs/close.svg"/>
+            <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
     </div>
     <div class="card-body">
@@ -58,16 +58,16 @@
             <div class="column-l">
                 <h3>Fast Moves</h3>
                 <div style="position: relative; margin-bottom: 0.5em;">
-                    <input id=fm-search-box class=search-box type=text>
-                    <img class="inlaid-icon search-icon" src="imgs/search.svg" />
+                    <input id=fm-search-box class=search-box type=text aria-label="FM Search">
+                    <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
                 </div>
                 <ul class="move-select" id="fm-select"></ul>
             </div>
             <div class="column-r">
                 <h3>Charged Moves</h3>
                 <div style="position: relative; margin-bottom: 0.5em;">
-                    <input id=cm-search-box class=search-box type=text>
-                    <img class="inlaid-icon search-icon" src="imgs/search.svg" />
+                    <input id=cm-search-box class=search-box type=text aria-label="CM Search">
+                    <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
                 </div>
                 <ul class="move-select" id="cm-select"></ul>
             </div>
@@ -84,17 +84,17 @@
     <div class="card-header">
         <div class="card-title" id="move-edit-title">Edit Move Data</div>
         <div class="drawer absolute-right v-middle dialog-close">
-            <img class="drawer-icon" src="imgs/close.svg"/>
+            <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
     </div>
     <div class="card-body">
         <div class="move-form">
-            <span>Name:</span>
+            <label for="any-search-box">Name:</label>
                 <div style="position: relative;">
-                    <input type=text class=search-box name="name" id="any-search-box">
-                    <img class="inlaid-icon search-icon" src="imgs/search.svg" />
+                    <input type=text class=search-box name="name" id="any-search-box" aria-label="Move Name">
+                    <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
                 </div>
-            <span>Type:</span>
+            <label for="move-edit-type">Type:</label>
                 <div class="row" style="gap: 1em; white-space-collapse: collapse;">
                     <select type="select" class="type-text bg-Normal" name="type" id="move-edit-type">
                         <option value="Normal" class="bg-Normal">Normal</option>
@@ -124,13 +124,13 @@
                         </div>
                     </label>
                 </div>
-            <span>Power:</span>
+            <label for="move-edit-power">Power:</label>
                 <div class="num-input-group">
                     <input type="button" data-id="move-edit-power" class="minus" value="–" />
                     <input type=number name="power" id="move-edit-power" min=0 max=50 step=1 >
                     <input type="button" data-id="move-edit-power" class="plus" value="+" />
                 </div>
-            <span>Energy:</span>
+            <label for="move-edit-energy">Energy:</label>
                 <div>
                     <div class="bar-bg unselectable" id="move-edit-energybar"></div>
                     <div class="num-input-group" id="move-edit-energygroup">
@@ -139,7 +139,7 @@
                         <input type="button" data-id="move-edit-energy" class="plus" value="+" />
                     </div>
                 </div>
-            <span>Duration:</span>
+            <label for="move-edit-duration">Duration:</label>
                 <div class="num-input-group">
                     <input type="button" data-id="move-edit-duration" class="minus" value="–" />
                     <input type=number name="duration" id="move-edit-duration" min=0.5 max=5 step=0.5 >
@@ -159,7 +159,7 @@
     <div class="card-header">
         <div class="card-title">Generate Search String</div>
         <div class="drawer absolute-right v-middle dialog-close">
-            <img class="drawer-icon" src="imgs/close.svg"/>
+            <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
         </div>
     </div>
     <div class="card-body">
@@ -222,18 +222,18 @@
     <div class="site-size" id="header-content">
         <a id="header-left" href="/">
             <div class="header-area">
-                <img class="unselectable" id=logo src="imgs/dialga.png">
+                <img class="unselectable" id=logo src="imgs/dialga.png" alt="Site Logo depicting Dialga">
                 <h2 id="site-name">Dialga<span class="contrast">Dex</span></h2>
             </div>
         </a>
         <div class="header-area" id="header-right">
             <form id=poke-search autocomplete=off class="v-middle">
-                <input id=poke-search-box class=search-box type=text>
-                <img class="inlaid-icon search-icon" src="imgs/search.svg" />
+                <input id=poke-search-box class=search-box type=text aria-label="Pokémon Search">
+                <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
             </form>
             <nav>
                 <div id=site-settings-icon class="drawer v-middle">
-                    <img class="drawer-icon" src="imgs/settings.svg" />
+                    <img class="drawer-icon" src="imgs/settings.svg" alt="Cogwheel button to open site settings" />
                     <div class="drawer-popup" id=settings >
                         <!--<div class=settings-title>Settings</div>-->
                         <div class=settings-list>
@@ -332,7 +332,7 @@
                     </div>
                 </div>
                 <div id=menu-icon class="drawer v-middle">
-                    <img class="drawer-icon" src="imgs/menu.svg" />
+                    <img class="drawer-icon" src="imgs/menu.svg" alt="Menu button to open navigation menu to different pages" />
                     <div class="drawer-popup" id="nav-drawer">
                         <ul class="menu">
                             <li><a id=rankings-link href="/?strongest">Attacker Rankings</a></li>
@@ -534,7 +534,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="resist immune">
-                                        <img src="imgs/triple-resistance.svg" class="tripleshield-icon">
+                                        <img src="imgs/triple-resistance.svg" class="tripleshield-icon" alt="3 shields representing triple resistance" >
                                     </span>
                                     <span class="desktop">3x Resistance</span>
                                     <span class="tooltiptext">Damage Multiplier x0.244</span>
@@ -544,7 +544,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="immune">
-                                        <img src="imgs/double-resistance.svg" class="tripleshield-icon">
+                                        <img src="imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance">
                                     </span>
                                     <span class="desktop">2x Resistance</span>
                                     <span class="tooltiptext">Damage Multiplier x0.391</span>
@@ -554,7 +554,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="resist">
-                                        <img src="imgs/resistance.svg" class="shield-icon">
+                                        <img src="imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance">
                                     </span>
                                     <span class="desktop">1x Resistance</span>
                                     <span class="tooltiptext">Damage Multiplier x0.625</span>
@@ -564,7 +564,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="supereffective">
-                                        <img src="imgs/effective.svg" class="sword-icon">
+                                        <img src="imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage">
                                     </span>
                                     <span class="desktop">1x Weakness</span>
                                     <span class="tooltiptext">Damage Multiplier x1.60</span>
@@ -574,7 +574,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="supereffective">
-                                        <img src="imgs/double-effective.svg" class="sword-icon">
+                                        <img src="imgs/double-effective.svg" class="sword-icon" alt="2 swords representing doubly supereffective damage">
                                     </span>
                                     <span class="desktop">2x Weakness</span>
                                     <span class="tooltiptext">Damage Multiplier x2.56</span>
@@ -588,7 +588,7 @@
                     <div class="card-header">
                         <div class="card-title">Raid Counters</div>
                         <div class="drawer absolute-right v-middle">
-                            <img class="drawer-icon" src="imgs/filter.svg"/>
+                            <img class="drawer-icon" src="imgs/filter.svg" alt="Funnel button to open filter and display options" />
                             <div id=counters-filters class="drawer-popup"></div>
                         </div> 
                     </div>
@@ -613,7 +613,7 @@
                     <div class="card-header">
                         <div class="card-title" id="movesets-title">Best Movesets</div>
                         <div class="drawer absolute-right v-middle" id="moveset-edit-icon">
-                            <img class="drawer-icon" src="imgs/edit.svg"/>
+                            <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open moveset editor" />
                         </div>
                     </div>
                     <div class="card-body">
@@ -690,10 +690,10 @@
                 </div>
                 <div class="absolute-right row">
                     <div class="drawer v-middle" id="search-string-icon">
-                        <img class="drawer-icon" src="imgs/search-string.svg"/>
+                        <img class="drawer-icon" src="imgs/search-string.svg" alt="Magnifying glass button to open search string generator" />
                     </div> 
                     <div class="drawer v-middle">
-                        <img class="drawer-icon" src="imgs/filter.svg"/>
+                        <img class="drawer-icon" src="imgs/filter.svg" alt="Funnel button to open filter and display options" />
                         <div id=strongest-filters class="drawer-popup">
                             <div id="filter-settings">
                                 <div class="settings-list">
@@ -898,7 +898,7 @@
                     <span> Move Data</span>
                 </div>
                 <div class="drawer absolute-right v-middle" id="move-edit-icon">
-                    <img class="drawer-icon" src="imgs/edit.svg"/>
+                    <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open move data editor" />
                 </div>
             </div>
             <div class="card-body">
@@ -964,17 +964,17 @@
                 </div>
                 <div class="table-legend">
                     <div class="tooltip">
-                        <span class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></span>
+                        <span class="supereffective"><img src="imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage"></span>
                         Super Effective
                         <span class="tooltiptext">Damage Multiplier x1.6</span>
                     </div>
                     <div class="tooltip">
-                        <span class="resist"><img src="imgs/resistance.svg" class="shield-icon"></span>
+                        <span class="resist"><img src="imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance"></span>
                         Resisted
                         <span class="tooltiptext">Damage Multiplier x0.625</span>
                     </div>
                     <div class="tooltip">
-                        <span class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></span>
+                        <span class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance"></span>
                         Immune
                         <span class="tooltiptext">Damage Multiplier x0.391</span>
                     </div>

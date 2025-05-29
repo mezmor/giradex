@@ -350,7 +350,7 @@ function ResetPokedexCounters() {
     // shows cell with loading image in the counters table
     $("#counters-grid").empty();
     let div = $("<div id='counters-loading'></div>");
-    let img = $("<img class=loading src=imgs/loading.gif></img>");
+    let img = $("<img class=loading src=imgs/loading.gif alt='Loading wheel'></img>");
     div.append(img);
     div.css("height", "125px");
     div.css("grid-column", "1 / 11")
@@ -488,12 +488,15 @@ function ProcessAndSetCountersFromArray(counters,
         let img_src_name = GetPokemonImgSrcName(counter_0.id, counter_0.form);
         let img_src = JB_URL + GIFS_PATH + img_src_name + ".gif";
         img.attr("src", img_src);
+
+        let form_name = GetFormText(counter_0.id, counter_0.form);
+        img.attr("alt", counter_0.name + (form_name.length > 0 ? " " + form_name : ""));
         const div = $("<div></div>");
 
         const div_align_baseline = $("<div class='align-base'></div>");
         div_align_baseline.append("<div class='fill-space'></div>");
         const div_img_wrapper = $("<div></div");
-        div_img_wrapper.append($("<img class=loading src=imgs/loading.gif></img>"));
+        div_img_wrapper.append($("<img class=loading src=imgs/loading.gif alt='Loading wheel'></img>"));
         div_img_wrapper.append(img);
         div_align_baseline.append(div_img_wrapper);
 
@@ -1094,7 +1097,7 @@ function UpdateMovesetEditor() {
 
         const li = $("<li class='move-select-move'><span class='type-text bg-"+(move_obj.name=="Hidden Power" ? "any-type" : move_obj.type)+"'>"
             +move_name+(is_elite ? "*" : "")+"</span></li>");
-        const img = $("<img class='absolute-right delete-icon' src='imgs/delete.svg' />");
+        const img = $("<img class='absolute-right delete-icon' src='imgs/delete.svg' alt='Delete Button' />");
         img.click(function(e) {
             // default move; add to _rem
             if (current_pkm_obj[move_type].includes(move_name)) {

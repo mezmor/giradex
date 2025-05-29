@@ -249,7 +249,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
 
     // shiny img
     const shiny_img =
-        $("<div class=shiny-img-div><img src=imgs/shiny.png></img></div>");
+        $("<div class=shiny-img-div><img src=imgs/shiny.png alt=''></img></div>");
     pokemon_container_div.append(shiny_img);
 
     // img container div
@@ -257,11 +257,12 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     if (is_selected)
         img_container_div.addClass('container-selected');
     img_container_div.append(
-            $("<img class=loading src=imgs/loading.gif></img>"));
+            $("<img class=loading src=imgs/loading.gif alt='Loading wheel'></img>"));
     img_container_div.append($("<img class=pokemon-img "
             + "onload ='HideLoading(this)' onerror='TryNextSrc(this)'"
-            + " onclick='SwapShiny(this)' src="
-            + img_src + "></img>"));
+            + " onclick='SwapShiny(this)' src='"
+            + img_src + "' alt='"
+            + pokemon_name + (form_text.length > 0 ? " " + form_text : "") + "'></img>"));
     pokemon_container_div.append(img_container_div);
 
     // pokemon name p
@@ -271,10 +272,12 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
             + "</p>");
     pokemon_name_p.on('click', e => LoadPokedexAndUpdateURL(GetPokeDexMon(pokemon_id, form)));
     if (is_selected && poke_obj && form != "Mega" && form != "MegaY") {
-        const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + "'></img>");
+        const shadow_icon = $("<img src='imgs/flame.svg' class='shadow-icon filter-" + (can_be_shadow ? 'shadow' : 'noshadow') + 
+            "' alt='" + (can_be_shadow ? 'Purple flame representing the shadow form is released' : 'Dark purple flame representing the shadow form is not yet released') + "'></img>");
         shadow_icon.on('click', function(e) { 
             shadow_icon.removeClass("filter-" + (poke_obj.shadow ? 'shadow' : 'noshadow'));
             shadow_icon.addClass("filter-" + (poke_obj.shadow ? 'noshadow' : 'shadow'));
+            shadow_icon.attr("alt", (poke_obj.shadow ? 'Purple flame representing the shadow form is released' : 'Dark purple flame representing the shadow form is not yet released'))
             poke_obj.shadow = !poke_obj.shadow;
             ClearTypeTiers();
             UpdatePokemonStatsAndURL();
@@ -290,6 +293,7 @@ function GetPokemonContainer(pokemon_id, is_selected, form = "Normal") {
     for (type of types) {
         pokemon_types_div.append($("<img src=imgs/types/"
                 + type.toLowerCase() + ".gif" 
+                + " alt='" + type + "'"
                 + " onclick='LoadStrongestAndUpdateURL(\"" + type
                 + "\", false)'></img>"));
     }
