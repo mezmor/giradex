@@ -273,7 +273,7 @@ function LoadStrongestAndUpdateURL(type = "Any", versus = null) {
 /**
  * Find the "baseline" mon to compare against for tier-making
  */
-function GetComparisonMon(str_pokemons) {
+function GetComparisonMon(str_pokemons, type = null) {
     let top_compare;
     const best_mon = str_pokemons[0].rat;
     
@@ -283,7 +283,12 @@ function GetComparisonMon(str_pokemons) {
             break;
         case "budget":
             try {
-                top_compare = str_pokemons.find(e => e.class == undefined && !e.shadow && e.form != "Mega" && e.form != "MegaY").rat;
+                top_compare = str_pokemons.find(e => e.class == undefined && 
+                                                    !e.shadow && 
+                                                    e.form != "Mega" && e.form != "MegaY" &&
+                                                    (e.fm_type == type || e.cm_type == type || 
+                                                    type == "Any" || type == "Each" || !type)
+                                                ).rat;
             } catch (err) {
                 top_compare = str_pokemons[str_pokemons.length-1].rat; // budget must be even lower
             }
@@ -300,7 +305,10 @@ function GetComparisonMon(str_pokemons) {
                                                     e.name != "Mew" && e.name != "Celebi" && e.name != "Jirachi" &&
                                                     e.name != "Victini" && e.name != "Keldeo" && e.name != "Meloetta" &&
                                                     e.name != "Shaymin" && e.name != "Diancie" && e.name != "Zarude" &&
-                                                    e.name != "Marshadow"
+                                                    e.name != "Marshadow" &&
+                                                    ((e.fm_type == type && e.cm_type == type) || 
+                                                    (type == "Normal" && (e.fm_type == "Normal" || (e.cm_type == "Normal" && e.cm != "Return"))) ||
+                                                    type == "Any" || type == "Each" || !type)
                                                 ).rat;
             } catch (err) {
                 top_compare = str_pokemons[str_pokemons.length-1].rat; // budget must be even lower
@@ -319,7 +327,8 @@ function ProcessAndGroup(str_pokemons, type, strongest_count) {
     const display_grouped = $("#filter-settings input[value='grouped']:checkbox").is(":checked") 
         && $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
         
-    const top_compare = GetComparisonMon(str_pokemons);
+    const top_compare = GetComparisonMon(str_pokemons, 
+        $("#chk-versus").is(":checked") ? null : type);
 
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
