@@ -520,6 +520,7 @@ li.move-select-move {
 }
 :is(ul,textarea,div)::-webkit-scrollbar-thumb { 
     background-color: var(--col-widget); 
+    cursor: pointer;
 }
 
 .delete-icon {
@@ -731,8 +732,13 @@ input.plus {
 /* 
  * (Strongest) Table Formatting
  */
-.table-bg tr:not(.table-header):nth-of-type(odd) { background-color: var(--col-row-bg); }
-.table-bg tr:not(.table-header):nth-of-type(even) { background-color: var(--col-alt-bg); }
+#strongest-scroller {
+    max-height: 750px;
+    overflow-y: scroll;
+}
+
+.table-bg tr.odd { background-color: var(--col-row-bg); }
+.table-bg tr.even { background-color: var(--col-alt-bg); }
 
 #strongest-table {
     width: 100%;

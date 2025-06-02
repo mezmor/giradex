@@ -623,7 +623,7 @@ function GetStrongestOfOneType(search_params) {
 /**
  * Find all strongest counters to this pokemon, filtering based on params
  */
-function GetStrongestVersus(enemy_params, search_params, num_counters = 500) {
+function GetStrongestVersus(enemy_params, search_params, num_counters = 5000) {
     const counters = [];
 
     /**

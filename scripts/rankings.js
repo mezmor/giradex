@@ -1,4 +1,11 @@
-let str_pokemons, type_tiers;
+let str_pokemons = [], type_tiers;
+
+
+let ROW_HEIGHT = 30; // fixed height in CSS
+const ROW_BUFFER_SIZE = 30;
+let curIndices = {
+    row: [0, 0]
+};
 
 /**
  * Bind event handlers for a rankings table
@@ -25,6 +32,8 @@ function BindRankings() {
     });
 
     BindSearchStringDialog();
+
+    SetupScroll();
 }
 
 /**
@@ -551,6 +560,87 @@ function BuildTiers(str_pokemons, top_compare, type) {
 }
 
 /**
+ * 
+ */
+function SetupScroll() {
+    const container = $("#strongest-scroller");
+
+    // Main scroll listener to add or remove rows/cols as needed
+    // Throttle to prevent heavy recalculation ttriggering too often
+    container.on('scroll', throttle(RecalcViewport,100));
+
+    // Also recalc everything if the table resizes (including toggling the options open/closed)
+    new ResizeObserver((entries,observer)=>RecalcViewport()).observe(container[0]);
+}
+
+// Reset matrix as if starting from scratch
+function ClearViewport() {
+    curIndices = {
+        row: [0, 0]
+    };
+    
+    $('#strongest-table tbody').html(`<tr style="height: 0px" id="pad"></tr>
+        <tr style="height: 0px" id="pad-btm"></tr>`);
+}
+
+// Determine desired buffer indices and recalc DOM to match
+function RecalcViewport(event, scrollTop = null) {
+    const container = $("#strongest-scroller");
+    
+    // Desired row buffer
+    const containerHeight = ROW_HEIGHT * 25; //container.height();
+    if (!scrollTop)
+        scrollTop = container.scrollTop();
+    const startRow = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - ROW_BUFFER_SIZE);
+    const rowCount = Math.ceil(containerHeight / ROW_HEIGHT) + 2*ROW_BUFFER_SIZE;
+    const endRow = Math.min(str_pokemons.length, startRow+rowCount);
+    
+    // New target indices
+    const indices = {
+        row: [startRow, endRow]
+    };
+
+    const tr_pad = $("#pad");
+    const tr_padbtm = $("#pad-btm");
+    if (tr_pad.length == 0 || tr_padbtm.length == 0)
+        ClearViewport(); // Always ensure padding rows exist - if not, redraw everything
+
+    // Make DOM changes to match new desired indices
+    RenderTable(indices);
+};
+
+// Manipulate DOM to make sure it matches the desired buffer indices
+function RenderTable(indices) {
+    const tbody = $('#strongest-table tbody');
+    const tr_pad = $("#pad");
+    const tr_padbtm = $("#pad-btm");
+
+    tr_pad.css("height", indices.row[0] * ROW_HEIGHT + "px");
+    tr_padbtm.css("height", (str_pokemons.length - indices.row[1]) * ROW_HEIGHT + "px");
+    
+    // Remove from bottom (scroll up)
+    for (let i=Math.max(indices.row[1],curIndices.row[0]); i<curIndices.row[1]; i++) {
+        tbody.children().eq(-2).remove();
+    }
+    // Remove from top (scroll down)
+    for (let i=curIndices.row[0]; i<indices.row[0]&&i<curIndices.row[1]; i++) {
+        tbody.children().eq(1).remove();
+    }
+
+    // Add on top (scroll up) (reverse order)
+    for (let i=Math.min(curIndices.row[0],indices.row[1])-1; i>=indices.row[0]; i--) {
+        tr_pad.after(GetRankingRow(i));
+    }
+    // Add on bottom (scroll down)
+    for (let i=Math.max(curIndices.row[1],indices.row[0]); i<indices.row[1]; i++) {
+        tr_padbtm.before(GetRankingRow(i));
+    }
+    
+    // Update indices to new values
+    curIndices = indices;
+}
+
+/**
  * Adds rows to the strongest pokemon table according to an array of
  * pokemon. The 'ranks' array fills the leftmost column of the table,
  * if nothing is sent, is filled with ordered numbers #1, #2, etc.
@@ -559,10 +649,7 @@ function BuildTiers(str_pokemons, top_compare, type) {
  * the remaining rows with "-". If the number of rows isn't specified,
  * there will be as many rows as pokemon in the array.
  */
-function SetRankingTable(str_pokemons, num_rows = null, 
-    display_numbered = false, highlight_suboptimal = false, show_pct = false) {
-    const display_grouped = $("#filter-settings input[value='grouped']:checkbox").is(":checked") 
-        && $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
+function SetRankingTable(str_pokemons, num_rows = null) {
 
     const best_pct = str_pokemons[0].pct;
 
@@ -574,98 +661,107 @@ function SetRankingTable(str_pokemons, num_rows = null,
     let cur_tier_i = 0;
 
     for (let row_i = 0; row_i < num_rows; row_i++) {
+        $("#strongest-table tbody").append(GetRankingRow(row_i));
+    }
+}
 
-        if (row_i < str_pokemons.length) {
+function GetRankingRow(row_i) {
+    const display_grouped = $("#filter-settings input[value='grouped']:checkbox").is(":checked") 
+        && $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
+    let display_numbered = true, highlight_suboptimal = false, show_pct = false;
 
-            const p = str_pokemons[row_i];
+    if (row_i < str_pokemons.length) {
+        const p = str_pokemons[row_i];
 
-            const name = p.name;
-            const coords = GetPokemonIconCoords(p.id, p.form);
-            const form_text = GetFormText(p.id, p.form).replace(/\s+Forme?/,"");
-            const legendary = p.class !== undefined;
+        const name = p.name;
+        const coords = GetPokemonIconCoords(p.id, p.form);
+        const form_text = GetFormText(p.id, p.form).replace(/\s+Forme?/,"");
+        const legendary = p.class !== undefined;
 
-            const tr = $("<tr></tr>");
-            if (display_grouped) 
-                tr.addClass("grouped");
+        const tr = $("<tr></tr>");
 
-            // re-style any rows for mons we've seen before 
-            if (highlight_suboptimal) {
-                const pok_uniq_id = GetUniqueIdentifier(p);
-                if (encountered_mons.has(pok_uniq_id)) {
-                    tr.addClass("suboptimal");
-                }
-                else {
-                    encountered_mons.add(pok_uniq_id);
-                }
+        if (display_grouped) 
+            tr.addClass("grouped");
+
+        if (row_i % 2)
+            tr.addClass("odd");
+        else 
+            tr.addClass("even");
+
+        // re-style any rows for mons we've seen before 
+        if (highlight_suboptimal) {
+            const pok_uniq_id = GetUniqueIdentifier(p);
+            if (encountered_mons.has(pok_uniq_id)) {
+                tr.addClass("suboptimal");
             }
-
-            const td_tier = $("<td></td>");
-            if (!display_grouped && show_pct) {
-                if (!cur_tier_td || p.tier != cur_tier_td.text()) {
-                    td_tier.text(p.tier);
-                    td_tier.addClass("tier-label");
-                    td_tier.addClass("tier-" + p.tier);
-                    if (cur_tier_td) cur_tier_td.prop("rowspan", row_i - cur_tier_i);
-                    cur_tier_td = td_tier;
-                    cur_tier_i = row_i;
-                }
-                else {
-                    if (cur_tier_td && row_i == num_rows-1) cur_tier_td.prop("rowspan", row_i - cur_tier_i + 1);
-                    td_tier.css("display", "none");
-                }
-            } 
-
-            const td_rank = "<td>"
-                + ((display_numbered) 
-                    ? (((display_grouped) 
-                        ? p.grouped_rat : row_i) + 1) : "")
-                +"</td>";
-            const td_name = "<td class='td-poke-name'>"
-                + "<a class='a-poke-name' href='/?p=" + p.id + "&f=" + p.form 
-                + "' onclick='return LoadPokedexAndUpdateURL(GetPokeDexMon(" + p.id
-                    + ",\"" + p.form + "\"))'>"
-                + "<span class=pokemon-icon style='background-image:url("
-                + ICONS_URL + ");background-position:" + coords.x + "px "
-                + coords.y + "px'></span>"
-                + " <span class='strongest-name'>"
-                + ((p.shadow)
-                    ? "<span class=shadow-text>Shadow</span> " : "")
-                + name
-                + ((p.level == 50) ? "<sup class='xl'>XL</sup>" : "")
-                +"</span>"
-                + ((form_text.length > 0)
-                    ? "<span class=poke-form-name> (" + form_text + ")</span>" 
-                    : "")
-                + "</a></td>";
-            const td_fm =
-                "<td><span class='type-text bg-"
-                + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
-                + "onclick=\"OpenMoveEditor('" + p.fm + "')\">"
-                + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
-            const td_cm =
-                "<td><span class='type-text bg-" + p.cm_type + "' "
-                + "onclick=\"OpenMoveEditor('" + p.cm + "')\">"
-                + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
-            const td_rat = "<td>" + settings_metric + " <b>"
-                + p.rat.toFixed(2) + "</b></td>";
-            const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
-
-            tr.append(td_tier);
-            tr.append(td_rank);
-            tr.append(td_name);
-            tr.append(td_fm);
-            tr.append(td_cm);
-            tr.append(td_rat);
-            tr.append(td_pct);
-
-            $("#strongest-table tbody").append(tr);
-
-        } else {
-
-            const empty_row =
-                "<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>"
-            $("#strongest-table tbody").append(empty_row);
+            else {
+                encountered_mons.add(pok_uniq_id);
+            }
         }
+
+        const td_tier = $("<td></td>");
+        if (!display_grouped && show_pct) {
+            if (!cur_tier_td || p.tier != cur_tier_td.text()) {
+                td_tier.text(p.tier);
+                td_tier.addClass("tier-label");
+                td_tier.addClass("tier-" + p.tier);
+                if (cur_tier_td) cur_tier_td.prop("rowspan", row_i - cur_tier_i);
+                cur_tier_td = td_tier;
+                cur_tier_i = row_i;
+            }
+            else {
+                if (cur_tier_td && row_i == num_rows-1) cur_tier_td.prop("rowspan", row_i - cur_tier_i + 1);
+                td_tier.css("display", "none");
+            }
+        } 
+
+        const td_rank = "<td>"
+            + ((display_numbered) 
+                ? (((display_grouped) 
+                    ? p.grouped_rat : row_i) + 1) : "")
+            +"</td>";
+        const td_name = "<td class='td-poke-name'>"
+            + "<a class='a-poke-name' href='/?p=" + p.id + "&f=" + p.form 
+            + "' onclick='return LoadPokedexAndUpdateURL(GetPokeDexMon(" + p.id
+                + ",\"" + p.form + "\"))'>"
+            + "<span class=pokemon-icon style='background-image:url("
+            + ICONS_URL + ");background-position:" + coords.x + "px "
+            + coords.y + "px'></span>"
+            + " <span class='strongest-name'>"
+            + ((p.shadow)
+                ? "<span class=shadow-text>Shadow</span> " : "")
+            + name
+            + ((p.level == 50) ? "<sup class='xl'>XL</sup>" : "")
+            +"</span>"
+            + ((form_text.length > 0)
+                ? "<span class=poke-form-name> (" + form_text + ")</span>" 
+                : "")
+            + "</a></td>";
+        const td_fm =
+            "<td><span class='type-text bg-"
+            + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
+            + "onclick=\"OpenMoveEditor('" + p.fm + "')\">"
+            + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
+        const td_cm =
+            "<td><span class='type-text bg-" + p.cm_type + "' "
+            + "onclick=\"OpenMoveEditor('" + p.cm + "')\">"
+            + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
+        const td_rat = "<td>" + settings_metric + " <b>"
+            + p.rat.toFixed(2) + "</b></td>";
+        const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
+
+        tr.append(td_tier);
+        tr.append(td_rank);
+        tr.append(td_name);
+        tr.append(td_fm);
+        tr.append(td_cm);
+        tr.append(td_rat);
+        tr.append(td_pct);
+
+        return tr;
+
+    } else {
+        return $("<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>");
     }
 }
 
@@ -790,4 +886,24 @@ function GetBarHTML(val, val_txt, full_val, max_val, add_classes) {
         + "<span class='bar-txt'>"
         + val_txt
         + "</span></div></div>";
+}
+
+
+// Allow func to execute no more than once every "timeFrame" milliseconds
+function throttle(func, timeFrame) {
+    let lastTime = 0, deferTimer;
+    return function (...args) {
+        let now = new Date();
+        if (now < lastTime + timeFrame) {
+            clearTimeout(deferTimer);
+            deferTimer = setTimeout(()=>{
+                func(...args);
+                lastTime = now;
+            }, timeFrame);
+        }
+        else {
+            func(...args);
+            lastTime = now;
+        }
+    };
 }
