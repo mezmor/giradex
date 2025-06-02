@@ -222,6 +222,9 @@ function LoadMoves(type = "Any") {
     BuildMoveUserMap();
     cur_sort.move_data = GetMoveData(cur_sort.move_type, cur_sort.move_kind);
     SetMoveTable(cur_sort);
+
+    // Prevent link
+    return false;
 }
 
 /**
@@ -245,7 +248,7 @@ function LoadMovesAndUpdateURL(type = "Any", move_kind) {
 
     window.history.pushState({}, "", url);
 
-    LoadMoves(type);
+    return LoadMoves(type);
 }
 
 /**
