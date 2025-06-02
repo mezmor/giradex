@@ -344,7 +344,7 @@ function CalcDamage(atk, def, power, modifiers, rounded = false) {
 function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
     enemy_params, search_params) {
 
-    const num_movesets = search_params.suboptimal ? 5 : 1;
+    const num_movesets = search_params.suboptimal ? 50 : 1;
     let movesets = [];
 
     // gets the necessary data to make the rating calculations
@@ -484,9 +484,9 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
             if (movesets.length < num_movesets) {
                 movesets.push(moveset);
                 // sorts array
-                movesets.sort(function compareFn(a , b) {
-                    return ((a.rat > b.rat) || - (a.rat < b.rat));
-                });
+                //movesets.sort(function compareFn(a , b) {
+                //    return ((a.rat > b.rat) || - (a.rat < b.rat));
+                //});
             } else if (avg_rating.rat > movesets[0].rat) {
                 movesets[0] = moveset;
                 // sorts array
@@ -497,6 +497,10 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
         }
     }
 
+    // sorts array
+    movesets.sort(function compareFn(a , b) {
+        return ((a.rat > b.rat) || - (a.rat < b.rat));
+    });
     return movesets;
 }
 
@@ -623,7 +627,7 @@ function GetStrongestOfOneType(search_params) {
 /**
  * Find all strongest counters to this pokemon, filtering based on params
  */
-function GetStrongestVersus(enemy_params, search_params, num_counters = 5000) {
+function GetStrongestVersus(enemy_params, search_params, num_counters = 100000) {
     const counters = [];
 
     /**
@@ -670,18 +674,23 @@ function GetStrongestVersus(enemy_params, search_params, num_counters = 5000) {
                 
                 if (counters.length < num_counters)
                     counters.push(counter);
-                else
+                else {
                     counters[0] = counter;
-                // sorts array
-                counters.sort(function compareFn(a , b) {
-                    return ((a.rat > b.rat) || - (a.rat < b.rat));
-                });
+                    // sorts array
+                    counters.sort(function compareFn(a , b) {
+                        return ((a.rat > b.rat) || - (a.rat < b.rat));
+                    });
+                }
             }
         }
     }
 
     SearchAll(search_params, UpdateIfStronger);
 
+    // sorts array
+    counters.sort(function compareFn(a , b) {
+        return ((a.rat > b.rat) || - (a.rat < b.rat));
+    });
     return counters;
 }
 

@@ -739,27 +739,26 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
             num_movesets++;
 
             // creates one row
-
             const tr = $("<tr></tr>");
             const td_fm = $("<td><span class='type-text bg-"
                 + ((fm == "Hidden Power") ? "any-type" : fm_type)
                 + "' onclick=\"OpenMoveEditor('" + fm + "')\">"
                 + fm + ((fm_is_elite) ? "*" : "")
                 + "</span></td>");
-            let td_cm = $("<td><span class='type-text bg-" + cm_type
+            const td_cm = $("<td><span class='type-text bg-" + cm_type
                 + "' onclick=\"OpenMoveEditor('" + cm + "')\">"
                 + cm.replaceAll(" Plus", "+") + ((cm_is_elite) ? "*" : "")
                 + "</span></td>");
-            let td_dps = $("<td>" + dps.toFixed(3) + "</td>");
-            let td_dps_sh = $("<td>"
+            const td_dps = $("<td>" + dps.toFixed(3) + "</td>");
+            const td_dps_sh = $("<td>"
                 + ((can_be_shadow) ? dps_sh.toFixed(3) : "-")
                 + "</td>");
-            let td_tdo = $("<td>" + tdo.toFixed(1) + "</td>");
-            let td_tdo_sh = $("<td>"
+            const td_tdo = $("<td>" + tdo.toFixed(1) + "</td>");
+            const td_tdo_sh = $("<td>"
                 + ((can_be_shadow) ? tdo_sh.toFixed(1) : "-")
                 + "</td>");
-            let td_rat = $("<td>" + rat.toFixed(2) + "</td>");
-            let td_rat_sh = $("<td>"
+            const td_rat = $("<td>" + rat.toFixed(2) + "</td>");
+            const td_rat_sh = $("<td>"
                 + ((can_be_shadow) ? rat_sh.toFixed(2) : "-")
                 + "</td>");
 
@@ -880,7 +879,6 @@ function BuildTypeTierLabel(type) {
  * values from a specific column.
  */
 function SortPokedexTable(column_i, sec_column_j) {
-
     let table = $("#pokedex-move-table")[0];
 
     // updates downside triangles
@@ -903,8 +901,13 @@ function SortPokedexTable(column_i, sec_column_j) {
     // sorts rows
     let rows_array = Array.from(table.tBodies[0].rows);
     rows_array = MergeSortPokedexTable(rows_array, column_i, sec_column_j);
-    for (let i = 0; i < rows_array.length; i++)
+    for (let i = 0; i < rows_array.length; i++) {
+        if (i % 2) 
+            rows_array[i].className = "even";
+        else 
+            rows_array[i].className = "odd";
         table.tBodies[0].append(rows_array[i]);
+    }
 }
 
 /**

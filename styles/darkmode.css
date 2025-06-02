@@ -19,8 +19,8 @@
 
     --col-drawer-bg: rgba(27,27,27,0.85);
 
-    --col-row-bg: #2f2f2f;
-    --col-alt-bg: #222;
+    --col-row-bg: hsl(220, 5%, 18%);
+    --col-alt-bg: hsl(220, 5%, 13%);
     --card-radius: 1rem;
 
     .switch {

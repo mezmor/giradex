@@ -13,8 +13,8 @@ let curIndices = {
 function BindRankings() {
     // Moveset count
     $("#chk-suboptimal").change(function() {
-        $("#chk-grouped").prop("disabled", !this.checked);
-    })
+        $("#chk-grouped").prop("disabled", !$("#chk-suboptimal").is(":checked"));
+    });
 
     // Enemy type
     $("#chk-versus").change(function() {
@@ -227,7 +227,7 @@ function LoadStrongest(type = "Any") {
     search_params.real_damage = false;
 
     if (type == "Each") {
-        str_pokemons = SetRankingTable(GetStrongestOfEachType(search_params));
+        str_pokemons = GetStrongestOfEachType(search_params);
     } else {
         str_pokemons = GetStrongestOfOneType(search_params);
         
@@ -238,12 +238,13 @@ function LoadStrongest(type = "Any") {
                         || settings_metric == 'TER'))
             str_pokemons.forEach(str_pok => str_pok.rat /= 1.6);*/
 
-        ProcessAndGroup(str_pokemons, type, settings_strongest_count);
-        SetRankingTable(str_pokemons, settings_strongest_count, true, true, true);
+        ProcessAndGroup(str_pokemons, type);
 
         if (IsDefaultSearchParams(search_params))
             SetTypeTier(type, str_pokemons);
     }
+
+    RecalcViewport(null,0);
 
     // Display relevant footnotes
     //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
@@ -332,17 +333,14 @@ function GetComparisonMon(str_pokemons, type = null) {
  * Group pokemon if needed, with ratings relative to best moveset.
  * Else build tiers and calculate ratings relative to a baseline.
  */
-function ProcessAndGroup(str_pokemons, type, strongest_count) {
-    const display_grouped = $("#filter-settings input[value='grouped']:checkbox").is(":checked") 
-        && $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
+function ProcessAndGroup(str_pokemons, type) {
+    const display_grouped = $("#chk-grouped").is(":checked") && $("#chk-suboptimal").is(":checked");
         
     const top_compare = GetComparisonMon(str_pokemons, 
         $("#chk-versus").is(":checked") ? null : type);
 
     // re-order array based on the optimal movesets of each pokemon
     if (display_grouped) {
-        str_pokemons.length = Math.min(str_pokemons.length, strongest_count); //truncate to top movesets early
-
         let str_pokemons_optimal = new Map(); // map of top movesets per mon
         let rat_order = 0;
 
@@ -374,8 +372,6 @@ function ProcessAndGroup(str_pokemons, type, strongest_count) {
             str_pok.pct_display = str_pok.pct * (top_compare / best_mon);
         }
         BuildTiers(str_pokemons, top_compare, type);
-    
-        //str_pokemons.length = Math.min(str_pokemons.length, strongest_count); // truncate late so all movesets could be evaluated
     }
 }
 
@@ -428,6 +424,8 @@ function BuildTiers(str_pokemons, top_compare, type) {
         let n = str_pokemons.findIndex(e => e.rat <= top_compare * 0.5) - 1; // consider everything up to 50% of comparison mon
         if (n<0)
             n = str_pokemons.length;
+        if (n>100) // Cap at top 500
+            n = 100;
 
         let tier_breaks = jenks_wrapper(str_pokemons.map(e => e.rat).slice(0, n), 5); // truncate to only those above breakpoint
         let compare_tier = tier_breaks.findIndex(e => e < top_compare);
@@ -588,9 +586,12 @@ function RecalcViewport(event, scrollTop = null) {
     const container = $("#strongest-scroller");
     
     // Desired row buffer
-    const containerHeight = ROW_HEIGHT * 25; //container.height();
+    const containerHeight = container.height();
     if (!scrollTop)
         scrollTop = container.scrollTop();
+    //scrollTop = ROW_HEIGHT * Math.round(scrollTop / ROW_HEIGHT); // round
+    //container.scrollTop(scrollTop);
+
     const startRow = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - ROW_BUFFER_SIZE);
     const rowCount = Math.ceil(containerHeight / ROW_HEIGHT) + 2*ROW_BUFFER_SIZE;
     const endRow = Math.min(str_pokemons.length, startRow+rowCount);
@@ -665,10 +666,14 @@ function SetRankingTable(str_pokemons, num_rows = null) {
     }
 }
 
+/**
+ * Builds and returns a ranking row representing the item at str_pokemons[row_i]
+ * to be added to the #strongest-table
+ */
 function GetRankingRow(row_i) {
-    const display_grouped = $("#filter-settings input[value='grouped']:checkbox").is(":checked") 
-        && $("#filter-settings input[value='suboptimal']:checkbox").is(":checked");
-    let display_numbered = true, highlight_suboptimal = false, show_pct = false;
+    const display_grouped = $("#chk-grouped").is(":checked") && $("#chk-suboptimal").is(":checked");
+    const display_numbered = true, highlight_suboptimal = true, show_pct = true;
+    const best_pct = str_pokemons[0].pct;
 
     if (row_i < str_pokemons.length) {
         const p = str_pokemons[row_i];
@@ -691,17 +696,14 @@ function GetRankingRow(row_i) {
         // re-style any rows for mons we've seen before 
         if (highlight_suboptimal) {
             const pok_uniq_id = GetUniqueIdentifier(p);
-            if (encountered_mons.has(pok_uniq_id)) {
+            if (str_pokemons.findIndex(e=>GetUniqueIdentifier(e)==pok_uniq_id) < row_i) {
                 tr.addClass("suboptimal");
-            }
-            else {
-                encountered_mons.add(pok_uniq_id);
             }
         }
 
         const td_tier = $("<td></td>");
         if (!display_grouped && show_pct) {
-            if (!cur_tier_td || p.tier != cur_tier_td.text()) {
+            /*if (!cur_tier_td || p.tier != cur_tier_td.text()) {
                 td_tier.text(p.tier);
                 td_tier.addClass("tier-label");
                 td_tier.addClass("tier-" + p.tier);
@@ -712,7 +714,7 @@ function GetRankingRow(row_i) {
             else {
                 if (cur_tier_td && row_i == num_rows-1) cur_tier_td.prop("rowspan", row_i - cur_tier_i + 1);
                 td_tier.css("display", "none");
-            }
+            }*/
         } 
 
         const td_rank = "<td>"

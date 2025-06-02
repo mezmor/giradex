@@ -1556,7 +1556,7 @@ input.settings-num {
 
 .bar-bg {
     background-color: var(--col-widget-back);
-    margin: 5px;
+    margin: 4px;
     border: 1px solid var(--col-outline);
     box-sizing: content-box;
     text-align: left;
