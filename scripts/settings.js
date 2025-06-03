@@ -86,10 +86,10 @@ function BindSettings() {
         estimated_y_numerator = (settings_newdps ? 1970 : 900);
         CheckURLAndAct(); 
     });
-    $("#strongest-count").change(function() { 
+    /*$("#strongest-count").change(function() { 
         SetStrongestCount(this.value); 
         this.style.width = (this.value.length + 2) + "ch";
-    });
+    });*/
     $("#relobby-time").change(function() { 
         SetRelobbyPenalty(this.value); 
     });
