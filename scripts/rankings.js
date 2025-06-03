@@ -6,6 +6,7 @@ const ROW_BUFFER_SIZE = 30;
 let curIndices = {
     row: [0, 0]
 };
+let tier_stops;
 
 /**
  * Bind event handlers for a rankings table
@@ -386,6 +387,9 @@ function ProcessAndGroup(str_pokemons, type) {
 function BuildTiers(str_pokemons, top_compare, type) {
     const best_mon = str_pokemons[0].rat;
 
+    tier_stops = [];
+    let last_stop = -1, cur_tier = "";
+
     // Compare to benchmark, building tiers based on ratio (str_pok.pct)
     if (settings_tiermethod == "broad" || settings_tiermethod == "ESpace") {
         let S_breakpoint = 100.0;
@@ -397,7 +401,7 @@ function BuildTiers(str_pokemons, top_compare, type) {
             letter_tier_size = 10.0;
         }
 
-        for (let str_pok of str_pokemons) {
+        for (let [i, str_pok] of str_pokemons.entries()) {
             if (str_pok.pct >= S_breakpoint + 0.00001) { //S+
                 const num_S = Math.floor((str_pok.pct - S_breakpoint + 0.00001)/S_tier_size)+1;
                 if (num_S > 3 && str_pok.name == "Mega Rayquaza") 
@@ -415,6 +419,17 @@ function BuildTiers(str_pokemons, top_compare, type) {
                     tier_cnt = 5;
                 str_pok.tier = String.fromCharCode("A".charCodeAt(0) + tier_cnt);
             }
+
+            if (str_pok.tier != cur_tier) {
+                if (cur_tier.length)
+                    tier_stops.push({
+                        tier: cur_tier,
+                        start: last_stop,
+                        stop: i
+                    });
+                cur_tier = str_pok.tier;
+                last_stop = i;
+            }
         }
     }
     // Compare to benchmark, generally trying to set the benchmark into "A" tier within reason
@@ -424,8 +439,8 @@ function BuildTiers(str_pokemons, top_compare, type) {
         let n = str_pokemons.findIndex(e => e.rat <= top_compare * 0.5) - 1; // consider everything up to 50% of comparison mon
         if (n<0)
             n = str_pokemons.length;
-        if (n>100) // Cap at top 500
-            n = 100;
+        if (n>250) // Cap at top 250
+            n = 250;
 
         let tier_breaks = jenks_wrapper(str_pokemons.map(e => e.rat).slice(0, n), 5); // truncate to only those above breakpoint
         let compare_tier = tier_breaks.findIndex(e => e < top_compare);
@@ -446,7 +461,7 @@ function BuildTiers(str_pokemons, top_compare, type) {
 
         let this_tier_idx = 0;
         let this_tier = (compare_tier >= 2 ? 1 - compare_tier : 0); // if necessary, shift tiers down to make "top_compare" mon A-tier
-        for (let str_pok of str_pokemons) {
+        for (let [i, str_pok] of str_pokemons.entries()) {
             if (str_pok.rat <= tier_breaks[this_tier_idx]) {
                 this_tier_idx++;
                 this_tier++;
@@ -461,11 +476,24 @@ function BuildTiers(str_pokemons, top_compare, type) {
                     let num_s = 1 - this_tier;
                     if (str_pok.rat > 1.15 * tier_breaks[this_tier_idx])
                         num_s += Math.floor((str_pok.rat - tier_breaks[this_tier_idx])/tier_breaks[this_tier_idx]/0.15);
+                    if (num_s > 5)
+                        num_s = 5;
                     str_pok.tier = "S".repeat(num_s);
                 }
             }
             else {
                 str_pok.tier = String.fromCharCode("A".charCodeAt(0) + this_tier + (this_tier >= 5 ? 5-this_tier : -1));
+            }
+
+            if (str_pok.tier != cur_tier) {
+                if (cur_tier.length)
+                    tier_stops.push({
+                        tier: cur_tier,
+                        start: last_stop,
+                        stop: i
+                    });
+                cur_tier = str_pok.tier;
+                last_stop = i;
             }
         }
     }
@@ -477,7 +505,7 @@ function BuildTiers(str_pokemons, top_compare, type) {
     // Basic philosophy is that an "S" tier mon should actually be GOOD, not just better than
     //   its counterparts
     else if (settings_tiermethod == "absolute") {
-        for (let str_pok of str_pokemons) {
+        for (let [i, str_pok] of str_pokemons.entries()) {
             let check_rat = str_pok.rat;
             if (type != 'Any') check_rat /= 1.6;
 
@@ -553,7 +581,26 @@ function BuildTiers(str_pokemons, top_compare, type) {
 
             if (str_pok.rat == best_mon && str_pok.name == "Mega Rayquaza")
                 str_pok.tier = "MRay";
+
+            if (str_pok.tier != cur_tier) {
+                if (cur_tier.length)
+                    tier_stops.push({
+                        tier: cur_tier,
+                        start: last_stop,
+                        stop: i
+                    });
+                cur_tier = str_pok.tier;
+                last_stop = i;
+            }
         }
+    }
+
+    if (cur_tier.length && !tier_stops.find(t=>t.tier==cur_tier)) {
+        tier_stops.push({
+            tier: cur_tier,
+            start: last_stop,
+            stop: str_pokemons.length
+        });
     }
 }
 
@@ -577,7 +624,7 @@ function ClearViewport() {
         row: [0, 0]
     };
     
-    $('#strongest-table tbody').html(`<tr style="height: 0px" id="pad"></tr>
+    $('#strongest-table tbody').html(`<tr style="height: 0px" id="pad"><td id="tier-label-container"></td></tr>
         <tr style="height: 0px" id="pad-btm"></tr>`);
 }
 
@@ -586,19 +633,24 @@ function RecalcViewport(event, scrollTop = null) {
     const container = $("#strongest-scroller");
     
     // Desired row buffer
-    const containerHeight = container.height();
+    const containerHeight = ROW_HEIGHT * 25; //container.height();
     if (!scrollTop)
         scrollTop = container.scrollTop();
     //scrollTop = ROW_HEIGHT * Math.round(scrollTop / ROW_HEIGHT); // round
     //container.scrollTop(scrollTop);
 
-    const startRow = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - ROW_BUFFER_SIZE);
-    const rowCount = Math.ceil(containerHeight / ROW_HEIGHT) + 2*ROW_BUFFER_SIZE;
-    const endRow = Math.min(str_pokemons.length, startRow+rowCount);
+    const topVisibleRow = scrollTop / ROW_HEIGHT;
+    const topRow = Math.floor(topVisibleRow);
+    const startRow = Math.max(0, topRow - ROW_BUFFER_SIZE);
+    const visibleRowCount = containerHeight / ROW_HEIGHT;
+    const bufferRowCount = 2*ROW_BUFFER_SIZE;
+    const bottomVisibleRow = topVisibleRow + visibleRowCount;
+    const endRow = Math.min(str_pokemons.length, startRow+Math.ceil(visibleRowCount)+bufferRowCount);
     
     // New target indices
     const indices = {
-        row: [startRow, endRow]
+        row: [startRow, endRow],
+        visibleRow: [topVisibleRow, bottomVisibleRow]
     };
 
     const tr_pad = $("#pad");
@@ -608,6 +660,7 @@ function RecalcViewport(event, scrollTop = null) {
 
     // Make DOM changes to match new desired indices
     RenderTable(indices);
+    RenderLabels(indices);
 };
 
 // Manipulate DOM to make sure it matches the desired buffer indices
@@ -639,6 +692,34 @@ function RenderTable(indices) {
     
     // Update indices to new values
     curIndices = indices;
+}
+
+// Recreate and position all labels that are currently visible
+function RenderLabels(indices) {
+    $("#tier-label-container").empty();
+
+    if (!tier_stops) return;
+
+    let min_len = 3;
+
+    for (const tier of tier_stops) {
+        if (min_len < tier.tier.length) min_len = tier.tier.length;
+
+        let startRow = tier.start, endRow = tier.stop;
+        if (startRow > indices.visibleRow[1] || endRow < indices.visibleRow[0])
+            continue;
+
+        if (startRow < indices.visibleRow[0]) startRow = indices.visibleRow[0];
+        if (endRow > indices.visibleRow[1]) endRow = indices.visibleRow[1];
+
+        let label = $(`<div class="tier-label floating-label">${tier.tier}</div>`);
+        if (tier.tier == "MRay") 
+            label.addClass("tier-MRay");
+        label.css("top", ((endRow + startRow - 1) / 2 * ROW_HEIGHT) + "px");
+        $("#tier-label-container").append(label);
+    }
+
+    $("#tier-label-container").css("min-width", (min_len+1) + "ch");
 }
 
 /**
@@ -703,6 +784,9 @@ function GetRankingRow(row_i) {
 
         const td_tier = $("<td></td>");
         if (!display_grouped && show_pct) {
+            td_tier.addClass("tier-label");
+            td_tier.addClass("tier-" + p.tier);
+            
             /*if (!cur_tier_td || p.tier != cur_tier_td.text()) {
                 td_tier.text(p.tier);
                 td_tier.addClass("tier-label");
@@ -830,7 +914,7 @@ function BuildTypeTier(type) {
     };
 
     let strongest = GetStrongestOfOneType(search_params);
-    ProcessAndGroup(strongest, type, Number.MAX_VALUE);
+    ProcessAndGroup(strongest, type);
     SetTypeTier(type, strongest);
 }
 

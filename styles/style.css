@@ -736,6 +736,10 @@ input.plus {
     max-height: 750px;
     overflow-y: scroll;
 }
+#tier-label-container {
+    position: relative;
+    z-index: 1;
+}
 
 .table-bg tr.odd { background-color: var(--col-row-bg); }
 .table-bg tr.even { background-color: var(--col-alt-bg); }
@@ -1644,6 +1648,14 @@ input.settings-num {
 .tier-label {
     text-shadow: 1px 1px 2px black;
     color: white;
+}
+.tier-label.floating-label {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
 }
 
 .tier-MRay {
