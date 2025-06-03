@@ -301,6 +301,10 @@ dialog.card .card-body {
         --ranking-row-height: 50px;
     }
 
+    #strongest-scroller::-webkit-scrollbar {
+        width: 10px;
+    }
+
     #strongest-table, 
     #pokedex, #pokedex-page, 
     #faq, #about,
@@ -464,6 +468,10 @@ dialog.card .card-body {
 
     #strongest-table, ul.footnotes {
         font-size: 12px;
+    }
+
+    #strongest-scroller::-webkit-scrollbar {
+        width: 5px;
     }
     
     #strongest-table tr > *:nth-child(1) {
