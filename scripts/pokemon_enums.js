@@ -289,8 +289,9 @@ function GetPokemonForms(pokemon_id) {
 
     switch (pokemon_id) {
         case 6: // Charizard
-        case 150: // Mewtwo
             return ["Normal", "Mega", "MegaY"];
+        case 150: // Mewtwo
+            return ["Normal", "Mega", "MegaY", "A"];
         case 3: // Venusaur
         case 9: // Blastoise
         case 15: // Beedrill
@@ -807,6 +808,8 @@ function GetFormText(pokemon_id, form) {
             return "Family of Three";
         case "S":
             return "Apex";
+        case "A":
+            return "Armored";
     }
 
     return "";
