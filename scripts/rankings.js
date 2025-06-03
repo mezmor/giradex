@@ -1,12 +1,12 @@
-let str_pokemons = [], type_tiers;
-
+let str_pokemons = [], type_tiers, tier_stops;
 
 let ROW_HEIGHT = 30; // fixed height in CSS
 const ROW_BUFFER_SIZE = 30;
 let curIndices = {
     row: [0, 0]
 };
-let tier_stops;
+
+let display_numbered = true, show_pct = true, highlight_suboptimal = true;
 
 /**
  * Bind event handlers for a rankings table
@@ -229,23 +229,35 @@ function LoadStrongest(type = "Any") {
 
     if (type == "Each") {
         str_pokemons = GetStrongestOfEachType(search_params);
+        tier_stops = [];
+        let i=0;
+        for (const t of POKEMON_TYPES) {
+            tier_stops.push({
+                tier: t,
+                type: t,
+                start: i,
+                stop: i+1
+            });
+            i++;
+        }
+
+        display_numbered = false;
+        show_pct = false;
+        highlight_suboptimal = false;
     } else {
         str_pokemons = GetStrongestOfOneType(search_params);
-        
-        /* Disable Rescale
-        const rescale = $("#filter-settings input[value='rescale']:checkbox").is(":checked");
-        if (rescale && (settings_metric == 'ER'
-                        || settings_metric == 'EER'
-                        || settings_metric == 'TER'))
-            str_pokemons.forEach(str_pok => str_pok.rat /= 1.6);*/
+
+        display_numbered = true;
+        show_pct = true;
+        highlight_suboptimal = true;
 
         ProcessAndGroup(str_pokemons, type);
 
         if (IsDefaultSearchParams(search_params))
             SetTypeTier(type, str_pokemons);
-    }
 
-    RecalcViewport(null,0);
+        RecalcViewport(null,0);
+    }
 
     // Display relevant footnotes
     //$("#footnote-elite").css('display', search_params.elite ? 'block' : 'none');
@@ -715,6 +727,9 @@ function RenderLabels(indices) {
         let label = $(`<div class="tier-label floating-label">${tier.tier}</div>`);
         if (tier.tier == "MRay") 
             label.addClass("tier-MRay");
+        if (tier.type)
+            label.addClass("bg-"+tier.type);
+
         label.css("top", ((endRow + startRow - 1) / 2 * ROW_HEIGHT) + "px");
         $("#tier-label-container").append(label);
     }
@@ -732,15 +747,8 @@ function RenderLabels(indices) {
  * there will be as many rows as pokemon in the array.
  */
 function SetRankingTable(str_pokemons, num_rows = null) {
-
-    const best_pct = str_pokemons[0].pct;
-
     if (!num_rows || num_rows > str_pokemons.length)
         num_rows = str_pokemons.length;
-
-    const encountered_mons = new Set();
-    let cur_tier_td = null;
-    let cur_tier_i = 0;
 
     for (let row_i = 0; row_i < num_rows; row_i++) {
         $("#strongest-table tbody").append(GetRankingRow(row_i));
@@ -753,7 +761,6 @@ function SetRankingTable(str_pokemons, num_rows = null) {
  */
 function GetRankingRow(row_i) {
     const display_grouped = $("#chk-grouped").is(":checked") && $("#chk-suboptimal").is(":checked");
-    const display_numbered = true, highlight_suboptimal = true, show_pct = true;
     const best_pct = str_pokemons[0].pct;
 
     if (row_i < str_pokemons.length) {
@@ -786,27 +793,14 @@ function GetRankingRow(row_i) {
         if (!display_grouped && show_pct) {
             td_tier.addClass("tier-label");
             td_tier.addClass("tier-" + p.tier);
-            
-            /*if (!cur_tier_td || p.tier != cur_tier_td.text()) {
-                td_tier.text(p.tier);
-                td_tier.addClass("tier-label");
-                td_tier.addClass("tier-" + p.tier);
-                if (cur_tier_td) cur_tier_td.prop("rowspan", row_i - cur_tier_i);
-                cur_tier_td = td_tier;
-                cur_tier_i = row_i;
-            }
-            else {
-                if (cur_tier_td && row_i == num_rows-1) cur_tier_td.prop("rowspan", row_i - cur_tier_i + 1);
-                td_tier.css("display", "none");
-            }*/
         } 
 
-        const td_rank = "<td>"
+        const td_rank = "<td>" //(!display_numbered ? " style='width: 0; max-width: 0'>" : ">")
             + ((display_numbered) 
                 ? (((display_grouped) 
                     ? p.grouped_rat : row_i) + 1) : "")
             +"</td>";
-        const td_name = "<td class='td-poke-name'>"
+        const td_name = $("<td class='td-poke-name'>"
             + "<a class='a-poke-name' href='/?p=" + p.id + "&f=" + p.form 
             + "' onclick='return LoadPokedexAndUpdateURL(GetPokeDexMon(" + p.id
                 + ",\"" + p.form + "\"))'>"
@@ -822,7 +816,7 @@ function GetRankingRow(row_i) {
             + ((form_text.length > 0)
                 ? "<span class=poke-form-name> (" + form_text + ")</span>" 
                 : "")
-            + "</a></td>";
+            + "</a></td>");
         const td_fm =
             "<td><span class='type-text bg-"
             + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
@@ -834,7 +828,10 @@ function GetRankingRow(row_i) {
             + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
         const td_rat = "<td>" + settings_metric + " <b>"
             + p.rat.toFixed(2) + "</b></td>";
-        const td_pct = ((show_pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
+        const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
+
+        //if (!show_pct || !display_numbered)
+        //    td_name.css("width", "45%");
 
         tr.append(td_tier);
         tr.append(td_rank);
