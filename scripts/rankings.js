@@ -356,6 +356,7 @@ function ProcessAndGroup(str_pokemons, type) {
     if (display_grouped) {
         let str_pokemons_optimal = new Map(); // map of top movesets per mon
         let rat_order = 0;
+        tier_stops = [];
 
         for (let str_pok of str_pokemons) {
             const pok_uniq_id = GetUniqueIdentifier(str_pok);

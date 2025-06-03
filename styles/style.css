@@ -775,10 +775,10 @@ input.plus {
 }
 #strongest-table tr.suboptimal td.td-poke-name { 
     font-weight: normal; 
-}
-
-#strongest-table tr.suboptimal {
     font-style: italic;
+}
+#strongest-table tr.suboptimal .pokemon-icon { 
+    visibility: hidden;
 }
 
 #strongest-table tr.suboptimal.grouped > *:nth-child(-n + 3) { 
