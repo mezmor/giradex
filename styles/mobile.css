@@ -1,5 +1,6 @@
 :root {
     --header-height: 4rem;
+    --ranking-row-height: 60px;
 }
 
 .site-size {
@@ -27,6 +28,11 @@ body {
 #strongest-table tr > *:nth-child(3) { 
     width: auto !important;
     padding-right: 10px;
+}
+
+#strongest-scroller {
+    max-height: calc(10 * var(--ranking-row-height));
+    overflow-y: scroll;
 }
 
 .type-links {
@@ -291,6 +297,10 @@ dialog.card .card-body {
 }
 
 @media screen and (max-width:600px) { 
+    :root {
+        --ranking-row-height: 50px;
+    }
+
     #strongest-table, 
     #pokedex, #pokedex-page, 
     #faq, #about,
@@ -301,6 +311,7 @@ dialog.card .card-body {
 
     #strongest-table tr > *:nth-child(1) {
         width: 10px;
+        min-width: 0 !important;
     }
     #strongest-table .tier-label {
         font-size: 8px;
@@ -447,12 +458,17 @@ dialog.card .card-body {
 }
 
 @media screen and (max-width:400px) { 
-    #strongest-table {
+    :root {
+        --ranking-row-height: 45px;
+    }
+
+    #strongest-table, ul.footnotes {
         font-size: 12px;
     }
     
     #strongest-table tr > *:nth-child(1) {
         width: 5px;
+        min-width: 0 !important;
     }
 
     #strongest-header .card-title { font-size: 0.9em; }

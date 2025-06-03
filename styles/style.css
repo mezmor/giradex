@@ -41,7 +41,8 @@
     --border-radius: 2px;
     --site-width: 900px;
     --site-margin: 10px;
-    --header-height: 3rem
+    --header-height: 3rem;
+    --ranking-row-height: 30px;
 }
 
 .switch {
@@ -748,7 +749,7 @@ input.plus {
     width: 100%;
     /*table-layout: fixed;*/
 } 
-#strongest-table tr { height: 30px; }
+#strongest-table tr { height: var(--ranking-row-height); }
 #strongest-table td { 
     padding-top: 0;
     padding-bottom: 0;
@@ -1653,8 +1654,8 @@ input.settings-num {
     position: absolute;
     left: 0;
     width: 100%;
-    height: 30px;
-    line-height: 30px;
+    height: var(--ranking-row-height);
+    line-height: var(--ranking-row-height);
     text-align: center;
 }
 

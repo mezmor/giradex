@@ -1,7 +1,7 @@
 let str_pokemons = [], type_tiers, tier_stops;
 
 let ROW_HEIGHT = 30; // fixed height in CSS
-const ROW_BUFFER_SIZE = 30;
+const MIN_ROW_BUFFER_SIZE = 10;
 let curIndices = {
     row: [0, 0]
 };
@@ -624,38 +624,48 @@ function SetupScroll() {
     const container = $("#strongest-scroller");
 
     // Main scroll listener to add or remove rows/cols as needed
-    // Throttle to prevent heavy recalculation ttriggering too often
+    // Throttle to prevent heavy recalculation triggering too often
     container.on('scroll', throttle(RecalcViewport,100));
 
-    // Also recalc everything if the table resizes (including toggling the options open/closed)
+    // Also recalc everything if the table resizes
     new ResizeObserver((entries,observer)=>RecalcViewport()).observe(container[0]);
 }
 
 // Reset matrix as if starting from scratch
 function ClearViewport() {
     curIndices = {
-        row: [0, 0]
+        row: [0, 0],
+        visibleRow: [0, 0]
     };
     
     $('#strongest-table tbody').html(`<tr style="height: 0px" id="pad"><td id="tier-label-container"></td></tr>
         <tr style="height: 0px" id="pad-btm"></tr>`);
 }
 
-// Determine desired buffer indices and recalc DOM to match
-function RecalcViewport(event, scrollTop = null) {
+// Calculate all indices for rendering
+function GetIndices(scrollTop = null) {
+    //ROW_HEIGHT = window.getComputedStyle(document.documentElement).getPropertyValue('--ranking-row-height');
+    if (window.matchMedia('(max-device-width: 400px)').matches)
+        ROW_HEIGHT = 45;
+    else if (window.matchMedia('(max-device-width: 600px)').matches)
+        ROW_HEIGHT = 50;
+    else if (window.matchMedia('(max-device-width: 900px)').matches)
+        ROW_HEIGHT = 60;
+    else
+        ROW_HEIGHT = 30;
+
     const container = $("#strongest-scroller");
     
     // Desired row buffer
-    const containerHeight = ROW_HEIGHT * 25; //container.height();
+    const containerHeight = container.height();
     if (!scrollTop)
         scrollTop = container.scrollTop();
-    //scrollTop = ROW_HEIGHT * Math.round(scrollTop / ROW_HEIGHT); // round
-    //container.scrollTop(scrollTop);
 
     const topVisibleRow = scrollTop / ROW_HEIGHT;
     const topRow = Math.floor(topVisibleRow);
-    const startRow = Math.max(0, topRow - ROW_BUFFER_SIZE);
     const visibleRowCount = containerHeight / ROW_HEIGHT;
+    let ROW_BUFFER_SIZE = Math.max(Math.ceil(visibleRowCount), MIN_ROW_BUFFER_SIZE);
+    const startRow = Math.max(0, topRow - ROW_BUFFER_SIZE);
     const bufferRowCount = 2*ROW_BUFFER_SIZE;
     const bottomVisibleRow = topVisibleRow + visibleRowCount;
     const endRow = Math.min(str_pokemons.length, startRow+Math.ceil(visibleRowCount)+bufferRowCount);
@@ -666,13 +676,34 @@ function RecalcViewport(event, scrollTop = null) {
         visibleRow: [topVisibleRow, bottomVisibleRow]
     };
 
+    return indices;
+}
+
+// Determine desired buffer indices and recalc DOM to match
+function RecalcViewport(event, scrollTop = null) {
+    // Always ensure padding rows exist - if not, redraw everything
     const tr_pad = $("#pad");
     const tr_padbtm = $("#pad-btm");
     if (tr_pad.length == 0 || tr_padbtm.length == 0)
-        ClearViewport(); // Always ensure padding rows exist - if not, redraw everything
+        ClearViewport(); 
 
-    // Make DOM changes to match new desired indices
-    RenderTable(indices);
+
+    // New target indices
+    let indices = GetIndices(scrollTop);
+
+    do {
+        // Make DOM changes to match new desired indices
+        RenderTable(indices);
+        curIndices = indices;
+        
+        // Refresh indices (container may have resized)
+        indices = GetIndices(scrollTop);
+    }
+    while (curIndices.row[0] != indices.row[0] ||
+        curIndices.row[1] != indices.row[1] ||
+        curIndices.visibleRow[0] != indices.visibleRow[0] ||
+        curIndices.visibleRow[1] != indices.visibleRow[1]);
+
     RenderLabels(indices);
 };
 
@@ -702,9 +733,6 @@ function RenderTable(indices) {
     for (let i=Math.max(curIndices.row[1],indices.row[0]); i<indices.row[1]; i++) {
         tr_padbtm.before(GetRankingRow(i));
     }
-    
-    // Update indices to new values
-    curIndices = indices;
 }
 
 // Recreate and position all labels that are currently visible
