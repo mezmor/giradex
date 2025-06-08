@@ -421,8 +421,9 @@ function SetMoveTable(sort_info) {
     // removes previous table rows
     $("#move-data-table tbody tr").remove();
 
-    for (const md of sort_info.move_data) {
+    for (const [i, md] of sort_info.move_data.entries()) {
         const tr = $("<tr></tr>");
+        tr.addClass((i%2 ? "odd" : "even"));
         
         const td_move_name ="<td" + (sort_info.sort_by=="name" ? " class='selected'" : "") + ">" + 
                 "<span class='type-text bg-" +
