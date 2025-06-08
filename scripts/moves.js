@@ -84,7 +84,8 @@ function BindMoveData() {
         else { // Fast
             $("#move-edit-energygroup").css("display", "");
             $("#move-edit-energybar").css("display", "none");
-            $("#move-edit-energy").val(10);
+            if ($("#move-edit-energy").val()<0)
+                $("#move-edit-energy").val(10);
             
             $("#move-edit-power").attr("min", 0);
             $("#move-edit-power").attr("max", 50);
