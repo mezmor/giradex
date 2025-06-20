@@ -62,20 +62,58 @@ function BindSearchStringDialog() {
         const result_arr = RunSearchString(search_str, check_movesets, check_elite_only);
         const result_compare = ValidateSearchString(pkm_arr, result_arr, check_movesets, check_elite_only);
 
-        if (result_compare[0].size > 0 || result_compare[1].size > 0) {
-            $("#search-string-issues").css("display", "block");
-
+        if (result_compare.not_found.size > 0) { 
+            $("#search-string-issues, #search-string-excluded-col").css("display", "block");
             $("#search-string-excluded").empty();
-            $("#search-string-included").empty();
 
-            for (const missed_mon of result_compare[0]) {
-                $("#search-string-excluded").append(GetMonLi(ParseUniqueIdentifier(missed_mon, true, false, check_movesets)));
+            for (const missed_mon of result_compare.not_found) {
+                let pkm_obj = ParseUniqueIdentifier(included_mon, true, false, check_movesets);
+                GetMonSearchIssue($("#search-string-excluded"), pkm_obj);
             }
-            for (const included_mon of result_compare[1])
-                $("#search-string-included").append(GetMonLi(ParseUniqueIdentifier(included_mon, true, false, check_movesets)));
         }
-        else {
-            $("#search-string-issues").css("display", "none");
+        
+        $("#search-string-issues, #search-string-excluded-col, #search-string-included-col").css("display", "none");
+        if (result_compare.not_wanted.size > 0) {
+            $("#search-string-issues, #search-string-included-col").css("display", "block");
+            $("#search-string-included").empty();
+            for (const included_mon of result_compare.not_wanted) {
+                let pkm_obj = ParseUniqueIdentifier(included_mon, true, false, check_movesets);
+                let base_pkm_obj = pkm_arr.find(e=>e.id==pkm_obj.id&&e.form==pkm_obj.form&&e.shadow==pkm_obj.shadow);
+                if (base_pkm_obj) { // move issue
+                    let fm_issue = null, cm_issue = null;
+                    if (check_elite_only && base_pkm_obj.fm_is_elite && pkm_obj.fm == "null") {
+                        fm_issue = {
+                            issue: "missing",
+                            move: base_pkm_obj.fm
+                        };
+                    }
+                    if (!fm_issue && (base_pkm_obj.fm_is_elite || !check_elite_only) && pkm_obj.fm != base_pkm_obj.fm && pkm_obj.fm != "null") {
+                        fm_issue = {
+                            issue: "incorrect",
+                            move: pkm_obj.fm
+                        };
+                    }
+                    if (check_elite_only && base_pkm_obj.cm_is_elite && pkm_obj.cm == "null") {
+                        cm_issue = {
+                            issue: "missing",
+                            move: base_pkm_obj.cm
+                        };
+                    }
+                    if (!cm_issue && (base_pkm_obj.cm_is_elite || !check_elite_only) && pkm_obj.cm != base_pkm_obj.cm && pkm_obj.cm != "null") {
+                        cm_issue = {
+                            issue: "incorrect",
+                            move: pkm_obj.cm
+                        };
+                    }
+                    
+                    if (fm_issue || cm_issue)
+                        GetMonSearchIssue($("#search-string-included"), pkm_obj, false, fm_issue, cm_issue);
+                }
+                else { // form issue
+                    base_pkm_obj = pkm_arr.find(e=>e.id==pkm_obj.id&&e.shadow==pkm_obj.shadow);
+                    GetMonSearchIssue($("#search-string-included"), pkm_obj, true);
+                }
+            }
         }
     }
 
@@ -129,29 +167,44 @@ function ShowHideSearchStringIcon() {
 }
 
 /**
- * Constructs Li element representing a pkm_obj
+ * Constructs Div element representing a pkm_obj
  * 
  * TODO: Probably can generalize this and use it for search results, table results
  */
-function GetMonLi(pkm_obj) {
-    const li = $("<li></li>");
-
+function GetMonSearchIssue(parent, pkm_obj, form_issue = false, fm_issue = null, cm_issue = null) {
     const coords = GetPokemonIconCoords(pkm_obj.id, pkm_obj.form);
-    const form_text = GetFormText(pkm_obj.id, pkm_obj.form).replace(/\s+Forme?/,"");
+    let form_text = GetFormText(pkm_obj.id, pkm_obj.form).replace(/\s+Forme?/,"");
+    if (form_text == "" && form_issue) form_text = pkm_obj.form;
 
-    li.append("<span class=pokemon-icon style='background-image:url("
+    const leftside = $("<div></div>");
+    leftside.append("<span class=pokemon-icon style='background-image:url("
         + ICONS_URL + ");background-position:" + coords.x + "px "
         + coords.y + "px'></span>");
-    li.append(" <span class='strongest-name'>"
+    leftside.append(" <span class='strongest-name'>"
         + ((pkm_obj.shadow)
             ? "<span class=shadow-text>Shadow</span> " : "")
         + pkm_obj.name
         +"</span>");
     
     if (form_text.length > 0)
-        li.append("<span class=poke-form-name> (" + form_text + ")</span>");
+        leftside.append(`<span class='poke-form-name ${form_issue ? 'issue-highlight' : ''}'> (${form_text})</span>`);
 
-    return li;
+    parent.append(leftside);
+
+    const rightside = $("<div></div>");
+    if (fm_issue) {
+        const fm_obj = jb_fm.find(e=>e.name == fm_issue.move);
+        if (fm_issue.issue == "missing") 
+            rightside.append("<span class='issue-highlight'>Missing: </span>");
+        rightside.append(`<span class="type-text bg-${fm_obj.type}">${fm_issue.move}</span>`);
+    }
+    if (cm_issue) {
+        const cm_obj = jb_cm.find(e=>e.name == cm_issue.move);
+        if (cm_issue.issue == "missing") 
+            rightside.append("<span class='issue-highlight'>Missing: </span>");
+        rightside.append(`<span class="type-text bg-${cm_obj.type}">${cm_issue.move}</span>`);
+    }
+    parent.append(rightside);
 }
 
 /**

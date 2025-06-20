@@ -593,8 +593,17 @@ dialog.card h3, dialog.card h4 {
 #search-string-issues p {
     margin: 0;
 }
+#search-string-issues .issue-highlight {
+    color: var(--col-red);
+    font-weight: bold;
+}
 
-ul.pkm-list {
+.pkm-list {
+    display: grid;
+    grid-template-columns: min-content min-content;
+    column-gap: 1em;
+    align-items: baseline;
+
     width: 100%;
     height: calc(92px + 1em); /* 3*30px rows + 2px border + 1em pad */
     overflow-y: auto;
@@ -607,7 +616,13 @@ ul.pkm-list {
     box-sizing: border-box;
 
     color: var(--col-text);
+}
+.pkm-list .strongest-name {
     font-weight: bold;
+}
+
+.pkm-list .type-text {
+    font-size: 0.9em;
 }
 
 #move-edit-type {
@@ -816,7 +831,7 @@ span.strongest-name {
     text-decoration: underline;
 }
 
-span.poke-form-name, .poke-number {
+.poke-form-name, .poke-number {
     text-decoration: none;
     font-weight: normal;
     font-size: 80%;

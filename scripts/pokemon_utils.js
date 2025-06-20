@@ -421,8 +421,13 @@ function SetEquals(set1, set2) {
 }
 function MapByID(arr) { 
 	return arr.reduce((acc, x) => {
-        if (!acc.has(x.id)) acc.set(x.id, []);
-        acc.get(x.id).push(x)
+        if (!acc.has(x.id)) 
+            acc.set(x.id, {all: [], elite: []});
+        
+        acc.get(x.id).all.push(x);
+        
+        if (x.fm_is_elite||x.cm_is_elite)
+            acc.get(x.id).elite.push(x);
         return acc;
     }, new Map()); 
 }
@@ -538,14 +543,14 @@ function GetSearchString(pkm_arr,
     }
 
     if (check_movesets) {
-        const mons_by_id = MapByID(pkm_arr.filter(e=>e.fm_is_elite||e.cm_is_elite||!check_elite_only)); // Filtered-in form map
+        const mons_by_id = MapByID(pkm_arr); // All mon map
         
         for (const p of pkm_arr) {
             const all_ps = mons_by_id.get(p.id);
-            if (!all_ps) continue;
+            if (check_elite_only && all_ps.all.length != all_ps.elite.length) continue; // skip if some would accidentally be filtered out
 
-            if (all_ps.length > 1) { // Multiple filtered in, allow all movesets
-                let fms = GetUnique(all_ps.filter(e=>e.fm_is_elite||!check_elite_only).map(e=>e.fm));
+            if (all_ps.all.length > 1) { // Multiple filtered in, allow ALL moves
+                let fms = GetUnique(all_ps.all.filter(e=>e.fm_is_elite||!check_elite_only).map(e=>e.fm));
                 if (fms.some(f=>f.startsWith("Hidden Power"))) {
                     str = str + GetHiddenPowerSearch(p.id, fms);
                     fms = fms.filter(f=>!f.startsWith("Hidden Power"));
@@ -557,16 +562,16 @@ function GetSearchString(pkm_arr,
                     str = str + ",@" + SanitizeMoveNameSearch(fm);
                 }
 
-                const cms = GetUnique(all_ps.filter(e=>e.cm_is_elite||!check_elite_only).map(e=>e.cm));
+                const cms = GetUnique(all_ps.all.filter(e=>e.cm_is_elite||!check_elite_only).map(e=>e.cm));
                 if (cms.length > 0)
                     str = str + "&!" + p.id;
                 for (const cm of cms) {
                     str = str + ",@" + SanitizeMoveNameSearch(cm);
                 }
 
-                all_ps.length = 0; // Prevent duplicating when we encounter the other forms
+                all_ps.all.length = 0; // Prevent duplicating when we encounter the other forms
             }
-            else if (all_ps.length == 1) { // Force exactly this moveset
+            else if (all_ps.all.length == 1) { // Force exactly this moveset
                 if (p.fm_is_elite||!check_elite_only)
                     str = str + "&!" + p.id + ",@" + SanitizeMoveNameSearch(p.fm);
                 if (p.cm_is_elite||!check_elite_only)
@@ -745,10 +750,10 @@ function ValidateSearchString(input_arr, output_arr,
     
     const all_outputs_uniq = new Set(output_arr.map(e=>GetUniqueIdentifier(e, true, false, check_movesets, check_elite_only)));
 
-    return [
-        all_inputs_uniq.difference(all_outputs_uniq), // not found
-        all_outputs_uniq.difference(all_inputs_uniq) // too many
-    ];
+    return {
+        not_found: all_inputs_uniq.difference(all_outputs_uniq),
+        not_wanted: all_outputs_uniq.difference(all_inputs_uniq)
+    };
 }
 
 /**
