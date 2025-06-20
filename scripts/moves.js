@@ -429,7 +429,6 @@ function SetMoveTable(sort_info) {
                 "<span class='type-text bg-" +
                 ((md.name == "Hidden Power") ? "any-type" : md.type) + "'" +
                 " onclick=\"OpenMoveEditor('" + md.name + "')\">" +
-                md.name.replaceAll(" Plus", "+") + 
             "</span></td>";
 
         const td_power = MoveDataTD(FormatDecimal(md.power,3,0), 
@@ -722,7 +721,7 @@ function InitMoveInput(moveKind, onSelect) {
                 if (move) type = move.type;
 
                 const moveTag = $('<span></span>');
-                moveTag.html($(item).html().replaceAll(" Plus", "+"));
+                moveTag.html($(item).html());
                 $(item).html('');
                 moveTag.addClass('type-text');
                 moveTag.addClass('bg-' + type);

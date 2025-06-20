@@ -363,13 +363,13 @@ function GetStrongestAgainstSpecificEnemy(pkm_obj, shadow, level,
     const fms = moves[0];
     const cms = moves[1];
     const elite_fms = moves[2];
-    const elite_cms = moves[3];
+    let elite_cms = moves[3];
     const pure_only_cms = moves[4];
     const shadow_only_cms = moves[5];
+    if (shadow === true) elite_cms = elite_cms.concat(shadow_only_cms);
+    else if (shadow === false) elite_cms = elite_cms.concat(pure_only_cms);
     const all_fms = fms.concat(elite_fms);
-    let all_cms = cms.concat(elite_cms);
-    if (shadow === true) all_cms = all_cms.concat(shadow_only_cms);
-    else if (shadow === false) all_cms = all_cms.concat(pure_only_cms);
+    const all_cms = cms.concat(elite_cms);
 
     // enemy data
     //let avg_y = null;

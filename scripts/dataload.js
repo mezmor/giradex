@@ -45,6 +45,9 @@ function LoadJSONData() {
     HttpGetAsync("pogo_cm.json",
         function(response) { 
             jb_cm = JSON.parse(response); 
+            jb_cm.forEach(cm => {
+                cm.name = cm.name.replaceAll(" Plus", "+");
+            });
             IncreaseLoadingVal();
         });
     HttpGetAsync("pogo_pkm_manual_announced.json",

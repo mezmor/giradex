@@ -854,7 +854,7 @@ function GetRankingRow(row_i) {
         const td_cm =
             "<td><span class='type-text bg-" + p.cm_type + "' "
             + "onclick=\"OpenMoveEditor('" + p.cm + "')\">"
-            + p.cm.replaceAll(" Plus", "+") + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
+            + p.cm + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
         const td_rat = "<td>" + settings_metric + " <b>"
             + p.rat.toFixed(2) + "</b></td>";
         const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");

@@ -747,7 +747,7 @@ function LoadPokedexMoveTable(pkm_obj, stats, max_stats = null) {
                 + "</span></td>");
             const td_cm = $("<td><span class='type-text bg-" + cm_type
                 + "' onclick=\"OpenMoveEditor('" + cm + "')\">"
-                + cm.replaceAll(" Plus", "+") + ((cm_is_elite) ? "*" : "")
+                + cm + ((cm_is_elite) ? "*" : "")
                 + "</span></td>");
             const td_dps = $("<td>" + dps.toFixed(3) + "</td>");
             const td_dps_sh = $("<td>"

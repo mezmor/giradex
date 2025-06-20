@@ -111,12 +111,12 @@ function GetPokemonMoves(pkm_obj, hidden_power_filter = "Type-Match") {
     // Add moves to Apex Forms
     if (pkm_obj.form == "S") {
         if (pkm_obj.id == 249) { // Apex Lugia
-            shadow_only_cm.push('Aeroblast Plus');
-            pure_only_cm.push('Aeroblast Plus Plus');
+            shadow_only_cm.push('Aeroblast+');
+            pure_only_cm.push('Aeroblast++');
         }
         if (pkm_obj.id == 250) { // Apex Ho-Oh
-            shadow_only_cm.push('Sacred Fire Plus');
-            pure_only_cm.push('Sacred Fire Plus Plus');
+            shadow_only_cm.push('Sacred Fire+');
+            pure_only_cm.push('Sacred Fire++');
         }
     }
 
@@ -619,6 +619,8 @@ function RunSearchString(str, check_movesets = true) {
             moves[1].forEach(cm=>cms.push({name: cm, elite: false}));
             moves[2].forEach(elite_fm=>fms.push({name: elite_fm, elite: true}));
             moves[3].forEach(elite_cm=>cms.push({name: elite_cm, elite: true}));
+            moves[4].forEach(elite_cm=>cms.push({name: elite_cm, elite: true}));
+            moves[5].forEach(elite_cm=>cms.push({name: elite_cm, elite: true}));
         }
 
         for (let fm of fms) {
@@ -782,8 +784,6 @@ function GetDarmanitanFilters(filtered_in_forms) {
 
 /* Handle special cases for weird move names */
 function SanitizeMoveNameSearch(moveName) {
-    moveName = moveName.replace(" Plus", "+");
-    
     if (moveName == "Psychic") 
         moveName = "Psychi";
 
