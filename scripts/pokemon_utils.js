@@ -544,28 +544,33 @@ function GetSearchString(pkm_arr,
             const all_ps = mons_by_id.get(p.id);
             if (!all_ps) continue;
 
-            if (all_ps.length > 1) { // Multiple filtered it, allow all movesets
-                const fms = GetUnique(all_ps.filter(e=>e.fm_is_elite||!check_elite_only).map(e=>e.fm));
+            if (all_ps.length > 1) { // Multiple filtered in, allow all movesets
+                let fms = GetUnique(all_ps.filter(e=>e.fm_is_elite||!check_elite_only).map(e=>e.fm));
+                if (fms.some(f=>f.startsWith("Hidden Power"))) {
+                    str = str + GetHiddenPowerSearch(p.id, fms);
+                    fms = fms.filter(f=>!f.startsWith("Hidden Power"));
+                    fms.push("Hidden Power"); // add in "typeless" HP to be used in normal string gen
+                }
                 if (fms.length > 0)
                     str = str + "&!" + p.id;
                 for (const fm of fms) {
-                    str = str + ",@" + fm;
+                    str = str + ",@" + SanitizeMoveNameSearch(fm);
                 }
 
                 const cms = GetUnique(all_ps.filter(e=>e.cm_is_elite||!check_elite_only).map(e=>e.cm));
                 if (cms.length > 0)
                     str = str + "&!" + p.id;
                 for (const cm of cms) {
-                    str = str + ",@" + (cm == "Psychic" ? "Psychi" : cm.replace(" Plus", ""));
+                    str = str + ",@" + SanitizeMoveNameSearch(cm);
                 }
 
                 all_ps.length = 0; // Prevent duplicating when we encounter the other forms
             }
             else if (all_ps.length == 1) { // Force exactly this moveset
                 if (p.fm_is_elite||!check_elite_only)
-                    str = str + "&!" + p.id + ",@" + p.fm;
+                    str = str + "&!" + p.id + ",@" + SanitizeMoveNameSearch(p.fm);
                 if (p.cm_is_elite||!check_elite_only)
-                    str = str + "&!" + p.id + ",@" + p.cm.replace(" Plus", ""); 
+                    str = str + "&!" + p.id + ",@" + SanitizeMoveNameSearch(p.cm); 
             }
             // else length == 0, which means we've seen it before
         }
@@ -607,7 +612,7 @@ function RunSearchString(str, check_movesets = true) {
     for (let pkm of search_space) {
         if (check_movesets && !(pkm.fm && pkm.cm)) continue;
 
-        const moves = GetPokemonMoves(pkm, "None");
+        const moves = GetPokemonMoves(pkm, "All");
         let fms = [{name: null, elite: false}], cms = [{name: null, elite: false}];
         if (check_movesets) {
             moves[0].forEach(fm=>fms.push({name: fm, elite: false}));
@@ -659,6 +664,7 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
     for (let clause of str.split(/[&|]/)) {
         pkm_arr = pkm_arr.filter(p => {
             let clause_val = false;
+            let fm_obj = null, cm_obj = null;
 
             // Break into OR'd tokens and return true as soon as we pass any of them
             for (let tok of clause.split(/[,;:]/)) {
@@ -679,12 +685,30 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                 if (tok.slice(0,4)=="mega") // mega/primal
                     clause_val = clause_val || ((p.form=="Mega"||p.form=="MegaY") ^ invert);
                 if (tok[0]=="@") { // has attack
-                    if (Array.isArray(p.fm) || Array.isArray(p.cm)) { // passthrough (pre-filtering)
+                    let check_fm = true, check_cm = true;
+                    let move_name = tok.slice(1);
+
+                    if (Array.isArray(p.fm) || Array.isArray(p.cm)) // passthrough (pre-filtering)
                         return true;
+                    
+                    if (move_name[0] == '1') { // only check fm
+                        check_cm = false;
+                        move_name = move_name.slice(1);
                     }
-                    else {
-                        let move_name = tok.slice(1);
-                        clause_val = clause_val || ((!!p.fm&&p.fm.substring(0,move_name.length)==move_name || !!p.cm&&p.cm.substring(0,move_name.length)==move_name) ^ invert);
+                    else if (move_name[0] == '2' || move_name[0] == '3') { // only check cm
+                        check_fm = false;
+                        move_name = move_name.slice(1);
+                    }
+                    
+                    if (check_fm && !!p.fm) {
+                        fm_obj = fm_obj ?? jb_fm.find(f=>f.name==p.fm);
+                        clause_val = clause_val || ((p.fm.substring(0,move_name.length)==move_name) ^ invert);
+                        clause_val = clause_val || ((fm_obj.type==move_name) ^ invert);
+                    }
+                    if (check_cm && !!p.cm) {
+                        cm_obj = cm_obj ?? jb_cm.find(c=>c.name==p.cm);
+                        clause_val = clause_val || ((p.cm.substring(0,move_name.length)==move_name) ^ invert);
+                        clause_val = clause_val || ((cm_obj.type==move_name) ^ invert);
                     }
                 }
                 if (POKEMON_TYPES.has(tok)) { // type
@@ -754,4 +778,35 @@ function GetDarmanitanFilters(filtered_in_forms) {
         ['Psychic,Ice'],            // 14: XZG (!S)
         ['555'],                    // 15: XZSG
     ][form_bitstring];
+}
+
+/* Handle special cases for weird move names */
+function SanitizeMoveNameSearch(moveName) {
+    moveName = moveName.replace(" Plus", "+");
+    
+    if (moveName == "Psychic") 
+        moveName = "Psychi";
+
+    if (moveName.startsWith("Weather Ball") 
+        || moveName.startsWith("Techno Blast")
+        || moveName.startsWith("Aura Sphere")) {
+        for (const t of POKEMON_TYPES) {
+            moveName = moveName.replace(" "+t, "");
+        }
+    }
+
+    return moveName;
+}
+
+/* Handle special case for typed Hidden Power */
+function GetHiddenPowerSearch(pkm_id, all_fms) {
+    str = '&!' + pkm_id;
+
+    for (const f of all_fms) {
+        if (f.startsWith("Hidden Power")) {
+            str = str + ',@1' + f.replace("Hidden Power ", "");
+        }
+    }
+
+    return str;
 }
