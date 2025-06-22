@@ -499,6 +499,17 @@ function GetSearchString(pkm_arr,
                 continue;
             }
 
+            // Differentiate Mewtwo based on costume
+            // Might have to revisit this when megas get released???
+            if (pkm_id == 150) {
+                str = str + "&!150,"
+                if (filtered_in_forms.has('A'))
+                    str = str + "costume";
+                else 
+                    str = str + "!costume";
+                continue;
+            }
+
 
             // Try type-based filtering
             const all_type_combos = Array.from(all_possible_forms.keys()).map(e=>new Set(jb_pkm.find(f=>f.id==pkm_id&&f.form==e).types));
@@ -733,6 +744,10 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                 }
                 if (POKEMON_TYPES.has(tok)) { // type
                     clause_val = clause_val || (p.types.includes(tok) ^ invert);
+                }
+                if (tok=="costume") { // costume form
+                    // Might need to make this more robust depending on if it breaks anything outside of Mewtwo
+                    clause_val = clause_val || ((p.id==150&&p.form=="A") ^ invert);
                 }
 
                 if (clause_val) return clause_val;
