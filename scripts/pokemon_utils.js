@@ -617,6 +617,8 @@ function GetSearchString(pkm_arr,
  */
 function RunSearchString(str, check_movesets = true) {
     let pkm_arr = [];
+
+    const check_unreleased = $("#filter-settings input[value='unreleased']:checkbox").is(":checked");
     
     // Run first check to pre-filter jb_pkm (prevents generating pointless movesets)
     const search_space = ApplySearchString(str, jb_pkm, true);
@@ -624,6 +626,7 @@ function RunSearchString(str, check_movesets = true) {
     // Build up all possible mons and movesets
     for (let pkm of search_space) {
         if (check_movesets && !(pkm.fm && pkm.cm)) continue;
+        if (!check_unreleased && !pkm.released) continue;
 
         const moves = GetPokemonMoves(pkm, "All");
         let fms = [{name: null, elite: false}], cms = [{name: null, elite: false}];
