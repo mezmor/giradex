@@ -822,7 +822,7 @@ function SanitizeMoveNameSearch(moveName) {
 
     if (moveName.startsWith("Weather Ball") 
         || moveName.startsWith("Techno Blast")
-        || moveName.startsWith("Aura Sphere")) {
+        || moveName.startsWith("Aura Wheel")) {
         for (const t of POKEMON_TYPES) {
             moveName = moveName.replace(" "+t, "");
         }
