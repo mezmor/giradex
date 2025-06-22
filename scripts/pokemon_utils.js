@@ -821,9 +821,13 @@ function SanitizeMoveNameSearch(moveName) {
         moveName = "Psychi";
 
     if (moveName.startsWith("Weather Ball") 
-        || moveName.startsWith("Techno Blast")
         || moveName.startsWith("Aura Wheel")) {
         for (const t of POKEMON_TYPES) {
+            moveName = moveName.replace(" "+t, "");
+        }
+    }
+    if (moveName.startsWith("Techno Blast")) {
+        for (const t of ["Normal", "Shock", "Burn", "Chill", "Water"]) {
             moveName = moveName.replace(" "+t, "");
         }
     }
