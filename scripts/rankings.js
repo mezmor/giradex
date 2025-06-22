@@ -67,7 +67,7 @@ function BindSearchStringDialog() {
             $("#search-string-excluded").empty();
 
             for (const missed_mon of result_compare.not_found) {
-                let pkm_obj = ParseUniqueIdentifier(included_mon, true, false, check_movesets);
+                let pkm_obj = ParseUniqueIdentifier(missed_mon, true, false, check_movesets);
                 GetMonSearchIssue($("#search-string-excluded"), pkm_obj);
             }
         }
@@ -107,11 +107,16 @@ function BindSearchStringDialog() {
                     }
                     
                     if (fm_issue || cm_issue)
-                        GetMonSearchIssue($("#search-string-included"), pkm_obj, false, fm_issue, cm_issue);
+                        GetMonSearchIssue($("#search-string-included"), pkm_obj, false, false, fm_issue, cm_issue);
                 }
-                else { // form issue
-                    base_pkm_obj = pkm_arr.find(e=>e.id==pkm_obj.id&&e.shadow==pkm_obj.shadow);
-                    GetMonSearchIssue($("#search-string-included"), pkm_obj, true);
+                else { 
+                    base_pkm_obj = pkm_arr.find(e=>e.id==pkm_obj.id&&e.form==pkm_obj.form&&e.shadow!=pkm_obj.shadow);
+                    if (base_pkm_obj) { // shadow issue
+                        GetMonSearchIssue($("#search-string-included"), pkm_obj, false, true, null, null);
+                    }
+                    else {
+                        GetMonSearchIssue($("#search-string-included"), pkm_obj, true, false, null, null);
+                    }
                 }
             }
         }
@@ -171,7 +176,7 @@ function ShowHideSearchStringIcon() {
  * 
  * TODO: Probably can generalize this and use it for search results, table results
  */
-function GetMonSearchIssue(parent, pkm_obj, form_issue = false, fm_issue = null, cm_issue = null) {
+function GetMonSearchIssue(parent, pkm_obj, form_issue = false, shadow_issue = false, fm_issue = null, cm_issue = null) {
     const coords = GetPokemonIconCoords(pkm_obj.id, pkm_obj.form);
     let form_text = GetFormText(pkm_obj.id, pkm_obj.form).replace(/\s+Forme?/,"");
     if (form_text == "" && form_issue) form_text = pkm_obj.form;
@@ -186,12 +191,17 @@ function GetMonSearchIssue(parent, pkm_obj, form_issue = false, fm_issue = null,
         + pkm_obj.name
         +"</span>");
     
-    if (form_text.length > 0)
-        leftside.append(`<span class='poke-form-name ${form_issue ? 'issue-highlight' : ''}'> (${form_text})</span>`);
+    if (form_text.length > 0 && !form_issue)
+        leftside.append(`<span class='poke-form-name'> (${form_text})</span>`);
 
     parent.append(leftside);
 
     const rightside = $("<div></div>");
+    if (form_text.length > 0 && form_issue)
+        rightside.append(`<span class='poke-form-name issue-highlight'> (${form_text})</span>`);
+    if (shadow_issue)
+        rightside.append(`<span class='poke-form-name issue-highlight'> (${pkm_obj.shadow ? '' : 'Not '}Shadow)</span>`);
+
     if (fm_issue) {
         const fm_obj = jb_fm.find(e=>e.name == fm_issue.move);
         if (fm_issue.issue == "missing") 

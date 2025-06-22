@@ -452,6 +452,14 @@ function GetSearchString(pkm_arr,
         str = str + "&!shadow"
     }
 
+    // Pure only (never shadow)
+    const pure_only = (new Set(pkm_arr.filter(e=>!e.shadow&&jb_pkm.find(p=>p.id==e.id&&p.form==e.form).shadow).map(e=>e.id))).difference(new Set(pkm_arr.filter(e=>e.shadow).map(e=>e.id)));
+    if (pure_only.size > 0) {
+        for (const p_id of pure_only) {
+            str = str + "&!" + p_id + ",!shadow";
+        }
+    }
+
     // Mega forms
     const has_mega_forms = pkm_arr.some(e=>e.form=="Mega"||e.form=="MegaY");
     if (has_mega_forms) {
@@ -624,26 +632,28 @@ function RunSearchString(str, check_movesets = true) {
             moves[1].forEach(cm=>cms.push({name: cm, elite: false}));
             moves[2].forEach(elite_fm=>fms.push({name: elite_fm, elite: true}));
             moves[3].forEach(elite_cm=>cms.push({name: elite_cm, elite: true}));
-            moves[4].forEach(elite_cm=>cms.push({name: elite_cm, elite: true}));
-            moves[5].forEach(elite_cm=>cms.push({name: elite_cm, elite: true}));
+            moves[4].forEach(elite_cm=>cms.push({name: elite_cm, elite: true, pure_only: true}));
+            moves[5].forEach(elite_cm=>cms.push({name: elite_cm, elite: true, shadow_only: true}));
         }
 
         for (let fm of fms) {
             for (let cm of cms) {
-                pkm_arr.push({
-                    id: pkm.id,
-                    name: pkm.name,
-                    form: pkm.form,
-                    shadow: false,
-                    fm: fm.name,
-                    fm_is_elite: fm.elite,
-                    cm: cm.name,
-                    cm_is_elite: cm.elite,
-                    types: pkm.types
-                });
+                if (!cm.shadow_only) {
+                    pkm_arr.push({
+                        id: pkm.id,
+                        name: pkm.name,
+                        form: pkm.form,
+                        shadow: false,
+                        fm: fm.name,
+                        fm_is_elite: fm.elite,
+                        cm: cm.name,
+                        cm_is_elite: cm.elite,
+                        types: pkm.types
+                    });
+                }
 
                 // List Shadow as a separate mon
-                if (pkm.shadow) {
+                if (pkm.shadow && !cm.pure_only) {
                     pkm_arr.push({
                         id: pkm.id,
                         name: "Shadow " + pkm.name,
