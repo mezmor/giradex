@@ -587,6 +587,11 @@ function GetSearchString(pkm_arr,
                 for (const cm of cms) {
                     str = str + ",@" + SanitizeMoveNameSearch(cm);
                 }
+                if (cms.includes("Psychic") &&
+                    jb_pkm.some(j=>j.id==p.id&&j.cm&&j.cm.includes("Psychic Fangs")) && // some form learns psychic fangs
+                    !cms.includes("Psychic Fangs")) { // psychic fangs isn't filtered in
+                    str = str + "&!" + p.id + ",!@Psychic Fangs";
+                }
 
                 all_ps.all.length = 0; // Prevent duplicating when we encounter the other forms
             }
@@ -595,6 +600,11 @@ function GetSearchString(pkm_arr,
                     str = str + "&!" + p.id + ",@" + SanitizeMoveNameSearch(p.fm);
                 if (p.cm_is_elite||!check_elite_only)
                     str = str + "&!" + p.id + ",@" + SanitizeMoveNameSearch(p.cm); 
+
+                if (p.cm == "Psychic" && 
+                    jb_pkm.find(j=>j.id==p.id&&j.form==p.form).cm.includes("Psychic Fangs")) { // can learn psychic fangs
+                    str = str + "&!" + p.id + ",!@Psychic Fangs";
+                }
             }
             // else length == 0, which means we've seen it before
         }
@@ -717,6 +727,7 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                     clause_val = clause_val || ((p.form=="Mega"||p.form=="MegaY") ^ invert);
                 if (tok[0]=="@") { // has attack
                     let check_fm = true, check_cm = true;
+                    let fm_phrase_val = false, cm_phrase_val = false;
                     let move_name = tok.slice(1);
 
                     if (Array.isArray(p.fm) || Array.isArray(p.cm)) // passthrough (pre-filtering)
@@ -733,14 +744,14 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                     
                     if (check_fm && !!p.fm) {
                         fm_obj = fm_obj ?? jb_fm.find(f=>f.name==p.fm);
-                        clause_val = clause_val || ((p.fm.substring(0,move_name.length)==move_name) ^ invert);
-                        clause_val = clause_val || ((fm_obj.type==move_name) ^ invert);
+                        fm_phrase_val = (p.fm.substring(0,move_name.length)==move_name) || (fm_obj.type==move_name);
                     }
                     if (check_cm && !!p.cm) {
                         cm_obj = cm_obj ?? jb_cm.find(c=>c.name==p.cm);
-                        clause_val = clause_val || ((p.cm.substring(0,move_name.length)==move_name) ^ invert);
-                        clause_val = clause_val || ((cm_obj.type==move_name) ^ invert);
+                        cm_phrase_val = (p.cm.substring(0,move_name.length)==move_name) || (cm_obj.type==move_name);
                     }
+
+                    clause_val = clause_val || ((fm_phrase_val || cm_phrase_val) ^ invert);
                 }
                 if (POKEMON_TYPES.has(tok)) { // type
                     clause_val = clause_val || (p.types.includes(tok) ^ invert);
