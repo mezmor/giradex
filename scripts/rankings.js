@@ -62,7 +62,7 @@ function BindSearchStringDialog() {
         const result_arr = RunSearchString(search_str, check_movesets, check_elite_only);
         const result_compare = ValidateSearchString(pkm_arr, result_arr, check_movesets, check_elite_only);
 
-        $("#search-string-issues, #search-string-excluded-col, #search-string-included-col").css("display", "none");
+        $("#search-string-issues, #search-string-excluded-col, #search-string-included-col, #string-length-issue").css("display", "none");
         if (result_compare.not_found.size > 0) { 
             $("#search-string-issues, #search-string-excluded-col").css("display", "block");
             $("#search-string-excluded").empty();
@@ -120,6 +120,9 @@ function BindSearchStringDialog() {
                 }
             }
         }
+
+        if (search_str.length > 5000)
+            $("#search-string-issues, #string-length-issue").css("display", "block");
     }
 
     // Dialog Open/Close
