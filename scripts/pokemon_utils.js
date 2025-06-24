@@ -502,11 +502,22 @@ function GetSearchString(pkm_arr,
             // Differentiate Mewtwo based on costume
             // Might have to revisit this when megas get released???
             if (pkm_id == 150) {
-                str = str + "&!150,"
+                str = str + "&!150,";
                 if (filtered_in_forms.has('A'))
                     str = str + "costume";
                 else 
                     str = str + "!costume";
+                continue;
+            }
+
+            // Differentiate Apex forms based on "research"
+            // Technically has a Ho-Oh research issue, but it's not huge
+            if (pkm_id == 249 || pkm_id == 250) {
+                str = str + "&!" + pkm_id + ",";
+                if (filtered_in_forms.has('S'))
+                    str = str + "research";
+                else 
+                    str = str + "!research";
                 continue;
             }
 
@@ -759,6 +770,10 @@ function ApplySearchString(str, pkm_arr, id_filter_only = false) {
                 if (tok=="costume") { // costume form
                     // Might need to make this more robust depending on if it breaks anything outside of Mewtwo
                     clause_val = clause_val || ((p.id==150&&p.form=="A") ^ invert);
+                }
+                if (tok=="research") { // research reward
+                    // Might need to make this more robust depending on if it breaks anything outside of Ho-Oh/Lugia
+                    clause_val = clause_val || (((p.id==249||p.id==250)&&p.form=="S") ^ invert);
                 }
 
                 if (clause_val) return clause_val;
