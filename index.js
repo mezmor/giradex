@@ -33,6 +33,16 @@ function Main() {
 
     // Load Pokemon Data
     LoadJSONData();
+    
+    // Initialize Collection System
+    if (typeof InitializeCollection !== 'undefined') {
+        InitializeCollection();
+    }
+    
+    // Initialize collection display state
+    if (typeof SetCollectionDisplay !== 'undefined') {
+        SetCollectionDisplay($("#chk-collection-display").is(":checked"));
+    }
 }
 
 /**
