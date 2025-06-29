@@ -884,6 +884,11 @@ function GetRankingRow(row_i) {
             }
         }
 
+        // Add owned pokemon highlighting
+        if (typeof IsInCollection !== 'undefined' && IsInCollection(p)) {
+            tr.addClass("pokemon-owned");
+        }
+
         const td_tier = $("<td></td>");
         if (!display_grouped && show_pct) {
             td_tier.addClass("tier-label");
@@ -925,6 +930,13 @@ function GetRankingRow(row_i) {
             + p.rat.toFixed(2) + "</b></td>";
         const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
 
+        // Collection checkbox column (moved to the right)
+        const td_collection = $("<td></td>");
+        if (typeof CreateCollectionCheckbox !== 'undefined' && $('body').hasClass('collection-enabled')) {
+            const collectionCheckbox = CreateCollectionCheckbox(p, row_i);
+            td_collection.append(collectionCheckbox);
+        }
+
         //if (!show_pct || !display_numbered)
         //    td_name.css("width", "45%");
 
@@ -935,11 +947,12 @@ function GetRankingRow(row_i) {
         tr.append(td_cm);
         tr.append(td_rat);
         tr.append(td_pct);
+        tr.append(td_collection);
 
         return tr;
 
     } else {
-        return $("<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>");
+        return $("<tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>");
     }
 }
 

@@ -112,6 +112,11 @@ function BindSettings() {
     $("#settings-speculative").change(function() { 
         SetSpeculative($("#settings-speculative").is(":checked")); 
     });
+    
+    // Collection Display Toggle
+    $("#chk-collection-display").change(function() {
+        SetCollectionDisplay($("#chk-collection-display").is(":checked"));
+    });
 }
 
 /**
@@ -442,19 +447,31 @@ function SetAffinity(useAffinity) {
 }
 
 /**
- * Modifies the jb_pkm array based on announced upcoming changes
+ * Sets whether to show upcoming/speculative data and, if necessary, updates the page accordingly.
  */
 function SetSpeculative(useUpcoming) {
     settings_speculative = useUpcoming;
+    
+    if (finished_loading) {
+        PatchSpeculative(useUpcoming);
+        CheckURLAndAct();
+    }
+}
 
-    PatchSpeculative(settings_speculative);
+/**
+ * Sets whether to display collection tracking and updates the page accordingly.
+ */
+function SetCollectionDisplay(showCollection) {
+    if (showCollection) {
+        $('body').addClass('collection-enabled');
+    } else {
+        $('body').removeClass('collection-enabled');
+    }
     
-    // Reset caches
-    ClearTypeTiers();
-    ClearMoveUserMap()
-    
-    // reload page
-    CheckURLAndAct();
+    // Refresh the current display if on rankings page
+    if ($("#strongest").is(":visible")) {
+        CheckURLAndAct();
+    }
 }
 
 /**

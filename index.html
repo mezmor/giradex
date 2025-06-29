@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/styles/tooltips.css">
     <link rel="stylesheet" href="/styles/autocomplete.css">
     <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/collection.css">
     <link rel="stylesheet" href="/styles/mobile.css" media="screen and (max-width:900px)">
 
     <link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_pkm_names.json" as="fetch" crossorigin />
@@ -39,6 +40,7 @@
     <script src="/scripts/rankings.js"></script>
     <script src="/scripts/pokedex.js"></script>
     <script src="/scripts/moves.js"></script>
+    <script src="/scripts/pokemon_collection.js"></script>
     <script src="index.js"></script>
 </head>
 
@@ -767,6 +769,13 @@
                                             <input type=checkbox value=grouped id=chk-grouped disabled>
                                             <span class="slider" ></span>
                                         </label>
+                                    <span class="tooltip tooltip-left">Collection Tracking
+                                        <span class="tooltiptext">Show checkboxes to track which Pokémon you own with IV indicators</span>
+                                    </span>
+                                        <label class="switch">
+                                            <input type=checkbox value=collection id=chk-collection-display checked>
+                                            <span class="slider"></span>
+                                        </label>
                                     <span class="tooltip tooltip-left" id=settings-compare-header>Baseline
                                         <span class="tooltiptext">Sets the "100%" reference Pokémon</span>
                                     </span>
@@ -1063,7 +1072,7 @@
                                 <td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Dragon" href="/?strongest&t=Dragon" onclick="return LoadStrongestAndUpdateURL('Dragon', false)">Dragon</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td>
                             </tr>
                             <tr><td><a class="type-text bg-Dark" href="/?strongest&t=Dark" onclick="return LoadStrongestAndUpdateURL('Dark', false)">Dark</a></td>
                                 <td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
