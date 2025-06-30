@@ -446,4 +446,189 @@ body:not(.collection-enabled) #strongest-table tr > *:nth-child(7):last-child {
     background-color: var(--col-alt-bg);
     border: 1px solid var(--col-border);
     border-radius: 4px;
+}
+
+/* Collection Page Styles */
+.collection-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.action-group {
+    padding: 1.5rem;
+    border: 1px solid var(--col-outline);
+    border-radius: var(--border-radius);
+    background-color: var(--col-row-bg);
+}
+
+.action-group h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--col-text);
+    font-size: 1.1rem;
+}
+
+.action-group p {
+    margin: 0 0 1rem 0;
+    color: var(--col-text-midkey);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.warning-text {
+    color: var(--col-red) !important;
+    font-weight: bold;
+}
+
+.action-group button {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.danger-btn {
+    background-color: var(--col-red) !important;
+    color: white !important;
+}
+
+.danger-btn:hover {
+    background-color: #b33333 !important;
+}
+
+.status-message {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    display: none;
+}
+
+.status-message.success {
+    background-color: rgba(56, 161, 105, 0.1);
+    color: var(--col-text);
+    border: 1px solid #38a169;
+    display: block;
+}
+
+.status-message.error {
+    background-color: rgba(229, 62, 62, 0.1);
+    color: var(--col-red);
+    border: 1px solid var(--col-red);
+    display: block;
+}
+
+/* Collection stats */
+#collection-stats-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    text-align: center;
+}
+
+.stat-item {
+    padding: 1rem;
+    background-color: var(--col-alt-bg);
+    border-radius: var(--border-radius);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--col-widget);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--col-text-midkey);
+    margin-top: 0.5rem;
+}
+
+/* Collection list */
+#collection-pokemon-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.collection-pokemon-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--col-row-bg);
+    border: 1px solid var(--col-outline);
+    border-radius: var(--border-radius);
+}
+
+.collection-pokemon-icon {
+    width: 40px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+.collection-pokemon-info {
+    flex-grow: 1;
+}
+
+.collection-pokemon-name {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.collection-pokemon-ivs {
+    font-size: 0.9rem;
+    color: var(--col-text-midkey);
+}
+
+.collection-pokemon-perfection {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    color: white;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+/* Quality indicator colors */
+.quality-perfect {
+    background-color: #8B5CF6; /* Purple for perfect */
+}
+
+.quality-excellent {
+    background-color: #3B82F6; /* Blue for excellent */
+}
+
+.quality-great {
+    background-color: #10B981; /* Green for great */
+}
+
+.quality-good {
+    background-color: #F59E0B; /* Yellow for good */
+}
+
+.quality-poor {
+    background-color: #EF4444; /* Red for poor */
+}
+
+/* Mobile responsiveness for collection page */
+@media screen and (max-width: 600px) {
+    .collection-actions {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .action-group {
+        padding: 1rem;
+    }
+    
+    #collection-pokemon-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .collection-pokemon-item {
+        padding: 0.75rem;
+    }
 } 
