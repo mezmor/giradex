@@ -946,15 +946,37 @@ function GetRankingRow(row_i) {
                 ? "<span class=poke-form-name> (" + form_text + ")</span>" 
                 : "")
             + "</a></td>");
-        const td_fm =
-            "<td><span class='type-text bg-"
-            + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
-            + "onclick=\"OpenMoveEditor('" + p.fm + "')\">"
-            + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
-        const td_cm =
-            "<td><span class='type-text bg-" + p.cm_type + "' "
-            + "onclick=\"OpenMoveEditor('" + p.cm + "')\">"
-            + p.cm + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
+        
+        let td_fm, td_cm;
+        
+        if (isMegasPage) {
+            // For megas page, show Pokemon types instead of moves
+            const pokemonTypes = p.types || []; // Get the actual Pokemon types
+            
+            // First type column
+            if (pokemonTypes.length > 0) {
+                td_fm = "<td><span class='type-text bg-" + pokemonTypes[0] + "'>" + pokemonTypes[0] + "</span></td>";
+            } else {
+                td_fm = "<td>-</td>";
+            }
+            
+            // Second type column
+            if (pokemonTypes.length > 1) {
+                td_cm = "<td><span class='type-text bg-" + pokemonTypes[1] + "'>" + pokemonTypes[1] + "</span></td>";
+            } else {
+                td_cm = "<td>-</td>";
+            }
+        } else {
+            // For normal rankings, show moves
+            td_fm = "<td><span class='type-text bg-"
+                + ((p.fm == "Hidden Power") ? "any-type" : p.fm_type) + "' "
+                + "onclick=\"OpenMoveEditor('" + p.fm + "')\">"
+                + p.fm + ((p.fm_is_elite) ? "*" : "") + "</span></td>";
+            td_cm = "<td><span class='type-text bg-" + p.cm_type + "' "
+                + "onclick=\"OpenMoveEditor('" + p.cm + "')\">"
+                + p.cm + ((p.cm_is_elite) ? "*" : "") + "</span></td>";
+        }
+        
         const td_rat = "<td>" + settings_metric + " <b>"
             + p.rat.toFixed(2) + "</b></td>";
         const td_pct = ((show_pct && p.pct) ? "<td>" + GetBarHTML(p.pct, p.pct.toFixed(1) + "%", 100, best_pct, ((Math.abs(p.pct - 100) < 0.000001) ? "contrast" : "")) + "</td>" : "");
