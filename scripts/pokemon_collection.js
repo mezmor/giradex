@@ -3,10 +3,146 @@
  * Handles ownership tracking, IV storage, and local persistence
  */
 
-// Collection storage key for localStorage
-const COLLECTION_STORAGE_KEY = 'dialgadex_pokemon_collection';
+/**
+ * Collection Data Store - Abstraction layer for collection data access
+ * This provides a clean interface that can be swapped out for different storage backends
+ */
+class CollectionStore {
+    constructor() {
+        this.storageKey = 'dialgadex_pokemon_collection';
+        this.data = {};
+        this.loadFromStorage();
+    }
 
-// Global collection data structure
+    /**
+     * Load collection data from storage
+     */
+    loadFromStorage() {
+        try {
+            const stored = localStorage.getItem(this.storageKey);
+            if (stored) {
+                this.data = JSON.parse(stored);
+            }
+        } catch (error) {
+            console.warn('Failed to load collection from storage:', error);
+            this.data = {};
+        }
+    }
+
+    /**
+     * Save collection data to storage
+     */
+    saveToStorage() {
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+        } catch (error) {
+            console.warn('Failed to save collection to storage:', error);
+        }
+    }
+
+    /**
+     * Get unique identifier for a Pokemon
+     */
+    getPokemonKey(pokemon) {
+        return `${pokemon.id}-${pokemon.form}-${pokemon.shadow || false}`;
+    }
+
+    /**
+     * Check if a Pokemon exists in the collection
+     */
+    has(pokemon) {
+        const key = this.getPokemonKey(pokemon);
+        return this.data.hasOwnProperty(key);
+    }
+
+    /**
+     * Get Pokemon data from collection
+     */
+    get(pokemon) {
+        const key = this.getPokemonKey(pokemon);
+        return this.data[key] || null;
+    }
+
+    /**
+     * Add or update Pokemon in collection
+     */
+    set(pokemon, collectionData) {
+        const key = this.getPokemonKey(pokemon);
+        this.data[key] = {
+            id: pokemon.id,
+            form: pokemon.form,
+            shadow: pokemon.shadow || false,
+            name: pokemon.name,
+            ivs: collectionData.ivs || { atk: 15, def: 15, hp: 15 },
+            dateAdded: collectionData.dateAdded || new Date().toISOString()
+        };
+        this.saveToStorage();
+    }
+
+    /**
+     * Remove Pokemon from collection
+     */
+    remove(pokemon) {
+        const key = this.getPokemonKey(pokemon);
+        delete this.data[key];
+        this.saveToStorage();
+    }
+
+    /**
+     * Update IVs for a Pokemon in collection
+     */
+    updateIVs(pokemon, ivs) {
+        const key = this.getPokemonKey(pokemon);
+        if (this.data[key]) {
+            this.data[key].ivs = ivs;
+            this.saveToStorage();
+        }
+    }
+
+    /**
+     * Get all collection data
+     */
+    getAll() {
+        return { ...this.data };
+    }
+
+    /**
+     * Set all collection data (for import)
+     */
+    setAll(data) {
+        this.data = { ...data };
+        this.saveToStorage();
+    }
+
+    /**
+     * Clear all collection data
+     */
+    clear() {
+        this.data = {};
+        this.saveToStorage();
+    }
+
+    /**
+     * Get collection statistics
+     */
+    getStats() {
+        const entries = Object.values(this.data);
+        return {
+            totalCount: entries.length,
+            perfectCount: entries.filter(p => {
+                const total = p.ivs.atk + p.ivs.def + p.ivs.hp;
+                return total === 45;
+            }).length,
+            averagePerfection: entries.length > 0 ? 
+                entries.reduce((sum, p) => sum + (p.ivs.atk + p.ivs.def + p.ivs.hp), 0) / (entries.length * 45) * 100 : 0
+        };
+    }
+}
+
+// Global collection store instance
+const collectionStore = new CollectionStore();
+
+// Legacy global collection data structure (kept for backwards compatibility)
 let pokemon_collection = {};
 
 /**
@@ -18,88 +154,67 @@ function InitializeCollection() {
 }
 
 /**
- * Load collection data from localStorage
+ * Load collection data from localStorage (Legacy function - now uses store)
  */
 function LoadCollectionFromStorage() {
-    try {
-        const stored = localStorage.getItem(COLLECTION_STORAGE_KEY);
-        if (stored) {
-            pokemon_collection = JSON.parse(stored);
-        }
-    } catch (error) {
-        console.warn('Failed to load collection from storage:', error);
-        pokemon_collection = {};
-    }
+    pokemon_collection = collectionStore.getAll();
 }
 
 /**
- * Save collection data to localStorage
+ * Save collection data to localStorage (Legacy function - now uses store)
  */
 function SaveCollectionToStorage() {
-    try {
-        localStorage.setItem(COLLECTION_STORAGE_KEY, JSON.stringify(pokemon_collection));
-    } catch (error) {
-        console.warn('Failed to save collection to storage:', error);
-    }
+    // This is now handled automatically by the store
 }
 
 /**
- * Get unique identifier for a Pokemon
+ * Get unique identifier for a Pokemon (Legacy function)
  */
 function GetCollectionKey(pokemon) {
-    return `${pokemon.id}-${pokemon.form}-${pokemon.shadow || false}`;
+    return collectionStore.getPokemonKey(pokemon);
 }
 
 /**
- * Check if a Pokemon is in the collection
+ * Check if a Pokemon is in the collection (Legacy function)
  */
 function IsInCollection(pokemon) {
-    const key = GetCollectionKey(pokemon);
-    return pokemon_collection.hasOwnProperty(key);
+    return collectionStore.has(pokemon);
 }
 
 /**
- * Add Pokemon to collection with optional IVs
+ * Add Pokemon to collection with optional IVs (Legacy function)
  */
 function AddToCollection(pokemon, ivs = null) {
-    const key = GetCollectionKey(pokemon);
-    pokemon_collection[key] = {
-        id: pokemon.id,
-        form: pokemon.form,
-        shadow: pokemon.shadow || false,
-        name: pokemon.name,
-        ivs: ivs || { atk: 15, def: 15, hp: 15 },
-        dateAdded: new Date().toISOString()
-    };
-    SaveCollectionToStorage();
+    collectionStore.set(pokemon, {
+        ivs: ivs || { atk: 15, def: 15, hp: 15 }
+    });
+    // Update legacy data structure
+    pokemon_collection = collectionStore.getAll();
 }
 
 /**
- * Remove Pokemon from collection
+ * Remove Pokemon from collection (Legacy function)
  */
 function RemoveFromCollection(pokemon) {
-    const key = GetCollectionKey(pokemon);
-    delete pokemon_collection[key];
-    SaveCollectionToStorage();
+    collectionStore.remove(pokemon);
+    // Update legacy data structure
+    pokemon_collection = collectionStore.getAll();
 }
 
 /**
- * Update IVs for a Pokemon in collection
+ * Update IVs for a Pokemon in collection (Legacy function)
  */
 function UpdateCollectionIVs(pokemon, ivs) {
-    const key = GetCollectionKey(pokemon);
-    if (pokemon_collection[key]) {
-        pokemon_collection[key].ivs = ivs;
-        SaveCollectionToStorage();
-    }
+    collectionStore.updateIVs(pokemon, ivs);
+    // Update legacy data structure
+    pokemon_collection = collectionStore.getAll();
 }
 
 /**
- * Get Pokemon data from collection
+ * Get Pokemon data from collection (Legacy function)
  */
 function GetFromCollection(pokemon) {
-    const key = GetCollectionKey(pokemon);
-    return pokemon_collection[key] || null;
+    return collectionStore.get(pokemon);
 }
 
 /**
@@ -441,7 +556,8 @@ function GetPokemonName(id, form) {
  * Export collection data as JSON
  */
 function ExportCollection() {
-    const dataStr = JSON.stringify(pokemon_collection, null, 2);
+    const data = collectionStore.getAll();
+    const dataStr = JSON.stringify(data, null, 2);
     const dataBlob = new Blob([dataStr], {type: 'application/json'});
     const url = URL.createObjectURL(dataBlob);
     
@@ -459,18 +575,46 @@ function ExportCollection() {
 function ImportCollection(jsonData) {
     try {
         const imported = JSON.parse(jsonData);
-        pokemon_collection = {...pokemon_collection, ...imported};
-        SaveCollectionToStorage();
+        
+        // Validate the imported data structure
+        if (typeof imported !== 'object' || imported === null) {
+            throw new Error('Invalid collection format: expected object');
+        }
+        
+        // Validate each entry has required fields
+        for (const [key, entry] of Object.entries(imported)) {
+            if (!entry.id || !entry.form || !entry.ivs) {
+                throw new Error(`Invalid entry format for key: ${key}`);
+            }
+            if (entry.ivs.atk === undefined || entry.ivs.def === undefined || entry.ivs.hp === undefined) {
+                throw new Error(`Invalid IV format for key: ${key}`);
+            }
+        }
+        
+        // Merge with existing collection
+        const currentData = collectionStore.getAll();
+        const mergedData = {...currentData, ...imported};
+        collectionStore.setAll(mergedData);
+        
+        // Update legacy data structure
+        pokemon_collection = collectionStore.getAll();
         
         // Refresh current display if on rankings page
         if ($("#strongest").is(":visible")) {
             CheckURLAndAct();
         }
         
-        return true;
+        return {
+            success: true,
+            imported: Object.keys(imported).length,
+            total: Object.keys(mergedData).length
+        };
     } catch (error) {
         console.error('Failed to import collection:', error);
-        return false;
+        return {
+            success: false,
+            error: error.message
+        };
     }
 }
 
@@ -584,4 +728,222 @@ function ShowInlineIVEditor(pokemon, stat, statDiv, checkbox) {
     statDiv.on('click', function(e) {
         e.stopPropagation();
     });
+}
+
+/**
+ * Clear entire collection
+ */
+function ClearCollection() {
+    collectionStore.clear();
+    pokemon_collection = {};
+    
+    // Refresh current display if on rankings page
+    if ($("#strongest").is(":visible")) {
+        CheckURLAndAct();
+    }
+}
+
+/**
+ * Get collection statistics
+ */
+function GetCollectionStats() {
+    return collectionStore.getStats();
+}
+
+/**
+ * Export collection data as formatted text
+ */
+function ExportCollectionAsText() {
+    const data = collectionStore.getAll();
+    const entries = Object.values(data);
+    
+    if (entries.length === 0) {
+        return "No Pokémon in collection.";
+    }
+    
+    // Sort by name
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+    
+    let text = "DialgaDex Collection Export\n";
+    text += "=".repeat(30) + "\n\n";
+    
+    entries.forEach(entry => {
+        const perfection = ((entry.ivs.atk + entry.ivs.def + entry.ivs.hp) / 45 * 100).toFixed(1);
+        const shadowText = entry.shadow ? " (Shadow)" : "";
+        const formText = entry.form && entry.form !== "Normal" ? ` (${entry.form})` : "";
+        
+        text += `${entry.name}${formText}${shadowText}\n`;
+        text += `  IVs: ${entry.ivs.atk}/${entry.ivs.def}/${entry.ivs.hp} (${perfection}%)\n`;
+        text += `  Added: ${new Date(entry.dateAdded).toLocaleDateString()}\n\n`;
+    });
+    
+    return text;
+}
+
+/**
+ * Initialize collection page functionality
+ */
+function InitializeCollectionPage() {
+    // Export JSON button
+    $('#export-json-btn').on('click', function() {
+        ExportCollection();
+    });
+
+    // Export text button
+    $('#export-text-btn').on('click', function() {
+        const textData = ExportCollectionAsText();
+        const dataBlob = new Blob([textData], {type: 'text/plain'});
+        const url = URL.createObjectURL(dataBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'dialgadex_collection.txt';
+        link.click();
+        
+        URL.revokeObjectURL(url);
+    });
+
+    // Import button
+    $('#import-btn').on('click', function() {
+        $('#import-file').click();
+    });
+
+    // File input change handler
+    $('#import-file').on('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const result = ImportCollection(e.target.result);
+            const statusDiv = $('#import-status');
+            
+            if (result.success) {
+                statusDiv.removeClass('error').addClass('success');
+                statusDiv.text(`Successfully imported ${result.imported} Pokémon. Total collection: ${result.total} Pokémon.`);
+                
+                // Refresh the collection display
+                UpdateCollectionPageDisplay();
+            } else {
+                statusDiv.removeClass('success').addClass('error');
+                statusDiv.text(`Import failed: ${result.error}`);
+            }
+        };
+        reader.readAsText(file);
+        
+        // Reset file input
+        $(this).val('');
+    });
+
+    // Clear collection button
+    $('#clear-collection-btn').on('click', function() {
+        if (confirm('Are you sure you want to delete all Pokémon from your collection? This action cannot be undone.')) {
+            ClearCollection();
+            UpdateCollectionPageDisplay();
+            
+            const statusDiv = $('#import-status');
+            statusDiv.removeClass('error').addClass('success');
+            statusDiv.text('Collection cleared successfully.');
+        }
+    });
+
+    // Initial display update
+    UpdateCollectionPageDisplay();
+}
+
+/**
+ * Update collection page display with current data
+ */
+function UpdateCollectionPageDisplay() {
+    UpdateCollectionStats();
+    UpdateCollectionList();
+}
+
+/**
+ * Update collection statistics display
+ */
+function UpdateCollectionStats() {
+    const stats = GetCollectionStats();
+    
+    const statsHtml = `
+        <div class="stat-item">
+            <div class="stat-value">${stats.totalCount}</div>
+            <div class="stat-label">Total Pokémon</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">${stats.perfectCount}</div>
+            <div class="stat-label">Perfect IV (100%)</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">${stats.averagePerfection.toFixed(1)}%</div>
+            <div class="stat-label">Average Perfection</div>
+        </div>
+    `;
+    
+    $('#collection-stats-content').html(statsHtml);
+}
+
+/**
+ * Update collection list display
+ */
+function UpdateCollectionList() {
+    const data = collectionStore.getAll();
+    const entries = Object.values(data);
+    
+    if (entries.length === 0) {
+        $('#collection-pokemon-list').html('<p>No Pokémon in your collection yet. Start adding some from the Attacker Rankings!</p>');
+        return;
+    }
+    
+    // Sort by name, then by form
+    entries.sort((a, b) => {
+        if (a.name !== b.name) return a.name.localeCompare(b.name);
+        return a.form.localeCompare(b.form);
+    });
+    
+    let listHtml = '';
+    entries.forEach(entry => {
+        const perfection = ((entry.ivs.atk + entry.ivs.def + entry.ivs.hp) / 45 * 100);
+        const perfectionClass = GetQualityClass(perfection);
+        const shadowText = entry.shadow ? ' (Shadow)' : '';
+        const formText = entry.form && entry.form !== 'Normal' ? ` (${entry.form})` : '';
+        
+        // Try to get Pokemon icon
+        const iconSrc = GetPokemonIconSrc(entry.id, entry.form, entry.shadow);
+        
+        listHtml += `
+            <div class="collection-pokemon-item">
+                <img class="collection-pokemon-icon" src="${iconSrc}" alt="${entry.name}" onerror="this.style.display='none'">
+                <div class="collection-pokemon-info">
+                    <div class="collection-pokemon-name">${entry.name}${formText}${shadowText}</div>
+                    <div class="collection-pokemon-ivs">
+                        IVs: ${entry.ivs.atk}/${entry.ivs.def}/${entry.ivs.hp}
+                        <span class="collection-pokemon-perfection ${perfectionClass}">${perfection.toFixed(1)}%</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    $('#collection-pokemon-list').html(listHtml);
+}
+
+/**
+ * Get Pokemon icon source URL
+ */
+function GetPokemonIconSrc(id, form, shadow) {
+    // This is a simplified version - you might want to use the same logic as in the main app
+    const baseUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
+    return `${baseUrl}${id}.png`;
+}
+
+/**
+ * Get CSS class for quality/perfection percentage
+ */
+function GetQualityClass(perfection) {
+    if (perfection >= 98) return 'quality-perfect';
+    if (perfection >= 91) return 'quality-excellent'; 
+    if (perfection >= 82) return 'quality-great';
+    if (perfection >= 67) return 'quality-good';
+    return 'quality-poor';
 } 

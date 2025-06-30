@@ -77,6 +77,13 @@ function BindMenu() {
         e.preventDefault();
         return false;
     });
+    // Link to Collection
+    $("#collection-link").click(function(e) {
+        LoadCollectionAndUpdateURL();
+        CloseMenu();
+        e.preventDefault();
+        return false;
+    });
     // Link to Move Data Lists
     $("#moves-link").click(function(e) {
         LoadMovesAndUpdateURL("Any");
@@ -250,6 +257,13 @@ function CheckURLAndAct() {
         return;
     }
 
+    // if url has 'collection' param...
+    if (params.has("collection")) {
+        LoadCollectionAndUpdateURL();
+
+        return;
+    }
+
     // if url has 'faq' param...
     if (params.has("faq")) {
         LoadFAQAndUpdateURL();
@@ -282,6 +296,27 @@ function LoadTypeChartAndUpdateURL() {
         "Each attacking type's effectiveness against raid bosses in Pokémon Go.");
 
     LoadPage("type-matrix");
+}
+
+/**
+ * Opens the Collection page and closes any other pages
+ */
+function LoadCollectionAndUpdateURL() {
+    window.history.pushState({}, "", "?collection");
+    
+    // sets the page title
+    document.title = "Collection - DialgaDex";
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Manage your Pokémon collection with import/export functionality.");
+
+    LoadPage("collection");
+    
+    // Initialize collection page if function exists
+    if (typeof InitializeCollectionPage !== 'undefined') {
+        InitializeCollectionPage();
+    }
 }
 
 /**
@@ -320,7 +355,7 @@ function LoadAboutAndUpdateURL() {
  * Shows appropriate part of SPA, hiding all other parts
  */
 function LoadPage(pageName) {
-    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix', 'faq', 'about'];
+    let pages = ['pokedex-page', 'strongest', 'move-data', 'type-matrix', 'collection', 'faq', 'about'];
 
     pages.forEach(page=>{
         $("#"+page).css("display", (page==pageName ? "revert" : "none"));
