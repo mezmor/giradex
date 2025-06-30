@@ -318,8 +318,16 @@ function getIVColorClass(value) {
  * Bind collection-related event handlers
  */
 function BindCollectionEvents() {
+    // Flag to prevent recursive checkbox updates
+    let isUpdatingCheckboxes = false;
+    
     // Handle checkbox changes
     $(document).on('change', '.collection-checkbox', function() {
+        // Prevent recursive updates when we're syncing checkboxes
+        if (isUpdatingCheckboxes) {
+            return;
+        }
+        
         const checkbox = $(this);
         const pokemon = {
             id: parseInt(checkbox.data('pokemon-id')),
@@ -328,15 +336,42 @@ function BindCollectionEvents() {
             name: GetPokemonName(parseInt(checkbox.data('pokemon-id')), checkbox.data('pokemon-form'))
         };
         
-        if (checkbox.is(':checked')) {
-            // Add to collection with default perfect IVs (15/15/15)
+        const isChecked = checkbox.is(':checked');
+        
+        // Find all checkboxes for the same Pokemon (same name, form, and shadow status)
+        // This will catch the same Pokemon appearing in different type sections
+        const matchingCheckboxes = $('.collection-checkbox').filter(function() {
+            const otherCheckbox = $(this);
+            const otherPokemonName = GetPokemonName(
+                parseInt(otherCheckbox.data('pokemon-id')), 
+                otherCheckbox.data('pokemon-form')
+            );
+            return otherPokemonName === pokemon.name &&
+                   otherCheckbox.data('pokemon-form') === pokemon.form &&
+                   (otherCheckbox.data('pokemon-shadow') === 'true') === pokemon.shadow;
+        });
+        
+        // Set flag to prevent recursive updates
+        isUpdatingCheckboxes = true;
+        
+        if (isChecked) {
+            // Add to collection with default perfect IVs (15/15/15) - only once
             AddToCollection(pokemon, { atk: 15, def: 15, hp: 15 });
-            UpdateCollectionDisplay(checkbox);
         } else {
-            // Remove from collection
+            // Remove from collection - only once
             RemoveFromCollection(pokemon);
-            UpdateCollectionDisplay(checkbox);
         }
+        
+        // Visually sync all matching checkboxes and their displays
+        matchingCheckboxes.each(function() {
+            const otherCheckbox = $(this);
+            // Update checkbox state without triggering change event
+            otherCheckbox.prop('checked', isChecked);
+            UpdateCollectionDisplay(otherCheckbox);
+        });
+        
+        // Clear flag
+        isUpdatingCheckboxes = false;
     });
     
     // Handle IV indicator clicks (open full dialog)
@@ -482,8 +517,25 @@ function ShowIVInputDialog(pokemon, checkbox) {
         };
         
         AddToCollection(pokemon, ivs);
-        checkbox.prop('checked', true);
-        UpdateCollectionDisplay(checkbox);
+        
+        // Find all checkboxes for the same Pokemon using name-based matching
+        const matchingCheckboxes = $('.collection-checkbox').filter(function() {
+            const otherCheckbox = $(this);
+            const otherPokemonName = GetPokemonName(
+                parseInt(otherCheckbox.data('pokemon-id')), 
+                otherCheckbox.data('pokemon-form')
+            );
+            return otherPokemonName === pokemon.name &&
+                   otherCheckbox.data('pokemon-form') === pokemon.form &&
+                   (otherCheckbox.data('pokemon-shadow') === 'true') === pokemon.shadow;
+        });
+        
+        // Update all matching checkboxes and their displays
+        matchingCheckboxes.each(function() {
+            const otherCheckbox = $(this);
+            otherCheckbox.prop('checked', true);
+            UpdateCollectionDisplay(otherCheckbox);
+        });
         
         // Close dialog
         $("#overlay").removeClass("active");
@@ -495,9 +547,26 @@ function ShowIVInputDialog(pokemon, checkbox) {
     dialog.find('.iv-cancel, .dialog-close').click(function(e) {
         e.preventDefault();
         
-        // If this was a new addition, uncheck the box
+        // If this was a new addition, uncheck all matching checkboxes
         if (!existingData) {
-            checkbox.prop('checked', false);
+            // Find all checkboxes for the same Pokemon using name-based matching
+            const matchingCheckboxes = $('.collection-checkbox').filter(function() {
+                const otherCheckbox = $(this);
+                const otherPokemonName = GetPokemonName(
+                    parseInt(otherCheckbox.data('pokemon-id')), 
+                    otherCheckbox.data('pokemon-form')
+                );
+                return otherPokemonName === pokemon.name &&
+                       otherCheckbox.data('pokemon-form') === pokemon.form &&
+                       (otherCheckbox.data('pokemon-shadow') === 'true') === pokemon.shadow;
+            });
+            
+            // Update all matching checkboxes and their displays
+            matchingCheckboxes.each(function() {
+                const otherCheckbox = $(this);
+                otherCheckbox.prop('checked', false);
+                UpdateCollectionDisplay(otherCheckbox);
+            });
         }
         
         // Close dialog
@@ -695,7 +764,23 @@ function ShowInlineIVEditor(pokemon, stat, statDiv, checkbox) {
         const newIVs = {...existingData.ivs, [stat]: newValue};
         
         UpdateCollectionIVs(pokemon, newIVs);
-        UpdateCollectionDisplay(checkbox);
+        
+        // Find all checkboxes for the same Pokemon using name-based matching
+        const matchingCheckboxes = $('.collection-checkbox').filter(function() {
+            const otherCheckbox = $(this);
+            const otherPokemonName = GetPokemonName(
+                parseInt(otherCheckbox.data('pokemon-id')), 
+                otherCheckbox.data('pokemon-form')
+            );
+            return otherPokemonName === pokemon.name &&
+                   otherCheckbox.data('pokemon-form') === pokemon.form &&
+                   (otherCheckbox.data('pokemon-shadow') === 'true') === pokemon.shadow;
+        });
+        
+        // Update all matching checkboxes' displays with the new IV data
+        matchingCheckboxes.each(function() {
+            UpdateCollectionDisplay($(this));
+        });
         
         statDiv.removeClass('editing');
     }
@@ -704,8 +789,22 @@ function ShowInlineIVEditor(pokemon, stat, statDiv, checkbox) {
         statDiv.html(originalContent);
         statDiv.removeClass('editing');
         
-        // Reset quality indicator to original values
-        UpdateCollectionDisplay(checkbox);
+        // Reset quality indicator to original values - sync across all matching checkboxes using name-based matching
+        const matchingCheckboxes = $('.collection-checkbox').filter(function() {
+            const otherCheckbox = $(this);
+            const otherPokemonName = GetPokemonName(
+                parseInt(otherCheckbox.data('pokemon-id')), 
+                otherCheckbox.data('pokemon-form')
+            );
+            return otherPokemonName === pokemon.name &&
+                   otherCheckbox.data('pokemon-form') === pokemon.form &&
+                   (otherCheckbox.data('pokemon-shadow') === 'true') === pokemon.shadow;
+        });
+        
+        // Update all matching checkboxes' displays
+        matchingCheckboxes.each(function() {
+            UpdateCollectionDisplay($(this));
+        });
     }
     
     // Save on Enter, cancel on Escape

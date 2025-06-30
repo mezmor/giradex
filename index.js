@@ -77,6 +77,13 @@ function BindMenu() {
         e.preventDefault();
         return false;
     });
+    // Link to Megas
+    $("#megas-link").click(function(e) {
+        LoadMegasAndUpdateURL();
+        CloseMenu();
+        e.preventDefault();
+        return false;
+    });
     // Link to Collection
     $("#collection-link").click(function(e) {
         LoadCollectionAndUpdateURL();
@@ -219,6 +226,12 @@ function CheckURLAndAct() {
         // loads strongest (default)
         LoadStrongest();
 
+        return;
+    }
+
+    // if url has 'megas' param...
+    if (params.has("megas")) {
+        LoadMegasAndUpdateURL();
         return;
     }
 
@@ -523,4 +536,28 @@ function HasTouchScreen() {
         }
     }
     return has_touch_screen
+}
+
+/**
+ * Opens the Megas Page and closes any other pages
+ */
+function LoadMegasAndUpdateURL() {
+    if (!finished_loading)
+        return false;
+        
+    window.history.pushState({}, "", "?megas");
+    
+    // sets the page title
+    document.title = "Mega Pokémon - DialgaDex";
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Top Mega Pokémon of each type for raids in Pokémon Go.");
+
+    LoadPage("strongest");
+    
+    // Load the strongest data in "Each" mode (same as ?strongest&t=Each)
+    LoadStrongest("Each");
+    
+    return false;
 }
