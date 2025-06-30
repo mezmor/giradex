@@ -775,3 +775,54 @@ function CalcZScore(value, dist) {
 function Clamp(num, min, max) {
     return Math.min(Math.max(num, min), max);
 }
+
+/**
+ * Searches all mega pokemon of each type and returns all mega pokemon
+ * per type. Dual-type megas will appear in both type categories.
+ */
+function GetMegaOfEachType(search_params) {
+    // array to store all mega pokemon organized by type
+    let mega_pokemons_array = [];
+    let type_indices = new Map(); // track where each type section starts/ends
+
+    // build a basic enemy to "sim" against
+    let enemy_params;
+
+    for (const type of POKEMON_TYPES) {
+        const start_index = mega_pokemons_array.length;
+        
+        search_params.type = type;
+        if (settings_type_affinity) {
+            enemy_params = GetTypeAffinity(search_params.type, true);
+        }
+        else {
+            enemy_params = {
+                weakness: GetTypesEffectivenessSingleBoost(search_params.type),
+                enemy_ys: [{"Any": {y_num: null, cm_num: null} }], // use defaults
+                stats: {atk: null, def: 180, hp: 1000000000} // Use huge HP to approach "theoretical" eDPS
+            };
+        }
+
+        // Get all Pokémon of this type that are Mega forms
+        const all_strongest = GetStrongestVersus(enemy_params, search_params);
+        
+        // Filter to only Mega forms
+        const mega_strongest = all_strongest.filter(p => p.form === "Mega" || p.form === "MegaY");
+        
+        if (mega_strongest.length > 0) {
+            // Add all megas for this type
+            mega_pokemons_array.push(...mega_strongest);
+            
+            // Store the range for this type
+            type_indices.set(type, {
+                start: start_index,
+                end: mega_pokemons_array.length
+            });
+        }
+    }
+    
+    // Add type information to the array for tier label rendering
+    mega_pokemons_array.type_indices = type_indices;
+    
+    return mega_pokemons_array;
+}
