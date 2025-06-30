@@ -556,8 +556,12 @@ function LoadMegasAndUpdateURL() {
 
     LoadPage("strongest");
     
+    // Hide the type selection links for the megas page
+    $("#strongest-links").hide();
+    
     // Load the strongest data in "Each" mode (same as ?strongest&t=Each)
-    LoadStrongest("Each");
+    // Pass false to prevent showing type selection links
+    LoadStrongest("Each", false);
     
     return false;
 }
