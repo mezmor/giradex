@@ -777,41 +777,90 @@ function Clamp(num, min, max) {
 }
 
 /**
- * Searches all mega pokemon of each type and returns all mega pokemon
- * per type. Dual-type megas will appear in both type categories.
+ * Gets all mega pokemon organized by their actual types (not movesets).
+ * Dual-type megas will appear in both type categories.
  */
 function GetMegaOfEachType(search_params) {
     // array to store all mega pokemon organized by type
     let mega_pokemons_array = [];
     let type_indices = new Map(); // track where each type section starts/ends
 
-    // build a basic enemy to "sim" against
-    let enemy_params;
+    // First, get all mega pokemon with their stats calculated
+    const all_megas = [];
+    
+    // Search through all pokemon to find Mega forms
+    for (let id = 1; id <= jb_max_id; id++) {
+        const forms = GetPokemonForms(id);
+        
+        for (let form of forms) {
+            // Only consider Mega forms
+            if (form !== "Mega" && form !== "MegaY") continue;
+            
+            const pkm_obj = jb_pkm.find(entry => entry.id === id && entry.form === form);
+            
+            // Check if pokemon should be included (released, etc.)
+            if (!pkm_obj || (!search_params.unreleased && !pkm_obj.released)) continue;
+            
+            // Calculate best moveset for this mega
+            for (let level of settings_default_level) {
+                if (pkm_obj.class == undefined && settings_xl_budget)
+                    level = 50;
 
+                // Build a basic enemy to sim against
+                const enemy_params = {
+                    weakness: GetTypesEffectivenessSingleBoost("Any"),
+                    enemy_ys: [{"Any": {y_num: null, cm_num: null} }],
+                    stats: {atk: null, def: 180, hp: 1000000000}
+                };
+                
+                // Get best moveset for this mega
+                const movesets = GetStrongestAgainstSpecificEnemy(pkm_obj, false, level, enemy_params, {
+                    ...search_params,
+                    type: "Any", // Allow any moveset type
+                    mixed: true   // Allow mixed movesets
+                });
+                
+                if (movesets.length > 0) {
+                    const best_moveset = movesets[0];
+                    all_megas.push({
+                        rat: best_moveset.rat,
+                        dps: best_moveset.dps,
+                        tdo: best_moveset.tdo,
+                        id: pkm_obj.id,
+                        name: pkm_obj.name,
+                        form: pkm_obj.form,
+                        shadow: false,
+                        class: pkm_obj.class,
+                        level: level,
+                        types: pkm_obj.types, // Store the actual pokemon types
+                        fm: best_moveset.fm,
+                        fm_is_elite: best_moveset.fm_is_elite,
+                        fm_type: best_moveset.fm_type,
+                        cm: best_moveset.cm,
+                        cm_is_elite: best_moveset.cm_is_elite,
+                        cm_type: best_moveset.cm_type
+                    });
+                }
+                break; // Only do one level per mega
+            }
+        }
+    }
+    
+    // Now organize megas by their actual types
     for (const type of POKEMON_TYPES) {
         const start_index = mega_pokemons_array.length;
         
-        search_params.type = type;
-        if (settings_type_affinity) {
-            enemy_params = GetTypeAffinity(search_params.type, true);
-        }
-        else {
-            enemy_params = {
-                weakness: GetTypesEffectivenessSingleBoost(search_params.type),
-                enemy_ys: [{"Any": {y_num: null, cm_num: null} }], // use defaults
-                stats: {atk: null, def: 180, hp: 1000000000} // Use huge HP to approach "theoretical" eDPS
-            };
-        }
-
-        // Get all Pokémon of this type that are Mega forms
-        const all_strongest = GetStrongestVersus(enemy_params, search_params);
+        // Find all megas that have this type
+        const megas_of_this_type = all_megas.filter(mega => 
+            mega.types.includes(type)
+        );
         
-        // Filter to only Mega forms
-        const mega_strongest = all_strongest.filter(p => p.form === "Mega" || p.form === "MegaY");
+        // Sort by rating (strongest first)
+        megas_of_this_type.sort((a, b) => b.rat - a.rat);
         
-        if (mega_strongest.length > 0) {
+        if (megas_of_this_type.length > 0) {
             // Add all megas for this type
-            mega_pokemons_array.push(...mega_strongest);
+            mega_pokemons_array.push(...megas_of_this_type);
             
             // Store the range for this type
             type_indices.set(type, {
