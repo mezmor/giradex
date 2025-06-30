@@ -918,8 +918,8 @@ function GetRankingRow(row_i) {
             td_tier.addClass("tier-label");
             td_tier.addClass("bg-" + currentTypeLabel);
             td_tier.text(currentTypeLabel);
-        } else if (!isMegasPage && !display_grouped && show_pct) {
-            // For normal rankings, show tier (S, A, B, etc.)
+        } else if (!isMegasPage && !display_grouped && show_pct && p.tier) {
+            // For normal rankings, show tier (S, A, B, etc.) - only if tier exists
             td_tier.addClass("tier-label");
             td_tier.addClass("tier-" + p.tier);
         }
