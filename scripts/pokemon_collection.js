@@ -807,7 +807,78 @@ function ShowInlineIVEditor(pokemon, stat, statDiv, checkbox) {
         });
     }
     
-    // Save on Enter, cancel on Escape
+    // Function to move to next/previous IV stat for editing
+    function moveToNextStat(direction) {
+        // Find the container and checkbox BEFORE calling saveValue (since saveValue modifies the DOM)
+        const container = statDiv.closest('.collection-container');
+        if (!container.length) {
+            console.log('Could not find collection container');
+            return;
+        }
+        
+        const originalCheckbox = container.find('.collection-checkbox');
+        if (!originalCheckbox.length) {
+            console.log('Could not find checkbox');
+            return;
+        }
+        
+        // Save current value first
+        saveValue();
+        
+        // Now find the updated IV display container after the DOM has been refreshed
+        const updatedContainer = originalCheckbox.closest('.collection-container');
+        if (!updatedContainer.length) {
+            console.log('Could not find updated collection container');
+            return;
+        }
+        
+        const ivDisplay = updatedContainer.find('.iv-inline-display');
+        if (!ivDisplay.length) {
+            console.log('Could not find IV display');
+            return;
+        }
+        
+        // Get all stat elements (including the one we just finished editing)
+        const statElements = ivDisplay.find('.iv-inline-stat');
+        if (statElements.length === 0) {
+            console.log('Could not find stat elements');
+            return;
+        }
+        
+        // Define the stat order
+        const statOrder = ['atk', 'def', 'hp'];
+        const currentStat = stat; // This is the stat we're currently editing
+        const currentIndex = statOrder.indexOf(currentStat);
+        
+        if (currentIndex === -1) {
+            console.log('Could not determine current stat index');
+            return;
+        }
+        
+        // Calculate next index
+        let nextIndex;
+        if (direction === 'next') {
+            nextIndex = (currentIndex + 1) % statOrder.length;
+        } else {
+            nextIndex = (currentIndex - 1 + statOrder.length) % statOrder.length;
+        }
+        
+        const nextStat = statOrder[nextIndex];
+        
+        // Find the specific stat element by data attribute
+        const nextStatDiv = ivDisplay.find(`.iv-inline-stat[data-stat="${nextStat}"]`);
+        if (!nextStatDiv.length) {
+            console.log(`Could not find stat element for ${nextStat}`);
+            return;
+        }
+        
+        // Start editing the next stat after a small delay
+        setTimeout(() => {
+            ShowInlineIVEditor(pokemon, nextStat, nextStatDiv, originalCheckbox);
+        }, 50); // Slightly longer delay to ensure current edit is completed
+    }
+    
+    // Save on Enter, cancel on Escape, navigate with Tab
     input.on('keydown', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -815,6 +886,13 @@ function ShowInlineIVEditor(pokemon, stat, statDiv, checkbox) {
         } else if (e.key === 'Escape') {
             e.preventDefault();
             cancelEdit();
+        } else if (e.key === 'Tab') {
+            e.preventDefault();
+            if (e.shiftKey) {
+                moveToNextStat('previous');
+            } else {
+                moveToNextStat('next');
+            }
         }
     });
     
