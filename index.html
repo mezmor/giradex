@@ -339,6 +339,7 @@
                     <div class="drawer-popup" id="nav-drawer">
                         <ul class="menu">
                             <li><a id=rankings-link href="/?strongest">Attacker Rankings</a></li>
+                            <li><a id=collection-link href="/?collection">Collection</a></li>
                             <li><a id=moves-link href="/?moves">Move Data</a></li>
                             <li><a id=typechart-link href="/?typechart">Type Chart</a></li>
                         </ul>
@@ -1030,7 +1031,7 @@
                         </thead>
                         <tbody>
                             <tr><td><a class="type-text bg-Normal" href="/?strongest&t=Normal" onclick="return LoadStrongestAndUpdateURL('Normal', false)">Normal</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Fire" href="/?strongest&t=Fire" onclick="return LoadStrongestAndUpdateURL('Fire', false)">Fire</a></td>
                                 <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td>
@@ -1072,7 +1073,7 @@
                                 <td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Dragon" href="/?strongest&t=Dragon" onclick="return LoadStrongestAndUpdateURL('Dragon', false)">Dragon</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td>
                             </tr>
                             <tr><td><a class="type-text bg-Dark" href="/?strongest&t=Dark" onclick="return LoadStrongestAndUpdateURL('Dark', false)">Dark</a></td>
                                 <td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
@@ -1088,6 +1089,62 @@
                 </div>
             </div>
             <div class="card-footer">&nbsp;</div>
+        </div>
+    </div>
+
+    <!-- Collection -->
+    <div id=collection class="page">
+        <h1>Pokémon Collection</h1>
+        <div class="card" id="collection-stats">
+            <div class="card-header">
+                <div class="card-title">Collection Statistics</div>
+            </div>
+            <div class="card-body">
+                <div id="collection-stats-content">
+                    <p>Loading collection statistics...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="collection-management">
+            <div class="card-header">
+                <div class="card-title">Collection Management</div>
+            </div>
+            <div class="card-body">
+                <div class="collection-actions">
+                    <div class="action-group">
+                        <h3>Export Collection</h3>
+                        <p>Download your collection data as a JSON file for backup or sharing.</p>
+                        <button id="export-json-btn" type="button">Export as JSON</button>
+                        <button id="export-text-btn" type="button">Export as Text</button>
+                    </div>
+                    
+                    <div class="action-group">
+                        <h3>Import Collection</h3>
+                        <p>Import collection data from a JSON file. This will merge with your existing collection.</p>
+                        <input type="file" id="import-file" accept=".json" style="display: none;">
+                        <button id="import-btn" type="button">Import from JSON</button>
+                        <div id="import-status" class="status-message"></div>
+                    </div>
+                    
+                    <div class="action-group">
+                        <h3>Clear Collection</h3>
+                        <p class="warning-text">This will permanently delete all Pokémon from your collection. This action cannot be undone.</p>
+                        <button id="clear-collection-btn" type="button" class="danger-btn">Clear All Data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="collection-list">
+            <div class="card-header">
+                <div class="card-title">Your Collection</div>
+            </div>
+            <div class="card-body">
+                <div id="collection-pokemon-list">
+                    <p>Loading collection...</p>
+                </div>
+            </div>
         </div>
     </div>
 
