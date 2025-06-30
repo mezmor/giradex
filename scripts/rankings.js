@@ -898,10 +898,31 @@ function GetRankingRow(row_i) {
         }
 
         const td_tier = $("<td></td>");
-        if (!display_grouped && show_pct) {
+        
+        // Check if this is the megas page and find which type section this row belongs to
+        const isMegasPage = str_pokemons.type_indices !== undefined;
+        let currentTypeLabel = "";
+        
+        if (isMegasPage && str_pokemons.type_indices) {
+            // Find which type section this row belongs to
+            for (const [type, indices] of str_pokemons.type_indices.entries()) {
+                if (row_i >= indices.start && row_i < indices.end) {
+                    currentTypeLabel = type;
+                    break;
+                }
+            }
+        }
+        
+        if (isMegasPage && currentTypeLabel) {
+            // For megas page, show type label in every row of each section
+            td_tier.addClass("tier-label");
+            td_tier.addClass("bg-" + currentTypeLabel);
+            td_tier.text(currentTypeLabel);
+        } else if (!isMegasPage && !display_grouped && show_pct) {
+            // For normal rankings, show tier (S, A, B, etc.)
             td_tier.addClass("tier-label");
             td_tier.addClass("tier-" + p.tier);
-        } 
+        }
 
         const td_rank = "<td>" //(!display_numbered ? " style='width: 0; max-width: 0'>" : ">")
             + ((display_numbered) 
@@ -1105,4 +1126,69 @@ function throttle(func, timeFrame) {
             lastTime = now;
         }
     };
+}
+
+/**
+ * Loads the list of the strongest mega pokemon of each type in pokemon go.
+ */
+function LoadMegas() {
+    if (!finished_loading)
+        return false;
+
+    // Move filters for display
+    MoveFilterPopup("#strongest-filters");
+
+    // displays what should be displayed 
+    LoadPage("strongest");
+    
+    // Don't show the type selection links for megas page
+    $("#strongest-links").hide();
+
+    // Disable suboptimal filters for megas (similar to "Each" mode)
+    $("#chk-suboptimal").prop("disabled", true);
+
+    // sets selected link (none for megas)
+    $("#strongest-links li").removeClass("selected");
+
+    // Disable versus checkbox for megas
+    const versus_chk = $("#strongest input[value='versus']:checkbox");
+    versus_chk.prop("checked", false);
+    versus_chk.prop("disabled", true);
+
+    // sets titles
+    document.title = "Mega Pokémon - DialgaDex"; // page title
+    $("#strongest-type-title").text("Mega");
+    $("#strongest-title-suffix").text("of Each Type");
+
+    // sets description
+    $('meta[name=description]').attr('content', 
+        "Top Mega Pokémon of each type for raids in Pokémon Go.");
+
+    // removes previous table rows
+    $("#strongest-table tbody tr").remove();
+
+    const search_params = GetSearchParms("Any", false);
+    search_params.real_damage = false;
+    search_params.mega = true; // ensure mega forms are included
+
+    // Get mega pokemon data - now returns all megas per type
+    str_pokemons = GetMegaOfEachType(search_params);
+    
+    // Don't use floating tier stops for megas - we put type labels directly in table rows
+    tier_stops = [];
+
+    display_numbered = false;
+    show_pct = false;
+    highlight_suboptimal = false;
+
+    // Display relevant footnotes
+    $("#footnote-typed-ranking").css('display', 'none');
+    $("#footnote-affinity-ranking").css('display', 'none');
+    $("#footnote-versus").css('display', 'none');
+
+    // Update Icon
+    ShowHideSearchStringIcon();
+
+    // Prevent Link
+    return false;
 }

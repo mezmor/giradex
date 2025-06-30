@@ -547,21 +547,8 @@ function LoadMegasAndUpdateURL() {
         
     window.history.pushState({}, "", "?megas");
     
-    // sets the page title
-    document.title = "Mega Pokémon - DialgaDex";
-
-    // sets description
-    $('meta[name=description]').attr('content', 
-        "Top Mega Pokémon of each type for raids in Pokémon Go.");
-
-    LoadPage("strongest");
-    
-    // Hide the type selection links for the megas page
-    $("#strongest-links").hide();
-    
-    // Load the strongest data in "Each" mode (same as ?strongest&t=Each)
-    // Pass false to prevent showing type selection links
-    LoadStrongest("Each", false);
+    // Load the megas page using the new LoadMegas function
+    LoadMegas();
     
     return false;
 }
