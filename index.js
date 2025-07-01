@@ -302,7 +302,7 @@ function LoadTypeChartAndUpdateURL() {
     window.history.pushState({}, "", "?typechart");
     
     // sets the page title
-    document.title = "Type Chart - DialgaDex";
+    document.title = "Type Chart - GiraDex";
 
     // sets description
     $('meta[name=description]').attr('content', 
@@ -318,7 +318,7 @@ function LoadCollectionAndUpdateURL() {
     window.history.pushState({}, "", "?collection");
     
     // sets the page title
-    document.title = "Collection - DialgaDex";
+    document.title = "Collection - GiraDex";
 
     // sets description
     $('meta[name=description]').attr('content', 
@@ -339,11 +339,11 @@ function LoadFAQAndUpdateURL() {
     window.history.pushState({}, "", "?faq");
     
     // sets the page title
-    document.title = "FAQ - DialgaDex";
+    document.title = "FAQ - GiraDex";
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Answers to common questions about DialgaDex.");
+        "Answers to common questions about GiraDex.");
 
     LoadPage("faq");
 }
@@ -355,11 +355,11 @@ function LoadAboutAndUpdateURL() {
     window.history.pushState({}, "", "?about");
     
     // sets the page title
-    document.title = "About - DialgaDex";
+    document.title = "About - GiraDex";
 
     // sets description
     $('meta[name=description]').attr('content', 
-        "Credits, references, contact info, and details about DialgaDex.");
+        "Credits, references, contact info, and details about GiraDex.");
 
     LoadPage("about");
 }

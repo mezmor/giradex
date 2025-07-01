@@ -210,7 +210,7 @@ function LoadMoves(type = "Any") {
     // sets titles
     let title = (cur_sort.move_type == "Any" ? "" : cur_sort.move_type + "-type ") + 
         cur_sort.move_kind + " Moves";
-    document.title = title + " - DialgaDex"; // page title
+    document.title = title + " - GiraDex"; // page title
     $("#move-type-title").text(cur_sort.move_type == "Any" ? "" : cur_sort.move_type + "-type");
 
     // sets description

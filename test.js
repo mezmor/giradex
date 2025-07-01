@@ -162,7 +162,7 @@ try {
     // Fallback: Manual implementation of core functionality for testing
     class CollectionStoreImpl {
         constructor() {
-            this.storageKey = 'dialgadex_pokemon_collection';
+            this.storageKey = 'giradex_pokemon_collection';
             this.data = {};
             this.loadFromStorage();
         }

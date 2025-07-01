@@ -9,7 +9,7 @@
  */
 class CollectionStore {
     constructor() {
-        this.storageKey = 'dialgadex_pokemon_collection';
+        this.storageKey = 'giradex_pokemon_collection';
         this.data = {};
         this.loadFromStorage();
     }
@@ -632,7 +632,7 @@ function ExportCollection() {
     
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'dialgadex_collection.json';
+    link.download = 'giradex_collection.json';
     link.click();
     
     URL.revokeObjectURL(url);
@@ -941,7 +941,7 @@ function ExportCollectionAsText() {
     // Sort by name
     entries.sort((a, b) => a.name.localeCompare(b.name));
     
-    let text = "DialgaDex Collection Export\n";
+    let text = "GiraDex Collection Export\n";
     text += "=".repeat(30) + "\n\n";
     
     entries.forEach(entry => {
@@ -974,7 +974,7 @@ function InitializeCollectionPage() {
         
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'dialgadex_collection.txt';
+        link.download = 'giradex_collection.txt';
         link.click();
         
         URL.revokeObjectURL(url);
