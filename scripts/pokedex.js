@@ -16,7 +16,7 @@ function LoadPokedex(pokedex_mon) {
     // sets the page title
     const pokemon_name = jb_names[pokedex_mon.pokemon_id];
     document.title = "#" + pokedex_mon.pokemon_id + " " + pokemon_name
-            + " - DialgaDex";
+            + " - GiraDex";
 
     // sets description
     $('meta[name=description]').attr('content', 

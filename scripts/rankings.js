@@ -271,7 +271,7 @@ function LoadStrongest(type = "Any", showTypeLinks = true) {
         title = title + " of Each type";
     if (versus)
         title = title + " against " + type + "-type Bosses";
-    document.title = title + " - DialgaDex"; // page title
+    document.title = title + " - GiraDex"; // page title
 
     $("#strongest-type-title").text("");
     $("#strongest-title-suffix").text("");
@@ -1178,7 +1178,7 @@ function LoadMegas() {
     versus_chk.prop("disabled", true);
 
     // sets titles
-    document.title = "Mega Pokémon - DialgaDex"; // page title
+    document.title = "Mega Pokémon - GiraDex"; // page title
     $("#strongest-type-title").text("Mega");
     $("#strongest-title-suffix").text("of Each Type");
 

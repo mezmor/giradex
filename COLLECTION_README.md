@@ -1,6 +1,6 @@
-# DialgaDex Collection System
+# GiraDex Collection System
 
-This document describes the Pokemon collection tracking system added to DialgaDex.
+This document describes the Pokemon collection tracking system added to GiraDex.
 
 ## Features
 
