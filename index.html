@@ -4,44 +4,42 @@
 <head>
     <meta charset=UTF-8>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-    <title>GiraDex</title>
+    <title>DialgaDex</title>
     <meta name="description" content="Ranking lists, moveset data, calculation tools, and everything else you need to tackle raids in Pokémon Go." />
     
-    <link rel="icon" type="image/png" href="/res/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/res/favicon.svg" />
-    <link rel="shortcut icon" href="/res/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/res/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="GiraDex" />
-    <link rel="manifest" href="/res/site.webmanifest" />
+    <link rel="icon" type="image/png" href="/giradex/res/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/giradex/res/favicon.svg" />
+    <link rel="shortcut icon" href="/giradex/res/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/giradex/res/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="DialgaDex" />
+    <link rel="manifest" href="/giradex/res/site.webmanifest" />
 
-    <link rel="stylesheet" href="/styles/darkmode.css">
-    <link rel="stylesheet" href="/styles/switch.css">
-    <link rel="stylesheet" href="/styles/togglebutton.css">
-    <link rel="stylesheet" href="/styles/tooltips.css">
-    <link rel="stylesheet" href="/styles/autocomplete.css">
-    <link rel="stylesheet" href="/styles/style.css">
-    <link rel="stylesheet" href="/styles/collection.css">
-    <link rel="stylesheet" href="/styles/mobile.css" media="screen and (max-width:900px)">
+    <link rel="stylesheet" href="/giradex/styles/darkmode.css">
+    <link rel="stylesheet" href="/giradex/styles/switch.css">
+    <link rel="stylesheet" href="/giradex/styles/togglebutton.css">
+    <link rel="stylesheet" href="/giradex/styles/tooltips.css">
+    <link rel="stylesheet" href="/giradex/styles/autocomplete.css">
+    <link rel="stylesheet" href="/giradex/styles/style.css">
+    <link rel="stylesheet" href="/giradex/styles/mobile.css" media="screen and (max-width:900px)">
 
     <link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_pkm_names.json" as="fetch" crossorigin />
     <link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_pkm.min.json" as="fetch" crossorigin />
     <link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_fm.json" as="fetch" crossorigin />
     <link rel="preload" href="https://raw.githubusercontent.com/mgrann03/pokemon-resources/main/pogo_cm.json" as="fetch" crossorigin />
 
-    <script src="/lib/jquery-3.6.0.min.js"></script>
-    <script src="/lib/autoComplete.js"></script>
-    <script src="/lib/jenks.js"></script>
+    <script src="/giradex/lib/jquery-3.6.0.min.js"></script>
+    <script src="/giradex/lib/autoComplete.js"></script>
+    <script src="/giradex/lib/jenks.js"></script>
     
-    <script src="/scripts/dataload.js"></script>
-    <script src="/scripts/settings.js"></script>
-    <script src="/scripts/pokemon_enums.js"></script>
-    <script src="/scripts/pokemon_utils.js"></script>
-    <script src="/scripts/calc.js"></script>
-    <script src="/scripts/rankings.js"></script>
-    <script src="/scripts/pokedex.js"></script>
-    <script src="/scripts/moves.js"></script>
-    <script src="/scripts/pokemon_collection.js"></script>
-    <script src="index.js"></script>
+    <script src="/giradex/scripts/dataload.js"></script>
+    <script src="/giradex/scripts/settings.js"></script>
+    <script src="/giradex/scripts/pokemon_enums.js"></script>
+    <script src="/giradex/scripts/pokemon_utils.js"></script>
+    <script src="/giradex/scripts/calc.js"></script>
+    <script src="/giradex/scripts/rankings.js"></script>
+    <script src="/giradex/scripts/pokedex.js"></script>
+    <script src="/giradex/scripts/moves.js"></script>
+    <script src="/giradex/index.js"></script>
 </head>
 
 <body class="darkmode">
@@ -52,7 +50,7 @@
     <div class="card-header">
         <div class="card-title">Edit Moveset</div>
         <div class="drawer absolute-right v-middle dialog-close">
-            <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
+            <img class="drawer-icon" src="/giradex/imgs/close.svg" alt="X Button to close the dialog" />
         </div>
     </div>
     <div class="card-body">
@@ -61,7 +59,7 @@
                 <h3>Fast Moves</h3>
                 <div style="position: relative; margin-bottom: 0.5em;">
                     <input id=fm-search-box class=search-box type=text aria-label="FM Search">
-                    <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
+                    <img class="inlaid-icon search-icon" src="/giradex/imgs/search.svg" alt="" />
                 </div>
                 <ul class="move-select" id="fm-select"></ul>
             </div>
@@ -69,7 +67,7 @@
                 <h3>Charged Moves</h3>
                 <div style="position: relative; margin-bottom: 0.5em;">
                     <input id=cm-search-box class=search-box type=text aria-label="CM Search">
-                    <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
+                    <img class="inlaid-icon search-icon" src="/giradex/imgs/search.svg" alt="" />
                 </div>
                 <ul class="move-select" id="cm-select"></ul>
             </div>
@@ -86,7 +84,7 @@
     <div class="card-header">
         <div class="card-title" id="move-edit-title">Edit Move Data</div>
         <div class="drawer absolute-right v-middle dialog-close">
-            <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
+            <img class="drawer-icon" src="/giradex/imgs/close.svg" alt="X Button to close the dialog" />
         </div>
     </div>
     <div class="card-body">
@@ -94,7 +92,7 @@
             <label for="any-search-box">Name:</label>
                 <div style="position: relative;">
                     <input type=text class=search-box name="name" id="any-search-box" aria-label="Move Name">
-                    <img class="inlaid-icon search-icon" src="imgs/search.svg" alt="" />
+                    <img class="inlaid-icon search-icon" src="/giradex/imgs/search.svg" alt="" />
                 </div>
             <label for="move-edit-type">Type:</label>
                 <div class="row" style="gap: 1em; white-space-collapse: collapse;">
@@ -161,7 +159,7 @@
     <div class="card-header">
         <div class="card-title">Generate Search String</div>
         <div class="drawer absolute-right v-middle dialog-close">
-            <img class="drawer-icon" src="imgs/close.svg" alt="X Button to close the dialog" />
+            <img class="drawer-icon" src="/giradex/imgs/close.svg" alt="X Button to close the dialog" />
         </div>
     </div>
     <div class="card-body">
@@ -225,8 +223,8 @@
     <div class="site-size" id="header-content">
         <a id="header-left" href="/">
             <div class="header-area">
-                <img class="unselectable" id=logo src="imgs/giratina.ico" alt="Site Logo depicting Giratina">
-                <h2 id="site-name">Gira<span class="contrast">Dex</span></h2>
+                <img class="unselectable" id=logo src="imgs/dialga.png" alt="Site Logo depicting Dialga">
+                <h2 id="site-name">Dialga<span class="contrast">Dex</span></h2>
             </div>
         </a>
         <div class="header-area" id="header-right">
@@ -236,7 +234,7 @@
             </form>
             <nav>
                 <div id=site-settings-icon class="drawer v-middle">
-                    <img class="drawer-icon" src="imgs/settings.svg" alt="Cogwheel button to open site settings" />
+                    <img class="drawer-icon" src="/giradex/imgs/settings.svg" alt="Cogwheel button to open site settings" />
                     <div class="drawer-popup" id=settings >
                         <!--<div class=settings-title>Settings</div>-->
                         <div class=settings-list>
@@ -335,12 +333,10 @@
                     </div>
                 </div>
                 <div id=menu-icon class="drawer v-middle">
-                    <img class="drawer-icon" src="imgs/menu.svg" alt="Menu button to open navigation menu to different pages" />
+                    <img class="drawer-icon" src="/giradex/imgs/menu.svg" alt="Menu button to open navigation menu to different pages" />
                     <div class="drawer-popup" id="nav-drawer">
                         <ul class="menu">
                             <li><a id=rankings-link href="/?strongest">Attacker Rankings</a></li>
-                            <li><a id=megas-link href="/?megas">Megas</a></li>
-                            <li><a id=collection-link href="/?collection">Collection</a></li>
                             <li><a id=moves-link href="/?moves">Move Data</a></li>
                             <li><a id=typechart-link href="/?typechart">Type Chart</a></li>
                         </ul>
@@ -539,7 +535,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="resist immune">
-                                        <img src="imgs/triple-resistance.svg" class="tripleshield-icon" alt="3 shields representing triple resistance" >
+                                        <img src="/giradex/imgs/triple-resistance.svg" class="tripleshield-icon" alt="3 shields representing triple resistance" >
                                     </span>
                                     <span class="desktop">3x Resistance</span>
                                     <span class="tooltiptext">Damage Multiplier x0.244</span>
@@ -549,7 +545,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="immune">
-                                        <img src="imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance">
+                                        <img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance">
                                     </span>
                                     <span class="desktop">2x Resistance</span>
                                     <span class="tooltiptext">Damage Multiplier x0.391</span>
@@ -559,7 +555,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="resist">
-                                        <img src="imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance">
+                                        <img src="/giradex/imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance">
                                     </span>
                                     <span class="desktop">1x Resistance</span>
                                     <span class="tooltiptext">Damage Multiplier x0.625</span>
@@ -569,7 +565,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="supereffective">
-                                        <img src="imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage">
+                                        <img src="/giradex/imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage">
                                     </span>
                                     <span class="desktop">1x Weakness</span>
                                     <span class="tooltiptext">Damage Multiplier x1.60</span>
@@ -579,7 +575,7 @@
                             <div class="dex-layout-tablecell">
                                 <div class="dex-layout-header tooltip tooltip-top">
                                     <span class="supereffective">
-                                        <img src="imgs/double-effective.svg" class="sword-icon" alt="2 swords representing doubly supereffective damage">
+                                        <img src="/giradex/imgs/double-effective.svg" class="sword-icon" alt="2 swords representing doubly supereffective damage">
                                     </span>
                                     <span class="desktop">2x Weakness</span>
                                     <span class="tooltiptext">Damage Multiplier x2.56</span>
@@ -593,7 +589,7 @@
                     <div class="card-header">
                         <div class="card-title">Raid Counters</div>
                         <div class="drawer absolute-right v-middle">
-                            <img class="drawer-icon" src="imgs/filter.svg" alt="Funnel button to open filter and display options" />
+                            <img class="drawer-icon" src="/giradex/imgs/filter.svg" alt="Funnel button to open filter and display options" />
                             <div id=counters-filters class="drawer-popup"></div>
                         </div> 
                     </div>
@@ -618,7 +614,7 @@
                     <div class="card-header">
                         <div class="card-title" id="movesets-title">Best Movesets</div>
                         <div class="drawer absolute-right v-middle" id="moveset-edit-icon">
-                            <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open moveset editor" />
+                            <img class="drawer-icon" src="/giradex/imgs/edit.svg" alt="Pencil button to open moveset editor" />
                         </div>
                     </div>
                     <div class="card-body">
@@ -695,10 +691,10 @@
                 </div>
                 <div class="absolute-right row">
                     <div class="drawer v-middle" id="search-string-icon">
-                        <img class="drawer-icon" src="imgs/search-string.svg" alt="Magnifying glass button to open search string generator" />
+                        <img class="drawer-icon" src="/giradex/imgs/search-string.svg" alt="Magnifying glass button to open search string generator" />
                     </div> 
                     <div class="drawer v-middle">
-                        <img class="drawer-icon" src="imgs/filter.svg" alt="Funnel button to open filter and display options" />
+                        <img class="drawer-icon" src="/giradex/imgs/filter.svg" alt="Funnel button to open filter and display options" />
                         <div id=strongest-filters class="drawer-popup">
                             <div id="filter-settings">
                                 <div class="settings-list">
@@ -770,13 +766,6 @@
                                         <label class="switch tooltip tooltip-left" id=settings-group>
                                             <input type=checkbox value=grouped id=chk-grouped disabled>
                                             <span class="slider" ></span>
-                                        </label>
-                                    <span class="tooltip tooltip-left">Collection Tracking
-                                        <span class="tooltiptext">Show checkboxes to track which Pokémon you own with IV indicators</span>
-                                    </span>
-                                        <label class="switch">
-                                            <input type=checkbox value=collection id=chk-collection-display checked>
-                                            <span class="slider"></span>
                                         </label>
                                     <span class="tooltip tooltip-left" id=settings-compare-header>Baseline
                                         <span class="tooltiptext">Sets the "100%" reference Pokémon</span>
@@ -910,7 +899,7 @@
                     <span> Move Data</span>
                 </div>
                 <div class="drawer absolute-right v-middle" id="move-edit-icon">
-                    <img class="drawer-icon" src="imgs/edit.svg" alt="Pencil button to open move data editor" />
+                    <img class="drawer-icon" src="/giradex/imgs/edit.svg" alt="Pencil button to open move data editor" />
                 </div>
             </div>
             <div class="card-body">
@@ -976,17 +965,17 @@
                 </div>
                 <div class="table-legend">
                     <div class="tooltip">
-                        <span class="supereffective"><img src="imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage"></span>
+                        <span class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon" alt="A sword representing supereffective damage"></span>
                         Super Effective
                         <span class="tooltiptext">Damage Multiplier x1.6</span>
                     </div>
                     <div class="tooltip">
-                        <span class="resist"><img src="imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance"></span>
+                        <span class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon" alt="A shield representing type resistance"></span>
                         Resisted
                         <span class="tooltiptext">Damage Multiplier x0.625</span>
                     </div>
                     <div class="tooltip">
-                        <span class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance"></span>
+                        <span class="immune"><img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon" alt="2 shields representing double resistance"></span>
                         Immune
                         <span class="tooltiptext">Damage Multiplier x0.391</span>
                     </div>
@@ -1032,58 +1021,58 @@
                         </thead>
                         <tbody>
                             <tr><td><a class="type-text bg-Normal" href="/?strongest&t=Normal" onclick="return LoadStrongestAndUpdateURL('Normal', false)">Normal</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Fire" href="/?strongest&t=Fire" onclick="return LoadStrongestAndUpdateURL('Fire', false)">Fire</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td>
+                                <td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Water" href="/?strongest&t=Water" onclick="return LoadStrongestAndUpdateURL('Water', false)">Water</a></td>
-                                <td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
+                                <td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Grass" href="/?strongest&t=Grass" onclick="return LoadStrongestAndUpdateURL('Grass', false)">Grass</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                                <td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Electric" href="/?strongest&t=Electric" onclick="return LoadStrongestAndUpdateURL('Electric', false)">Electric</a></td>
-                                <td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
+                                <td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="immune"><img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Ice" href="/?strongest&t=Ice" onclick="return LoadStrongestAndUpdateURL('Ice', false)">Ice</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                                <td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Fighting" href="/?strongest&t=Fighting" onclick="return LoadStrongestAndUpdateURL('Fighting', false)">Fighting</a></td>
-                                <td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
+                                <td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="immune"><img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td>
                             </tr>
                             <tr><td><a class="type-text bg-Poison" href="/?strongest&t=Poison" onclick="return LoadStrongestAndUpdateURL('Poison', false)">Poison</a></td>
-                                <td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td>
+                                <td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td class="immune"><img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td>
                             </tr>
                             <tr><td><a class="type-text bg-Ground" href="/?strongest&t=Ground" onclick="return LoadStrongestAndUpdateURL('Ground', false)">Ground</a></td>
-                                <td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td>
+                                <td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="immune"><img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Flying" href="/?strongest&t=Flying" onclick="return LoadStrongestAndUpdateURL('Flying', false)">Flying</a></td>
-                                <td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                                <td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Psychic" href="/?strongest&t=Psychic" onclick="return LoadStrongestAndUpdateURL('Psychic', false)">Psychic</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                                <td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="immune"><img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Bug" href="/?strongest&t=Bug" onclick="return LoadStrongestAndUpdateURL('Bug', false)">Bug</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
+                                <td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td>
                             </tr>
                             <tr><td><a class="type-text bg-Rock" href="/?strongest&t=Rock" onclick="return LoadStrongestAndUpdateURL('Rock', false)">Rock</a></td>
-                                <td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                                <td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Ghost" href="/?strongest&t=Ghost" onclick="return LoadStrongestAndUpdateURL('Ghost', false)">Ghost</a></td>
-                                <td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td>
+                                <td class="immune"><img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td>
                             </tr>
                             <tr><td><a class="type-text bg-Dragon" href="/?strongest&t=Dragon" onclick="return LoadStrongestAndUpdateURL('Dragon', false)">Dragon</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="imgs/double-resistance.svg" class="tripleshield-icon"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="immune"><img src="/giradex/imgs/double-resistance.svg" class="tripleshield-icon"></td>
                             </tr>
                             <tr><td><a class="type-text bg-Dark" href="/?strongest&t=Dark" onclick="return LoadStrongestAndUpdateURL('Dark', false)">Dark</a></td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td>
                             </tr>
                             <tr><td><a class="type-text bg-Steel" href="/?strongest&t=Steel" onclick="return LoadStrongestAndUpdateURL('Steel', false)">Steel</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td>
+                                <td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td></td><td></td><td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td>
                             </tr>
                             <tr><td><a class="type-text bg-Fairy" href="/?strongest&t=Fairy" onclick="return LoadStrongestAndUpdateURL('Fairy', false)">Fairy</a></td>
-                                <td></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="imgs/resistance.svg" class="shield-icon"></td><td></td>
+                                <td></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="supereffective"><img src="/giradex/imgs/effective.svg" class="sword-icon"></td><td class="resist"><img src="/giradex/imgs/resistance.svg" class="shield-icon"></td><td></td>
                             </tr>
                         </tbody>
                     </table>
@@ -1093,72 +1082,16 @@
         </div>
     </div>
 
-    <!-- Collection -->
-    <div id=collection class="page">
-        <h1>Pokémon Collection</h1>
-        <div class="card" id="collection-stats">
-            <div class="card-header">
-                <div class="card-title">Collection Statistics</div>
-            </div>
-            <div class="card-body">
-                <div id="collection-stats-content">
-                    <p>Loading collection statistics...</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="card" id="collection-management">
-            <div class="card-header">
-                <div class="card-title">Collection Management</div>
-            </div>
-            <div class="card-body">
-                <div class="collection-actions">
-                    <div class="action-group">
-                        <h3>Export Collection</h3>
-                        <p>Download your collection data as a JSON file for backup or sharing.</p>
-                        <button id="export-json-btn" type="button">Export as JSON</button>
-                        <button id="export-text-btn" type="button">Export as Text</button>
-                    </div>
-                    
-                    <div class="action-group">
-                        <h3>Import Collection</h3>
-                        <p>Import collection data from a JSON file. This will merge with your existing collection.</p>
-                        <input type="file" id="import-file" accept=".json" style="display: none;">
-                        <button id="import-btn" type="button">Import from JSON</button>
-                        <div id="import-status" class="status-message"></div>
-                    </div>
-                    
-                    <div class="action-group">
-                        <h3>Clear Collection</h3>
-                        <p class="warning-text">This will permanently delete all Pokémon from your collection. This action cannot be undone.</p>
-                        <button id="clear-collection-btn" type="button" class="danger-btn">Clear All Data</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card" id="collection-list">
-            <div class="card-header">
-                <div class="card-title">Your Collection</div>
-            </div>
-            <div class="card-body">
-                <div id="collection-pokemon-list">
-                    <p>Loading collection...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- About -->
     <div id=about class="page">
-        <h1>About GiraDex</h1>
+        <h1>About DialgaDex</h1>
         <div class="card article" id="contact">
             <div class="card-header">
                 <div class="card-title">Contact Info</div>
             </div>
             <div class="card-body">
                 <p>If you have any questions, suggestions, bug reports, or feedback, please 
-                    <a target="_blank" href="https://old.reddit.com/message/compose?to=Mikegrann&subject=About%20GiraDex">send me a PM on Reddit</a>. 
+                    <a target="_blank" href="https://old.reddit.com/message/compose?to=Mikegrann&subject=About%20DialgaDex">send me a PM on Reddit</a>. 
                     Please do not use the Reddit "Chat" feature as it doesn't notify me properly, meaning your message will likely go unseen.</p>
                 <p>You can also submit issues or pull requests via the <a target="_blank" href="https://github.com/mgrann03/dialgadex">Github Repo</a>.</p>
             </div>
@@ -1168,7 +1101,7 @@
                 <div class="card-title">Credits and References</div>
             </div>
             <div class="card-body">
-                <h4>The following articles are key to how GiraDex calculates its metrics:</h4>
+                <h4>The following articles are key to how DialgaDex calculates its metrics:</h4>
                 <ul>
                     <li><a target="_blank" href=https://gamepress.gg/pokemongo/damage-mechanics>Damage Mechanics</a> from GamePress</li>
                     <li><a target="_blank" href=https://gamepress.gg/pokemongo/how-calculate-comprehensive-dps>Comprehensive DPS</a> by bioweapon</li>
@@ -1203,8 +1136,8 @@
                 <div class="card-title">Privacy Policy</div>
             </div>
             <div class="card-body">
-                <p>GiraDex does not directly process or store any personally identifiable information. The website uses no analytics, no cookies, etc.</p>
-                <p>GiraDex is hosted by GitHub Pages. As a natural consequence of hosting web servers, GitHub may collect personal information such as logging
+                <p>DialgaDex does not directly process or store any personally identifiable information. The website uses no analytics, no cookies, etc.</p>
+                <p>DialgaDex is hosted by GitHub Pages. As a natural consequence of hosting web servers, GitHub may collect personal information such as logging
                     the IP addresses of visitors. For more information about what may or may not be collected, please refer to the
                     <a target="_blank" href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Privacy Statement</a>.
                 </p>
@@ -1216,7 +1149,7 @@
     <div id=faq class="page">
         <h1>Frequently Asked Questions</h1>
         <p>This page collects answers to some of the most common questions I receive or see on Reddit
-            related to GiraDex. Most of this information (and more) is already available elsewhere
+            related to DialgaDex. Most of this information (and more) is already available elsewhere
             on the site via footnotes and tooltips, or is answered in some of the linked reference pages.
             If you don't find your answer in this FAQ, try looking in one of those places.</p>
         <p>If you still can't find an answer to your question, consider asking for help on Reddit or
@@ -1227,7 +1160,7 @@
             </summary>
             <div class="card-body">
                 <h3>How do I decide if my Pokémon is good?</h3>
-                <p>This is a massive question, and it's the main reason GiraDex exists. There are plenty
+                <p>This is a massive question, and it's the main reason DialgaDex exists. There are plenty
                     of factors that go into determining which Pokémon are good in raids, and many of these
                     factors aren't visible at all in-game. Here are a few ways of evaluating your Pokémon
                     using the tools available on this website.</p>
@@ -1262,7 +1195,7 @@
                 <p>While the exact eDPS for each Pokémon is the most accurate point of comparison, it can be a little
                     misleading. eDPS is a stand-in for real world results, and it implies more precision than it
                     can actually achieve, as real raids are full of volatile, random probabilities. For this reason,
-                    GiraDex assigns each ranking result a "tier" level. Any Pokémon in the same tier are likely to
+                    DialgaDex assigns each ranking result a "tier" level. Any Pokémon in the same tier are likely to
                     perform relatively similarly in the real world. Within any one tier, IVs, boss movesets, unique
                     tempo and energy interactions, and plain random chance are going to take over. So Pokémon should
                     be judged primarily by where they appear in these "tiers", not their exact position in the
@@ -1356,7 +1289,7 @@
                     there are many roughly-equivalent options in the lower tiers.</p>
                 <h3>What are the "Tiers" and "Baseline" settings doing?</h3>
                 <p>The "Tiers" setting determines how Pokémon get grouped into the different tier rankings. Everything
-                    on GiraDex is calculated dynamically (in fact, it's all calculated directly in your web browser),
+                    on DialgaDex is calculated dynamically (in fact, it's all calculated directly in your web browser),
                     and tiers are no exception. This helps remove bias from the tier-making process. Still, there are
                     a few different ways of building tiers, each with its own motivation and advantages.</p>
                 <p>The Jenks and ESpace methods both rely on choosing a reference "Baseline" Pokémon as a point of
@@ -1408,7 +1341,7 @@
                 <p>For more details about eDPS, check out the original article outlining the measure, its 
                     motivation, and its advantages over existing metrics.</p>
                 <h3>How is DPS calculated?</h3>
-                <p>DPS and TDO are calculated using the Comprehensive DPS Formula. GiraDex has some tweaks to
+                <p>DPS and TDO are calculated using the Comprehensive DPS Formula. DialgaDex has some tweaks to
                     the original formula, including:</p>
                 <ul>
                     <li>A new formula for estimating y (incoming DPS from the raid boss) more accurately</li>
@@ -1440,27 +1373,27 @@
             </summary>
             <div class="card-body">
                 <h3>Why don't these metrics match other websites?</h3>
-                <p>GiraDex uses the latest, most up-to-date calculation methods possible. While the basic 
+                <p>DialgaDex uses the latest, most up-to-date calculation methods possible. While the basic 
                     formula for calculating DPS and TDO is very similar, this site incorporates multiple 
                     tweaks to improve on the original work.</p>
                 <p>The most notable change involves incoming damage from raid bosses. Old calculations
                     significantly underestimated how quickly your Pokémon would die. This had a ripple effect,
-                    resulting in poor estimates for wasted energy. GiraDex uses an updated method for
+                    resulting in poor estimates for wasted energy. DialgaDex uses an updated method for
                     estimating incoming damage from bosses, which results in about a 50% higher final value.
                     Ultimately, this means "glass cannons" (high DPS, frail Pokémon) are typically lower
                     rated on this website.</p>
                 <p>An additional change further improves the estimate for wasted energy. By recognizing that
                     energy waste includes both the energy you had when you died and the energy you received
-                    from the final "killing blow," GiraDex calculates lower overall energy efficiency. This
+                    from the final "killing blow," DialgaDex calculates lower overall energy efficiency. This
                     especially penalizes movesets with energy-hungry 1-bar attacks.</p>
-                <p>GiraDex is also the only website currently using the latest metric, eDPS. This metric
+                <p>DialgaDex is also the only website currently using the latest metric, eDPS. This metric
                     reflects real game mechanics instead of relying on statistical modeling. It can handle
                     new scenarios like "solos" (fighting with just a single attacker). And it has been
                     validated against simulations as more accurate than any previous metrics.</p>
                 <h3>Why doesn't the list of counters match simulations?</h3>
                 <p>While DPS calculations are fairly accurate, they still have their limits. There are
                     some nuances related to the tempo of attacks (from both your team and the raid boss)
-                    which cannot be fully captured by our DPS formula. For this reason, GiraDex is best
+                    which cannot be fully captured by our DPS formula. For this reason, DialgaDex is best
                     used to gauge the overall effectiveness of your Pokémon instead of the performance
                     against any one specific raid boss.</p>
                 <p>For the most accurate list of raid counters, please consult PokéBattler instead.</p>
@@ -1496,7 +1429,7 @@
                     loaded from the Game Master. Any modifications you make will only be active in this
                     same window. If you navigate away from the website (or open a new tab, or refresh the
                      page), all the game data is reloaded and your modifications will be lost.</p>
-                <p>GiraDex is designed to always keep you in the same session while using the website so
+                <p>DialgaDex is designed to always keep you in the same session while using the website so
                     your modifications aren't lost during normal browsing.</p>
                 <h3>How do I preview announced-but-unimplemented changes?</h3>
                 <p>In the site settings (accessible via the header), there's an option to preview "speculative"
@@ -1514,7 +1447,7 @@
                 <p>To delete a move (either from the Pokémon's real learnset, or a move you added), find it in
                     the current move list and press the red X to delete it.</p>
                 <h3>How do I view/edit the attributes for a move?</h3>
-                <p>Anywhere a move is displayed on GiraDex (in the ranking lists, on a dex page, in the move list, 
+                <p>Anywhere a move is displayed on DialgaDex (in the ranking lists, on a dex page, in the move list, 
                     etc.) you can click on that move to open the move data editor popup. There, you can easily view
                     and modify any of the move's attributes, including its type, power, energy, and duration.</p>
                 <h3>How do I add a new move that doesn't yet exist in the Game Master?</h3>
@@ -1548,7 +1481,7 @@
 
     <!-- footer -->
     <div id=footer>
-        <p>GiraDex is not affiliated with The Pokémon Company, Niantic, Scopely, Pokémon Go, or any other such entities.<br/>
+        <p>DialgaDex is not affiliated with The Pokémon Company, Niantic, Scopely, Pokémon Go, or any other such entities.<br/>
             Pokémon is a trademark of Nintendo. All such trademarks are the property of their respective owners.</p>
         <nav id=footer-links>
             <a id=faq-link href="/?faq">FAQ</a>
@@ -1565,4 +1498,3 @@
 </body>
 
 </html>
-
