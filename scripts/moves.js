@@ -429,6 +429,7 @@ function SetMoveTable(sort_info) {
                 "<span class='type-text bg-" +
                 ((md.name == "Hidden Power") ? "any-type" : md.type) + "'" +
                 " onclick=\"OpenMoveEditor('" + md.name + "')\">" +
+                md.name +
             "</span></td>";
 
         const td_power = MoveDataTD(FormatDecimal(md.power,3,0), 
