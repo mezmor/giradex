@@ -472,6 +472,8 @@ function GetPokemonForms(pokemon_id) {
                 "Matron", "Dandy", "La_reine", "Kabuki", "Pharaoh" ];
         case 678: // Meowstic
             return [ "Normal", "Female" ];
+        case 681: // Aegislash
+            return [ "Normal", "Blade" ];
         case 710: // Pumpkaboo
         case 711: // Gourgeist
             return [ "Average", "Small", "Large", "Super" ];
@@ -595,6 +597,8 @@ function GetFormText(pokemon_id, form) {
                     return "Male";
                 case 649: // Genesect
                     return "Normal";
+                case 681: // Aegislash
+                    return "Shield";
                 case 890: // Eternatus
                     return "Eternatus";
             }
@@ -810,6 +814,8 @@ function GetFormText(pokemon_id, form) {
             return "Apex";
         case "A":
             return "Armored";
+        case "Blade":
+            return "Blade";
     }
 
     return "";
@@ -1081,7 +1087,7 @@ function GetPokemonIconCoords(pokemon_id, form) {
         if (form == "Normal" || form == "Natural") offsetID = pokemon_id;
         else offsetID = furfrouOffset + furfrouLookup.indexOf(form);
     } 
-    // Aegislash Blade
+    else if (pokemon_id == 681 && form == "Blade") offsetID = 1148; // Aegislash Blade
     // Xerneas Neutral
     else if (pokemon_id == 720 && form == "Unbound") offsetID = 1150; // Hoopa
     // Ash Greninja
