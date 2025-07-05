@@ -815,6 +815,12 @@ function RenderLabels(indices) {
 
     if (!tier_stops) return;
 
+    // Skip floating labels for "Each" type page (where tier_stops have type property)
+    // These pages show type labels directly in table rows instead
+    if (tier_stops.length > 0 && tier_stops[0].type !== undefined) {
+        return;
+    }
+
     let min_len = 3;
 
     for (const tier of tier_stops) {
@@ -913,12 +919,31 @@ function GetRankingRow(row_i) {
             }
         }
         
+        // Check if this is the "Each" type page and find which type this row belongs to
+        const isEachTypePage = tier_stops.length > 0 && tier_stops[0].type !== undefined;
+        let currentEachTypeLabel = "";
+        
+        if (isEachTypePage) {
+            // Find which type section this row belongs to
+            for (const tier of tier_stops) {
+                if (row_i >= tier.start && row_i < tier.stop) {
+                    currentEachTypeLabel = tier.type;
+                    break;
+                }
+            }
+        }
+        
         if (isMegasPage && currentTypeLabel) {
             // For megas page, show type label in every row of each section
             td_tier.addClass("tier-label");
             td_tier.addClass("bg-" + currentTypeLabel);
             td_tier.text(currentTypeLabel);
-        } else if (!isMegasPage && !display_grouped && show_pct && p.tier) {
+        } else if (isEachTypePage && currentEachTypeLabel) {
+            // For "Each" type page, show type label in every row of each section
+            td_tier.addClass("tier-label");
+            td_tier.addClass("bg-" + currentEachTypeLabel);
+            td_tier.text(currentEachTypeLabel);
+        } else if (!isMegasPage && !isEachTypePage && !display_grouped && show_pct && p.tier) {
             // For normal rankings, show tier (S, A, B, etc.) - only if tier exists
             td_tier.addClass("tier-label");
             td_tier.addClass("tier-" + p.tier);
