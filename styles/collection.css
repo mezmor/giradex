@@ -412,8 +412,9 @@ body:not(.collection-enabled) #strongest-table tr > *:nth-child(7):last-child {
     gap: 2px;
 }
 
-.iv-inline-editor input[type="number"] {
-    width: 40px;
+.iv-inline-editor .num-input-group input[type="number"] {
+    width: 40px !important;
+    flex: none !important;
     font-size: 11px;
     padding: 2px 4px;
     text-align: center;

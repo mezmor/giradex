@@ -68,6 +68,8 @@ class CollectionStore {
      */
     set(pokemon, collectionData) {
         const key = this.getPokemonKey(pokemon);
+        const isMegaPokemon = pokemon.form === "Mega" || pokemon.form === "MegaY";
+        
         this.data[key] = {
             id: pokemon.id,
             form: pokemon.form,
@@ -76,6 +78,14 @@ class CollectionStore {
             ivs: collectionData.ivs || { atk: 15, def: 15, hp: 15 },
             dateAdded: collectionData.dateAdded || new Date().toISOString()
         };
+        
+        // Only save LVLs for mega Pokemon
+        if (isMegaPokemon && collectionData.lvls !== undefined) {
+            this.data[key].lvls = collectionData.lvls;
+        } else if (isMegaPokemon) {
+            this.data[key].lvls = 30; // Default LVLs for mega Pokemon
+        }
+        
         this.saveToStorage();
     }
 
@@ -95,6 +105,19 @@ class CollectionStore {
         const key = this.getPokemonKey(pokemon);
         if (this.data[key]) {
             this.data[key].ivs = ivs;
+            this.saveToStorage();
+        }
+    }
+
+    /**
+     * Update LVLs for a Pokemon in collection (only for mega Pokemon)
+     */
+    updateLVLs(pokemon, lvls) {
+        const key = this.getPokemonKey(pokemon);
+        const isMegaPokemon = pokemon.form === "Mega" || pokemon.form === "MegaY";
+        
+        if (this.data[key] && isMegaPokemon) {
+            this.data[key].lvls = Math.max(0, Math.min(30, lvls));
             this.saveToStorage();
         }
     }
@@ -184,14 +207,22 @@ function IsInCollection(pokemon) {
 /**
  * Add Pokemon to collection with optional IVs (Legacy function)
  */
-function AddToCollection(pokemon, ivs = null) {
+function AddToCollection(pokemon, ivs = null, lvls = null) {
     console.log('AddToCollection called with:', pokemon);
     const collectionKey = collectionStore.getPokemonKey(pokemon);
     console.log('Generated collection key:', collectionKey);
     
-    collectionStore.set(pokemon, {
+    const isMegaPokemon = pokemon.form === "Mega" || pokemon.form === "MegaY";
+    const collectionData = {
         ivs: ivs || { atk: 15, def: 15, hp: 15 }
-    });
+    };
+    
+    // Only add LVLs for mega Pokemon
+    if (isMegaPokemon) {
+        collectionData.lvls = lvls !== null ? lvls : 30;
+    }
+    
+    collectionStore.set(pokemon, collectionData);
     // Update legacy data structure
     pokemon_collection = collectionStore.getAll();
     
@@ -212,6 +243,15 @@ function RemoveFromCollection(pokemon) {
  */
 function UpdateCollectionIVs(pokemon, ivs) {
     collectionStore.updateIVs(pokemon, ivs);
+    // Update legacy data structure
+    pokemon_collection = collectionStore.getAll();
+}
+
+/**
+ * Update LVLs for a Pokemon in collection (Legacy function)
+ */
+function UpdateCollectionLVLs(pokemon, lvls) {
+    collectionStore.updateLVLs(pokemon, lvls);
     // Update legacy data structure
     pokemon_collection = collectionStore.getAll();
 }
@@ -274,7 +314,8 @@ function CreateCollectionCheckbox(pokemon, row_index) {
     container.append(checkbox);
     
     if (isOwned && collectionData) {
-        const ivDisplay = CreateInlineIVDisplay(pokemon, collectionData.ivs);
+        const lvls = collectionData.lvls !== undefined ? collectionData.lvls : 30;
+        const ivDisplay = CreateInlineIVDisplay(pokemon, collectionData.ivs, lvls);
         container.append(ivDisplay);
         
         const perfection = CalculateIVPerfection(collectionData.ivs);
@@ -294,12 +335,12 @@ function CreateCollectionCheckbox(pokemon, row_index) {
 }
 
 /**
- * Create inline IV display with individual ATK/DEF/HP values
+ * Create inline IV display with individual ATK/DEF/HP values and LVLs
  */
-function CreateInlineIVDisplay(pokemon, ivs) {
+function CreateInlineIVDisplay(pokemon, ivs, lvls = 30) {
     const ivDisplay = $('<div class="iv-inline-display"></div>');
     
-    // Create individual stat displays
+    // Create individual stat displays for IVs
     ['atk', 'def', 'hp'].forEach(stat => {
         const value = ivs[stat];
         const colorClass = getIVColorClass(value);
@@ -316,6 +357,23 @@ function CreateInlineIVDisplay(pokemon, ivs) {
         
         ivDisplay.append(statDiv);
     });
+    
+    // Add LVLs display only for mega Pokemon on the megas page
+    const isMegaPokemon = pokemon.form === "Mega" || pokemon.form === "MegaY";
+    const isMegasPage = $('body').hasClass('megas-page');
+    
+    if (isMegaPokemon && isMegasPage) {
+        const lvlsDiv = $(`
+            <div class="iv-inline-stat" 
+                 data-stat="lvls"
+                 title="Click to edit LVLs">
+                <div class="iv-inline-label">LVLs</div>
+                <div class="iv-inline-value">${lvls}</div>
+            </div>
+        `);
+        
+        ivDisplay.append(lvlsDiv);
+    }
     
     return ivDisplay;
 }
@@ -390,7 +448,8 @@ function BindCollectionEvents() {
         if (isChecked) {
             // Add to collection with default perfect IVs (15/15/15) - only once
             console.log('Adding to collection:', pokemon);
-            AddToCollection(pokemon, { atk: 15, def: 15, hp: 15 });
+            const isMegaPokemon = pokemon.form === "Mega" || pokemon.form === "MegaY";
+            AddToCollection(pokemon, { atk: 15, def: 15, hp: 15 }, isMegaPokemon ? 30 : null);
         } else {
             // Remove from collection - only once
             console.log('Removing from collection:', pokemon);
@@ -438,7 +497,11 @@ function BindCollectionEvents() {
             name: GetPokemonName(parseInt(checkbox.data('pokemon-id')), checkbox.data('pokemon-form'), checkbox.data('pokemon-shadow') === true)
         };
         
-        ShowInlineIVEditor(pokemon, stat, statDiv, checkbox);
+        if (stat === 'lvls') {
+            ShowInlineLVLsEditor(pokemon, statDiv, checkbox);
+        } else {
+            ShowInlineIVEditor(pokemon, stat, statDiv, checkbox);
+        }
     });
 }
 
@@ -448,12 +511,27 @@ function BindCollectionEvents() {
 function ShowIVInputDialog(pokemon, checkbox) {
     const existingData = GetFromCollection(pokemon);
     const currentIVs = existingData ? existingData.ivs : { atk: 15, def: 15, hp: 15 };
+    const currentLVLs = existingData ? (existingData.lvls !== undefined ? existingData.lvls : 30) : 30;
+    
+    const isMegaPokemon = pokemon.form === "Mega" || pokemon.form === "MegaY";
+    const isMegasPage = $('body').hasClass('megas-page');
+    const showLVLs = isMegaPokemon && isMegasPage;
+    
+    const dialogTitle = showLVLs ? `Set IVs and LVLs for ${pokemon.name}` : `Set IVs for ${pokemon.name}`;
+    const lvlsSection = showLVLs ? `
+        <label>LVLs:</label>
+        <div class="num-input-group">
+            <input type="button" class="minus" value="–" data-target="iv-lvls" />
+            <input type="number" id="iv-lvls" min="0" max="30" value="${currentLVLs}" />
+            <input type="button" class="plus" value="+" data-target="iv-lvls" />
+        </div>
+    ` : '';
     
     const dialog = $(`
         <dialog class="card iv-input-dialog">
             <form>
                 <div class="card-header">
-                    <div class="card-title">Set IVs for ${pokemon.name}</div>
+                    <div class="card-title">${dialogTitle}</div>
                     <div class="drawer absolute-right v-middle dialog-close">
                         <img class="drawer-icon" src="imgs/close.svg" alt="Close" />
                     </div>
@@ -480,6 +558,8 @@ function ShowIVInputDialog(pokemon, checkbox) {
                             <input type="number" id="iv-hp" min="0" max="15" value="${currentIVs.hp}" />
                             <input type="button" class="plus" value="+" data-target="iv-hp" />
                         </div>
+                        
+                        ${lvlsSection}
                         
                         <div class="iv-summary">
                             <strong>Perfection: <span id="iv-perfection">${CalculateIVPerfection(currentIVs).toFixed(1)}%</span></strong>
@@ -508,7 +588,15 @@ function ShowIVInputDialog(pokemon, checkbox) {
         const input = $(`#${target}`);
         const isPlus = $(this).hasClass('plus');
         const currentVal = parseInt(input.val()) || 0;
-        const newVal = Math.max(0, Math.min(15, currentVal + (isPlus ? 1 : -1)));
+        
+        let newVal;
+        if (target === 'iv-lvls') {
+            // LVLs have max of 30, minimum of 0
+            newVal = Math.max(0, Math.min(30, currentVal + (isPlus ? 1 : -1)));
+        } else {
+            // IVs have max of 15
+            newVal = Math.max(0, Math.min(15, currentVal + (isPlus ? 1 : -1)));
+        }
         
         input.val(newVal);
         updatePerfection();
@@ -551,7 +639,13 @@ function ShowIVInputDialog(pokemon, checkbox) {
             hp: parseInt($('#iv-hp').val()) || 0
         };
         
-        AddToCollection(pokemon, ivs);
+        // Only get LVLs value if it's a mega Pokemon on the megas page
+        let lvls = null;
+        if (showLVLs && $('#iv-lvls').length > 0) {
+            lvls = Math.max(0, Math.min(30, parseInt($('#iv-lvls').val()) || 0));
+        }
+        
+        AddToCollection(pokemon, ivs, lvls);
         
         // Find all checkboxes for the same Pokemon using precise matching
         const matchingCheckboxes = $('.collection-checkbox').filter(function() {
@@ -622,7 +716,8 @@ function UpdateCollectionDisplay(checkbox) {
         const collectionData = GetFromCollection(pokemon);
         
         // Add inline IV display
-        const ivDisplay = CreateInlineIVDisplay(pokemon, collectionData.ivs);
+        const lvls = collectionData.lvls !== undefined ? collectionData.lvls : 30;
+        const ivDisplay = CreateInlineIVDisplay(pokemon, collectionData.ivs, lvls);
         checkbox.after(ivDisplay);
         
         // Add perfection indicator
@@ -913,6 +1008,94 @@ function ShowInlineIVEditor(pokemon, stat, statDiv, checkbox) {
             } else {
                 moveToNextStat('next');
             }
+        }
+    });
+    
+    // Save on blur (click outside)
+    input.on('blur', function() {
+        setTimeout(saveValue, 100); // Small delay to allow button clicks
+    });
+    
+    // Prevent event bubbling
+    statDiv.on('click', function(e) {
+        e.stopPropagation();
+    });
+}
+
+/**
+ * Show inline LVLs editor for mega levels
+ */
+function ShowInlineLVLsEditor(pokemon, statDiv, checkbox) {
+    const existingData = GetFromCollection(pokemon);
+    if (!existingData) return;
+    
+    const currentValue = existingData.lvls !== undefined ? existingData.lvls : 30;
+    
+    // Create inline editor
+    const editor = $(`
+        <div class="iv-inline-editor">
+            <div class="num-input-group">
+                <input type="button" class="minus" value="–" />
+                <input type="number" class="iv-input" min="0" max="30" value="${currentValue}" />
+                <input type="button" class="plus" value="+" />
+            </div>
+        </div>
+    `);
+    
+    // Replace the stat display with editor
+    const originalContent = statDiv.html();
+    statDiv.html(editor);
+    statDiv.addClass('editing');
+    
+    const input = statDiv.find('.iv-input');
+    input.focus().select();
+    
+    // Handle +/- buttons
+    statDiv.find('.plus').click(function(e) {
+        e.stopPropagation();
+        const newVal = Math.min(30, parseInt(input.val()) + 1);
+        input.val(newVal);
+    });
+    
+    statDiv.find('.minus').click(function(e) {
+        e.stopPropagation();
+        const newVal = Math.max(0, parseInt(input.val()) - 1);
+        input.val(newVal);
+    });
+    
+    // Handle save/cancel
+    function saveValue() {
+        const newValue = Math.max(0, Math.min(30, parseInt(input.val()) || 0));
+        
+        UpdateCollectionLVLs(pokemon, newValue);
+        
+        // Find all checkboxes for the same Pokemon using precise matching
+        const matchingCheckboxes = $('.collection-checkbox').filter(function() {
+            const otherCheckbox = $(this);
+            return parseInt(otherCheckbox.data('pokemon-id')) === pokemon.id &&
+                   otherCheckbox.data('pokemon-form') === pokemon.form &&
+                   (otherCheckbox.data('pokemon-shadow') === true) === pokemon.shadow;
+        });
+        
+        // Update all matching checkboxes' displays with the new LVLs data
+        matchingCheckboxes.each(function() {
+            UpdateCollectionDisplay($(this));
+        });
+        
+        statDiv.removeClass('editing');
+    }
+    
+    function cancelEdit() {
+        statDiv.html(originalContent);
+        statDiv.removeClass('editing');
+    }
+    
+    // Save on Enter
+    input.on('keydown', function(e) {
+        if (e.key === 'Enter') {
+            saveValue();
+        } else if (e.key === 'Escape') {
+            cancelEdit();
         }
     });
     
