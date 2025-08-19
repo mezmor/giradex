@@ -8,6 +8,9 @@ function LoadPokedex(pokedex_mon) {
     if (!finished_loading || loading_pogo_moves || loading_counters)
         return;
 
+    // Remove megas page class when switching to pokedex
+    $('body').removeClass('megas-page');
+
     if (!pokedex_mon || pokedex_mon.pokemon_id == 0) {
         LoadPokedexAndUpdateURL(GetPokeDexMon(1, "Normal", null, null));
         return;

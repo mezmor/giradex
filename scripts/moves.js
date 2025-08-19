@@ -191,6 +191,9 @@ function LoadMoves(type = "Any") {
     if (!finished_loading)
         return;
 
+    // Remove megas page class when switching to moves
+    $('body').removeClass('megas-page');
+
     cur_sort.move_type = type;
 
     // displays what should be displayed 

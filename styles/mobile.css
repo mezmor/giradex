@@ -508,3 +508,24 @@ dialog.card .card-body {
         overflow: clip;
     }
 }
+
+/* Mobile adjustments for Megas page without eDPS column */
+@media screen and (max-width: 900px) {
+    /* Megas page adjustments (no eDPS column) */
+    body.megas-page.collection-enabled #strongest-table tr > *:nth-child(1) { width: 6%; }  /* Tier */
+    body.megas-page.collection-enabled #strongest-table tr > *:nth-child(2) { width: 6%; }  /* Rank */
+    body.megas-page.collection-enabled #strongest-table tr > *:nth-child(3) { width: 35%; } /* Name */
+    body.megas-page.collection-enabled #strongest-table tr > *:nth-child(4) { width: 15%; } /* Type 1 */
+    body.megas-page.collection-enabled #strongest-table tr > *:nth-child(5) { width: 15%; } /* Type 2 */
+    body.megas-page.collection-enabled #strongest-table tr > *:nth-child(6) { width: 0%; }  /* Percentage (hidden) */
+    body.megas-page.collection-enabled #strongest-table tr > *:nth-child(7) { width: 23%; } /* Collection (now 7th) */
+    
+    /* Megas page when collection disabled */
+    body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(1) { width: 8%; }  /* Tier */
+    body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(2) { width: 8%; }  /* Rank */
+    body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(3) { width: 45%; } /* Name */
+    body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(4) { width: 19%; } /* Type 1 */
+    body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(5) { width: 20%; } /* Type 2 */
+    body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(6) { width: 0%; }  /* Percentage (hidden) */
+    body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(7) { display: none; } /* Collection (hidden) */
+}

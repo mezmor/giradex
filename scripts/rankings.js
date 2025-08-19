@@ -228,6 +228,9 @@ function LoadStrongest(type = "Any", showTypeLinks = true) {
     if (!finished_loading)
         return false;
 
+    // Remove megas page class when switching to normal rankings
+    $('body').removeClass('megas-page');
+
     // Move filters for display
     MoveFilterPopup("#strongest-filters");
 
@@ -1021,7 +1024,12 @@ function GetRankingRow(row_i) {
         tr.append(td_name);
         tr.append(td_fm);
         tr.append(td_cm);
-        tr.append(td_rat);
+        
+        // Don't show eDPS column for megas page
+        if (!isMegasPage) {
+            tr.append(td_rat);
+        }
+        
         tr.append(td_pct);
         tr.append(td_collection);
 
@@ -1232,6 +1240,9 @@ function LoadMegas() {
     $("#footnote-typed-ranking").css('display', 'none');
     $("#footnote-affinity-ranking").css('display', 'none');
     $("#footnote-versus").css('display', 'none');
+    
+    // Add CSS class to identify megas page for styling
+    $('body').addClass('megas-page');
 
     // Update Icon
     ShowHideSearchStringIcon();
