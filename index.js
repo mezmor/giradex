@@ -301,8 +301,8 @@ function CheckURLAndAct() {
 function LoadTypeChartAndUpdateURL() {
     window.history.pushState({}, "", "?typechart");
     
-    // Remove megas page class when switching to type chart
-    $('body').removeClass('megas-page');
+    // Remove megas page and each type page classes when switching to type chart
+    $('body').removeClass('megas-page each-type-page');
     
     // sets the page title
     document.title = "Type Chart - GiraDex";
@@ -320,8 +320,8 @@ function LoadTypeChartAndUpdateURL() {
 function LoadCollectionAndUpdateURL() {
     window.history.pushState({}, "", "?collection");
     
-    // Remove megas page class when switching to collection
-    $('body').removeClass('megas-page');
+    // Remove megas page and each type page classes when switching to collection
+    $('body').removeClass('megas-page each-type-page');
     
     // sets the page title
     document.title = "Collection - GiraDex";
@@ -344,8 +344,8 @@ function LoadCollectionAndUpdateURL() {
 function LoadFAQAndUpdateURL() {
     window.history.pushState({}, "", "?faq");
 
-    // Remove megas page class when switching to FAQ
-    $('body').removeClass('megas-page');
+    // Remove megas page and each type page classes when switching to FAQ
+    $('body').removeClass('megas-page each-type-page');
     
     // sets the page title
     document.title = "FAQ - GiraDex";
@@ -363,8 +363,8 @@ function LoadFAQAndUpdateURL() {
 function LoadAboutAndUpdateURL() {
     window.history.pushState({}, "", "?about");
 
-    // Remove megas page class when switching to About
-    $('body').removeClass('megas-page');
+    // Remove megas page and each type page classes when switching to About
+    $('body').removeClass('megas-page each-type-page');
     
     // sets the page title
     document.title = "About - GiraDex";

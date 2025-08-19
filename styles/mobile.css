@@ -218,9 +218,25 @@ dialog.card .card-body {
     padding: 0 10px;
 }
 
-/* % comparison bars */
+/* % comparison bars - hide 7th column for normal rankings, but handle Each type differently */
 #strongest-table tr > *:nth-child(7) {
     display: none;
+}
+
+/* CRITICAL Override: For Each type page, collection is 7th child (no percentage column exists) */
+@media screen and (max-width: 900px) {
+    /* Each type page collection column is 7th child, not 8th! */
+    body.each-type-page.collection-enabled #strongest-table tr > *:nth-child(7) {
+        display: table-cell !important; /* Collection column - override the general hide rule */
+        width: 20% !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* When collection disabled, hide the 7th child */
+    body.each-type-page:not(.collection-enabled) #strongest-table tr > *:nth-child(7) {
+        display: none !important; /* Collection column hidden when disabled */
+    }
 }
 
 #settings-tiermethod, #settings-tiermethod-header {
@@ -528,4 +544,21 @@ dialog.card .card-body {
     body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(5) { width: 20%; } /* Type 2 */
     body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(6) { width: 0%; }  /* Percentage (hidden) */
     body.megas-page:not(.collection-enabled) #strongest-table tr > *:nth-child(7) { display: none; } /* Collection (hidden) */
+    
+    /* Each type page adjustments (has eDPS column, NO percentage column, collection is 7th child) */
+    body.each-type-page.collection-enabled #strongest-table tr > *:nth-child(1) { width: 6%; }  /* Tier */
+    body.each-type-page.collection-enabled #strongest-table tr > *:nth-child(2) { width: 6%; }  /* Rank */
+    body.each-type-page.collection-enabled #strongest-table tr > *:nth-child(3) { width: 32%; } /* Name */
+    body.each-type-page.collection-enabled #strongest-table tr > *:nth-child(4) { width: 15%; } /* Fast Move */
+    body.each-type-page.collection-enabled #strongest-table tr > *:nth-child(5) { width: 15%; } /* Charged Move */
+    body.each-type-page.collection-enabled #strongest-table tr > *:nth-child(6) { width: 14%; } /* eDPS */
+    body.each-type-page.collection-enabled #strongest-table tr > *:nth-child(7) { width: 12%; } /* Collection (7th child!) */
+    
+    /* Each type page when collection disabled (only 6 columns total) */
+    body.each-type-page:not(.collection-enabled) #strongest-table tr > *:nth-child(1) { width: 8%; }  /* Tier */
+    body.each-type-page:not(.collection-enabled) #strongest-table tr > *:nth-child(2) { width: 8%; }  /* Rank */
+    body.each-type-page:not(.collection-enabled) #strongest-table tr > *:nth-child(3) { width: 44%; } /* Name */
+    body.each-type-page:not(.collection-enabled) #strongest-table tr > *:nth-child(4) { width: 18%; } /* Fast Move */
+    body.each-type-page:not(.collection-enabled) #strongest-table tr > *:nth-child(5) { width: 18%; } /* Charged Move */
+    body.each-type-page:not(.collection-enabled) #strongest-table tr > *:nth-child(6) { width: 14%; } /* eDPS */
 }

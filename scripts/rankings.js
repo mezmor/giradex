@@ -228,8 +228,8 @@ function LoadStrongest(type = "Any", showTypeLinks = true) {
     if (!finished_loading)
         return false;
 
-    // Remove megas page class when switching to normal rankings
-    $('body').removeClass('megas-page');
+    // Remove megas page and each type page classes when switching to normal rankings
+    $('body').removeClass('megas-page each-type-page');
 
     // Move filters for display
     MoveFilterPopup("#strongest-filters");
@@ -318,6 +318,9 @@ function LoadStrongest(type = "Any", showTypeLinks = true) {
         display_numbered = false;
         show_pct = false;
         highlight_suboptimal = false;
+        
+        // Add CSS class to identify Each type page for styling
+        $('body').addClass('each-type-page');
     } else {
         str_pokemons = GetStrongestOfOneType(search_params);
 
