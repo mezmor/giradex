@@ -53,7 +53,6 @@ class CollectionStore {
         
         // Save the migrated data back to storage if changes were made
         if (migrationNeeded) {
-            console.log('Migrated collection data to include LVLs for mega Pokemon');
             this.saveToStorage();
         }
     }
