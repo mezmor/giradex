@@ -22,10 +22,39 @@ class CollectionStore {
             const stored = localStorage.getItem(this.storageKey);
             if (stored) {
                 this.data = JSON.parse(stored);
+                
+                // Migrate old data format to new format (backwards compatibility)
+                this.migrateOldData();
             }
         } catch (error) {
             console.warn('Failed to load collection from storage:', error);
             this.data = {};
+        }
+    }
+
+    /**
+     * Migrate old collection data format to include lvls field for mega Pokemon
+     */
+    migrateOldData() {
+        let migrationNeeded = false;
+        
+        for (const [key, entry] of Object.entries(this.data)) {
+            // Check if this entry is missing the lvls field
+            if (entry.lvls === undefined) {
+                // Only add lvls for mega Pokemon (form === "Mega" or "MegaY")
+                const isMegaPokemon = entry.form === "Mega" || entry.form === "MegaY";
+                if (isMegaPokemon) {
+                    entry.lvls = 30; // Default value for mega Pokemon
+                    migrationNeeded = true;
+                }
+                // Non-mega Pokemon don't get lvls field (intentionally omitted)
+            }
+        }
+        
+        // Save the migrated data back to storage if changes were made
+        if (migrationNeeded) {
+            console.log('Migrated collection data to include LVLs for mega Pokemon');
+            this.saveToStorage();
         }
     }
 
@@ -773,13 +802,22 @@ function ImportCollection(jsonData) {
             throw new Error('Invalid collection format: expected object');
         }
         
-        // Validate each entry has required fields
+        // Validate and migrate each entry
         for (const [key, entry] of Object.entries(imported)) {
             if (!entry.id || !entry.form || !entry.ivs) {
                 throw new Error(`Invalid entry format for key: ${key}`);
             }
             if (entry.ivs.atk === undefined || entry.ivs.def === undefined || entry.ivs.hp === undefined) {
                 throw new Error(`Invalid IV format for key: ${key}`);
+            }
+            
+            // Add backwards compatibility: add lvls field for mega Pokemon if missing
+            if (entry.lvls === undefined) {
+                const isMegaPokemon = entry.form === "Mega" || entry.form === "MegaY";
+                if (isMegaPokemon) {
+                    entry.lvls = 30; // Default value for mega Pokemon
+                }
+                // Non-mega Pokemon don't get lvls field
             }
         }
         
